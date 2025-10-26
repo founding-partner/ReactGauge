@@ -4,11 +4,12 @@ import React_RCTAppDelegate
 import ReactAppDependencyProvider
 
 @main
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, RNAppAuthAuthorizationFlowManager {
   var window: UIWindow?
 
   var reactNativeDelegate: ReactNativeDelegate?
   var reactNativeFactory: RCTReactNativeFactory?
+  weak var authorizationFlowManagerDelegate: RNAppAuthAuthorizationFlowManagerDelegate?
 
   func application(
     _ application: UIApplication,
@@ -31,6 +32,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     return true
   }
+
+  func application(
+    _ app: UIApplication,
+    open url: URL,
+    options: [UIApplication.OpenURLOptionsKey: Any] = [:]
+  ) -> Bool {
+    if let authorizationFlowManagerDelegate = authorizationFlowManagerDelegate,
+       authorizationFlowManagerDelegate.resumeExternalUserAgentFlow(with: url) {
+      self.authorizationFlowManagerDelegate = nil
+      return true
+    }
+
+    return false
+  }
 }
 
 class ReactNativeDelegate: RCTDefaultReactNativeFactoryDelegate {
@@ -45,4 +60,14 @@ class ReactNativeDelegate: RCTDefaultReactNativeFactoryDelegate {
     Bundle.main.url(forResource: "main", withExtension: "jsbundle")
 #endif
   }
+}
+
+@objc(RNAppAuthAuthorizationFlowManagerDelegate)
+protocol RNAppAuthAuthorizationFlowManagerDelegate: AnyObject {
+  func resumeExternalUserAgentFlow(with url: URL) -> Bool
+}
+
+@objc(RNAppAuthAuthorizationFlowManager)
+protocol RNAppAuthAuthorizationFlowManager: AnyObject {
+  var authorizationFlowManagerDelegate: RNAppAuthAuthorizationFlowManagerDelegate? { get set }
 }

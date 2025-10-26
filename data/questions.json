@@ -1,0 +1,44 @@
+[
+  {
+    "id": "react-001",
+    "type": "mcq",
+    "prompt": "Which hook memoizes the result of an expensive calculation?",
+    "description": "Select the hook that ensures a value is recomputed only when its dependencies change.",
+    "code": "const value = useMemo(() => heavyWork(data), [data]);",
+    "options": [
+      "useState",
+      "useMemo",
+      "useEffect",
+      "useReducer"
+    ],
+    "answerIndex": 1,
+    "explanation": "`useMemo` caches the computed value until dependencies change, avoiding unnecessary recomputation."
+  },
+  {
+    "id": "react-002",
+    "type": "boolean",
+    "prompt": "React components must return a single root element.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "Components must return a single React element, but fragments let you group multiple children without extra nodes."
+  },
+  {
+    "id": "react-003",
+    "type": "code",
+    "prompt": "What will be logged to the console?",
+    "description": "Review the snippet and choose the correct console output.",
+    "code": "function Example() {\n  const [count, setCount] = useState(0);\n\n  useEffect(() => {\n    const id = setInterval(() => setCount(c => c + 1), 1000);\n    return () => clearInterval(id);\n  }, []);\n\n  console.log('render', count);\n  return null;\n}",
+    "options": [
+      "`render 0` once then nothing",
+      "`render` logs increasing numbers each second",
+      "`render` logs only even numbers",
+      "It throws because setState inside useEffect is not allowed"
+    ],
+    "answerIndex": 1,
+    "explanation": "Each interval tick schedules a state update, causing the component to re-render and log the incremented count."
+  }
+]
