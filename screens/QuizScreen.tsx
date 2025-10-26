@@ -181,55 +181,58 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
   );
 
   return (
-    <View style={[styles.container, style]} {...rest}>
-      <QuizHeader
-        title="React Mastery Quiz"
-        subtitle={`Question ${currentIndex + 1} of ${totalQuestions}`}
-        avatarUri={avatarUrl}
-        initials={getInitials(username)}
-        currentQuestion={currentIndex + 1}
-        totalQuestions={totalQuestions}
-        timeRemainingLabel={isGuest ? 'Guest mode' : `${streakDays} day streak`}
-      />
-
+    <View style={[styles.root, style]}>
       {confettiBurst > 0 ? (
-        <ConfettiCannon
-          key={confettiBurst}
-          count={100}
-          origin={{ x: windowWidth / 2, y: 0 }}
-          fadeOut
-          explosionSpeed={320}
-          fallSpeed={2400}
-        />
-      ) : null}
-
-      <ProgressBar progress={progress} milestones={milestones} />
-
-      <QuestionCard
-        title={currentQuestion.prompt}
-        description={currentQuestion.description}
-        codeSnippet={currentQuestion.code}
-        footer={footer}
-      >
-        {currentQuestion.options.map((option, index) => (
-          <OptionButton
-            key={option}
-            label={option}
-            selected={effectiveSelectedIndex === index}
-            onPress={() => handleSelectOption(index)}
-            disabled={submitted}
-            status={deriveStatus({
-              index,
-              submitted,
-              selectedIndex: effectiveSelectedIndex ?? undefined,
-              answerIndex: currentQuestion.answerIndex,
-            })}
-            containerStyle={styles.option}
+        <View style={styles.confettiLayer} pointerEvents="none">
+          <ConfettiCannon
+            key={confettiBurst}
+            count={100}
+            origin={{ x: windowWidth / 2, y: 0 }}
+            fadeOut
+            explosionSpeed={320}
+            fallSpeed={2400}
           />
-        ))}
-      </QuestionCard>
+        </View>
+      ) : null}
+      <View style={styles.container} {...rest}>
+        <QuizHeader
+          title="React Mastery Quiz"
+          subtitle={`Question ${currentIndex + 1} of ${totalQuestions}`}
+          avatarUri={avatarUrl}
+          initials={getInitials(username)}
+          currentQuestion={currentIndex + 1}
+          totalQuestions={totalQuestions}
+          timeRemainingLabel={isGuest ? 'Guest mode' : `${streakDays} day streak`}
+        />
 
-      {renderExplanation()}
+        <ProgressBar progress={progress} milestones={milestones} />
+
+        <QuestionCard
+          title={currentQuestion.prompt}
+          description={currentQuestion.description}
+          codeSnippet={currentQuestion.code}
+          footer={footer}
+        >
+          {currentQuestion.options.map((option, index) => (
+            <OptionButton
+              key={option}
+              label={option}
+              selected={effectiveSelectedIndex === index}
+              onPress={() => handleSelectOption(index)}
+              disabled={submitted}
+              status={deriveStatus({
+                index,
+                submitted,
+                selectedIndex: effectiveSelectedIndex ?? undefined,
+                answerIndex: currentQuestion.answerIndex,
+              })}
+              containerStyle={styles.option}
+            />
+          ))}
+        </QuestionCard>
+
+        {renderExplanation()}
+      </View>
     </View>
   );
 };
@@ -269,8 +272,17 @@ function getInitials(source: string) {
 }
 
 const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+  },
   container: {
+    flex: 1,
     gap: spacing.xl,
+  },
+  confettiLayer: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 20,
+    elevation: 20,
   },
   option: {
     marginBottom: spacing.md,
