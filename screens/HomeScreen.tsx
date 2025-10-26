@@ -25,6 +25,9 @@ export interface HomeScreenProps extends ViewProps {
   onStartQuiz: () => void;
   onRequestSignIn?: () => void;
   isGuest?: boolean;
+  difficulty: 'easy' | 'medium' | 'hard';
+  onSelectDifficulty: (difficulty: 'easy' | 'medium' | 'hard') => void;
+  questionPoolSize: number;
   totalAnswered: number;
   totalCorrect: number;
   streakDays: number;
@@ -38,6 +41,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   onStartQuiz,
   onRequestSignIn,
   isGuest = false,
+  difficulty,
+  onSelectDifficulty,
+  questionPoolSize,
   totalAnswered,
   totalCorrect,
   streakDays,
@@ -95,6 +101,44 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         </View>
       )}
 
+      <View style={styles.difficultyCard}>
+        <Text style={styles.sectionHeading}>Difficulty</Text>
+        <Text style={styles.difficultySubtext}>
+          Choose how many questions you want to tackle. Question bank currently holds {questionPoolSize} prompts.
+        </Text>
+        <View style={styles.difficultyRow}>
+          {difficultyOptions.map((option) => (
+            <Pressable
+              key={option.value}
+              accessibilityRole="button"
+              accessibilityState={{ selected: difficulty === option.value }}
+              style={[
+                styles.difficultyChip,
+                difficulty === option.value && styles.difficultyChipActive,
+              ]}
+              onPress={() => onSelectDifficulty(option.value)}
+            >
+              <Text
+                style={[
+                  styles.difficultyChipText,
+                  difficulty === option.value && styles.difficultyChipTextActive,
+                ]}
+              >
+                {option.label}
+              </Text>
+              <Text
+                style={[
+                  styles.difficultyChipCount,
+                  difficulty === option.value && styles.difficultyChipTextActive,
+                ]}
+              >
+                {option.count} Qs
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+      </View>
+
       <QuestionCard
         title="Daily Warm-up"
         description="Try this sample question to prep your brain before starting the full quiz."
@@ -147,6 +191,12 @@ const ProgressRow = ({
   );
 };
 
+const difficultyOptions = [
+  { value: 'easy' as const, label: 'Easy', count: 5 },
+  { value: 'medium' as const, label: 'Medium', count: 10 },
+  { value: 'hard' as const, label: 'Hard', count: 20 },
+];
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -195,6 +245,50 @@ const styles = StyleSheet.create({
     ...typography.caption,
     textTransform: 'uppercase',
     color: colors.surface,
+  },
+  difficultyCard: {
+    backgroundColor: colors.surface,
+    borderRadius: radius.md,
+    padding: spacing.xl,
+    gap: spacing.md,
+  },
+  difficultySubtext: {
+    ...typography.body,
+    color: colors.textSecondary,
+  },
+  difficultyRow: {
+    flexDirection: 'row',
+    gap: spacing.md,
+  },
+  difficultyChip: {
+    flex: 1,
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    borderColor: colors.border,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
+    alignItems: 'center',
+    gap: spacing.xs,
+  },
+  difficultyChipActive: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+  },
+  difficultyChipText: {
+    ...typography.caption,
+    fontSize: 12,
+    letterSpacing: 0.2,
+    textTransform: 'uppercase',
+    color: colors.textPrimary,
+  },
+  difficultyChipTextActive: {
+    color: colors.textOnPrimary,
+  },
+  difficultyChipCount: {
+    ...typography.caption,
+    fontSize: 12,
+    color: colors.textSecondary,
+    textTransform: 'none',
   },
   progressBlock: {
     gap: spacing.sm,

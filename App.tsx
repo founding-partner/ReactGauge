@@ -29,8 +29,14 @@ type UserProfile = {
 };
 
 type ActiveScreen = 'home' | 'quiz' | 'result';
+type Difficulty = 'easy' | 'medium' | 'hard';
 
 const QUESTIONS: Question[] = questionsData as Question[];
+const QUESTION_COUNT_BY_DIFFICULTY: Record<Difficulty, number> = {
+  easy: 5,
+  medium: 10,
+  hard: 20,
+};
 
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
@@ -38,6 +44,9 @@ function App(): React.JSX.Element {
   const [authLoading, setAuthLoading] = useState(false);
   const [activeScreen, setActiveScreen] = useState<ActiveScreen>('home');
   const [quizAnswers, setQuizAnswers] = useState<AnswerRecord[]>([]);
+  const [activeQuestions, setActiveQuestions] = useState<Question[]>([]);
+  const [completedQuestions, setCompletedQuestions] = useState<Question[]>([]);
+  const [difficulty, setDifficulty] = useState<Difficulty>('easy');
 
   const handleSignIn = async () => {
     try {
@@ -86,6 +95,15 @@ function App(): React.JSX.Element {
 
   const handleStartQuiz = () => {
     setQuizAnswers([]);
+    const selected = pickQuestionsForDifficulty(difficulty);
+    if (selected.length === 0) {
+      Alert.alert(
+        'No Questions Available',
+        'Add more questions to the question bank to start a quiz for this difficulty.',
+      );
+      return;
+    }
+    setActiveQuestions(selected);
     setActiveScreen('quiz');
   };
 
@@ -96,6 +114,7 @@ function App(): React.JSX.Element {
   const handleQuizComplete = (answers: AnswerRecord[]) => {
     setQuizAnswers(answers);
     setActiveScreen('result');
+    setCompletedQuestions(activeQuestions);
 
     const correctCount = answers.filter((answer) => answer.isCorrect).length;
 
@@ -115,6 +134,8 @@ function App(): React.JSX.Element {
 
   const handleRetryQuiz = () => {
     setQuizAnswers([]);
+    const selected = pickQuestionsForDifficulty(difficulty);
+    setActiveQuestions(selected);
     setActiveScreen('quiz');
   };
 
@@ -143,7 +164,7 @@ function App(): React.JSX.Element {
       return (
         <ResultScreen
           answers={quizAnswers}
-          questions={QUESTIONS}
+          questions={completedQuestions}
           onRetry={handleRetryQuiz}
           onClose={handleCloseResults}
           isGuest={user.mode === 'guest'}
@@ -161,6 +182,9 @@ function App(): React.JSX.Element {
         onStartQuiz={handleStartQuiz}
         onRequestSignIn={user.mode === 'guest' ? handleSignIn : undefined}
         isGuest={user.mode === 'guest'}
+        difficulty={difficulty}
+        onSelectDifficulty={setDifficulty}
+        questionPoolSize={QUESTIONS.length}
         totalAnswered={user.answered}
         totalCorrect={user.correct}
         streakDays={user.streak}
@@ -168,7 +192,7 @@ function App(): React.JSX.Element {
       />
     ) : (
       <QuizScreen
-        questions={QUESTIONS}
+        questions={activeQuestions}
         username={user.name ?? user.login}
         avatarUrl={user.avatarUrl}
         streakDays={user.streak}
@@ -234,3 +258,14 @@ const styles = StyleSheet.create({
 });
 
 export default App;
+
+function pickQuestionsForDifficulty(difficulty: Difficulty): Question[] {
+  const desiredCount = QUESTION_COUNT_BY_DIFFICULTY[difficulty];
+  const pool = [...QUESTIONS];
+  const maxCount = Math.min(desiredCount, pool.length);
+  for (let i = pool.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  return pool.slice(0, maxCount);
+}

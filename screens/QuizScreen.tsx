@@ -44,6 +44,17 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
   const currentQuestion = questions[currentIndex];
   const totalQuestions = questions.length;
 
+  if (questions.length === 0) {
+    return (
+      <View style={[styles.root, style, styles.emptyState]} {...rest}>
+        <Text style={styles.emptyTitle}>No questions available</Text>
+        <Text style={styles.emptySubtitle}>
+          Add questions to the bank or choose a different difficulty to begin.
+        </Text>
+      </View>
+    );
+  }
+
   const progress = (currentIndex + (submitted ? 1 : 0)) / totalQuestions;
 
   const milestones = useMemo(
@@ -283,6 +294,21 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     zIndex: 20,
     elevation: 20,
+  },
+  emptyState: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: spacing.xl,
+    gap: spacing.md,
+  },
+  emptyTitle: {
+    ...typography.heading,
+    color: colors.textPrimary,
+  },
+  emptySubtitle: {
+    ...typography.body,
+    color: colors.textSecondary,
+    textAlign: 'center',
   },
   option: {
     marginBottom: spacing.md,
