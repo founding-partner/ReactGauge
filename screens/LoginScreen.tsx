@@ -1,7 +1,9 @@
 import React from 'react';
 import {
   ActivityIndicator,
+  Image,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -23,16 +25,56 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
   ...rest
 }) => {
   return (
-    <View style={[styles.container, style]} {...rest}>
+    <ScrollView
+      style={style}
+      contentContainerStyle={styles.container}
+      keyboardShouldPersistTaps="handled"
+      {...rest}
+    >
       <View style={styles.hero} accessible accessibilityRole="header">
-        <View style={styles.logoWrapper}>
-          <Text style={styles.logoText}>RG</Text>
-        </View>
+        <Image
+          source={require('../app.png')}
+          style={styles.logoImage}
+          resizeMode="contain"
+          accessibilityLabel="React Gauge Logo"
+        />
         <Text style={styles.title}>Level up your React skills</Text>
         <Text style={styles.subtitle}>
           Take curated quizzes, review detailed explanations, and track your
           growth as a React engineer.
         </Text>
+      </View>
+
+      <View style={styles.actions}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityState={{ busy: loading, disabled: loading }}
+          style={({ pressed }) => [
+            styles.signInButton,
+            pressed && !loading ? styles.signInButtonPressed : null,
+            loading ? styles.signInButtonDisabled : null,
+          ]}
+          onPress={onSignIn}
+          disabled={loading}
+        >
+          {loading ? (
+            <ActivityIndicator color={colors.background} />
+          ) : (
+            <Text style={styles.signInText}>Continue with GitHub</Text>
+          )}
+        </Pressable>
+
+        <Pressable
+          accessibilityRole="button"
+          style={({ pressed }) => [
+            styles.guestButton,
+            pressed ? styles.guestButtonPressed : null,
+          ]}
+          onPress={onContinueAsGuest}
+          disabled={loading}
+        >
+          <Text style={styles.guestButtonText}>Continue as Guest</Text>
+        </Pressable>
       </View>
 
       <View style={styles.callouts}>
@@ -51,78 +93,45 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
         </View>
       </View>
 
-      <Pressable
-        accessibilityRole="button"
-        accessibilityState={{ busy: loading, disabled: loading }}
-        style={({ pressed }) => [
-          styles.signInButton,
-          pressed && !loading ? styles.signInButtonPressed : null,
-          loading ? styles.signInButtonDisabled : null,
-        ]}
-        onPress={onSignIn}
-        disabled={loading}
-      >
-        {loading ? (
-          <ActivityIndicator color={colors.background} />
-        ) : (
-          <Text style={styles.signInText}>Continue with GitHub</Text>
-        )}
-      </Pressable>
-
-      <Pressable
-        accessibilityRole="button"
-        style={({ pressed }) => [
-          styles.guestButton,
-          pressed ? styles.guestButtonPressed : null,
-        ]}
-        onPress={onContinueAsGuest}
-        disabled={loading}
-      >
-        <Text style={styles.guestButtonText}>Continue as Guest</Text>
-      </Pressable>
-
       <Text style={styles.disclaimer}>
         GitHub login is used only to personalize your experience. We never post
         on your behalf.
       </Text>
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    paddingTop: spacing.xl,
     paddingHorizontal: spacing.xl,
-    gap: spacing.xxl,
+    paddingBottom: spacing.xxl,
+    gap: spacing.xl,
   },
   hero: {
-    gap: spacing.lg,
-  },
-  logoWrapper: {
-    width: 120,
-    height: 120,
-    borderRadius: radius.pill,
-    backgroundColor: colors.primary,
+    gap: spacing.md,
     alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'flex-start',
   },
-  logoText: {
-    ...typography.heading,
-    color: colors.textOnPrimary,
+  logoImage: {
+    width: '100%',
+    height: undefined,
+    aspectRatio: 1,
+    borderRadius: radius.md,
   },
   title: {
     ...typography.display,
     color: colors.surface,
+    textAlign: 'center',
   },
   subtitle: {
     ...typography.body,
     color: colors.surface,
     opacity: 0.8,
+    textAlign: 'center',
   },
   callouts: {
-    gap: spacing.lg,
+    gap: spacing.md,
   },
   callout: {
     backgroundColor: '#172554',
@@ -138,6 +147,9 @@ const styles = StyleSheet.create({
     ...typography.body,
     color: colors.surface,
     opacity: 0.9,
+  },
+  actions: {
+    gap: spacing.md,
   },
   signInButton: {
     backgroundColor: colors.surface,
