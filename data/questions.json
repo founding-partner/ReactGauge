@@ -4,7 +4,6 @@
     "type": "mcq",
     "prompt": "Which hook memoizes the result of an expensive calculation?",
     "description": "Select the hook that ensures a value is recomputed only when its dependencies change.",
-    "code": "const value = useMemo(() => heavyWork(data), [data]);",
     "options": [
       "useState",
       "useMemo",
@@ -12,7 +11,8 @@
       "useReducer"
     ],
     "answerIndex": 1,
-    "explanation": "`useMemo` caches the computed value until dependencies change, avoiding unnecessary recomputation."
+    "explanation": "`useMemo` caches the computed value until dependencies change, avoiding unnecessary recomputation.",
+    "topic": "Hooks"
   },
   {
     "id": "react-002",
@@ -24,7 +24,8 @@
       "False"
     ],
     "answerIndex": 0,
-    "explanation": "Components must return a single React element, but fragments let you group multiple children without extra nodes."
+    "explanation": "Components must return a single React element, but fragments let you group multiple children without extra nodes.",
+    "topic": "Component Structure"
   },
   {
     "id": "react-003",
@@ -39,6 +40,391 @@
       "It throws because setState inside useEffect is not allowed"
     ],
     "answerIndex": 1,
-    "explanation": "Each interval tick schedules a state update, causing the component to re-render and log the incremented count."
+    "explanation": "Each interval tick schedules a state update, causing the component to re-render and log the incremented count.",
+    "topic": "Rendering"
+  }
+  ,
+  {
+    "id": "react-004",
+    "type": "mcq",
+    "prompt": "Which React hook is used to perform side effects in functional components?",
+    "description": "Choose the correct hook that lets you run effects like data fetching or subscriptions.",
+    "options": [
+      "useEffect",
+      "useCallback",
+      "useRef",
+      "useLayoutEffect"
+    ],
+    "answerIndex": 0,
+    "explanation": "`useEffect` lets you perform side effects in functional components, similar to lifecycle methods in class components.",
+    "topic": "Hooks"
+  },
+  {
+    "id": "react-005",
+    "type": "boolean",
+    "prompt": "The useState hook can only be called at the top level of a component.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "React hooks must be called at the top level of a functional component or a custom hook, not inside loops, conditions, or nested functions.",
+    "topic": "Hooks"
+  },
+  {
+    "id": "react-006",
+    "type": "code",
+    "prompt": "What is the output of this component?",
+    "description": "Evaluate the render behavior based on the useRef hook.",
+    "code": "function RefExample() {\n  const renderCount = useRef(1);\n  useEffect(() => {\n    renderCount.current += 1;\n  });\n\n  console.log('renders', renderCount.current);\n  return null;\n}",
+    "options": [
+      "logs 'renders 1' only once",
+      "logs 'renders 2' every time",
+      "logs increasing count on every render",
+      "throws an error for accessing useRef"
+    ],
+    "answerIndex": 2,
+    "explanation": "`useRef` stores a mutable value that persists across renders. The `renderCount` value increases every render.",
+    "topic": "Hooks"
+  }
+  ,
+  {
+    "id": "react-007",
+    "type": "mcq",
+    "prompt": "What is the primary purpose of React.memo?",
+    "description": "Choose the best description of React.memo behavior.",
+    "options": [
+      "Prevents a component from re-rendering if its props haven’t changed",
+      "Memoizes expensive function results",
+      "Schedules updates to run asynchronously",
+      "Replaces the need for useCallback"
+    ],
+    "answerIndex": 0,
+    "explanation": "React.memo is a higher-order component that memoizes the rendered output and skips re-render when props are shallowly equal.",
+    "topic": "Hooks"
+  },
+  {
+    "id": "react-008",
+    "type": "boolean",
+    "prompt": "Keys provided to list items should be unique among their siblings.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "Keys help React identify which items have changed, are added, or removed. They must be unique among siblings.",
+    "topic": "Keys"
+  },
+  {
+    "id": "react-009",
+    "type": "code",
+    "prompt": "What will be logged to the console on the initial render?",
+    "description": "Consider how state updates inside useEffect affect the first render's console output.",
+    "code": "function Counter() {\n  const [count, setCount] = useState(0);\n  useEffect(() => {\n    setCount(c => c + 1);\n    setCount(c => c + 1);\n  }, []);\n\n  console.log('count', count);\n  return null;\n}",
+    "options": [
+      "logs 'count 0' on initial render",
+      "logs 'count 1' on initial render",
+      "logs 'count 2' on initial render",
+      "throws an error"
+    ],
+    "answerIndex": 0,
+    "explanation": "useEffect runs after the initial render, so the first console.log during initial render shows the initial state (0). The two state updates occur after that.",
+    "topic": "Rendering"
+  },
+  {
+    "id": "react-010",
+    "type": "mcq",
+    "prompt": "Which is the best choice for a React list key?",
+    "description": "Select the recommended value to use as a key when rendering lists.",
+    "options": [
+      "Array index (i) always",
+      "A stable unique id from the item (e.g., database id)",
+      "Math.random() each render",
+      "Current timestamp"
+    ],
+    "answerIndex": 1,
+    "explanation": "A stable unique id is preferred for keys because it remains consistent between renders and helps React efficiently update the list.",
+    "topic": "Keys"
+  }
+,
+  {
+    "id": "react-011",
+    "type": "mcq",
+    "prompt": "What does the useState hook return?",
+    "description": "Select the correct return structure of the useState hook.",
+    "options": [
+      "Only the current state value",
+      "An object with state and updater keys",
+      "An array with state and updater function",
+      "A Promise that resolves to state"
+    ],
+    "answerIndex": 2,
+    "explanation": "useState returns an array where the first element is the current state value and the second is the function to update it.",
+    "topic": "Hooks"
+  },
+  {
+    "id": "react-012",
+    "type": "boolean",
+    "prompt": "You can update the state directly by assigning a new value to it when using useState.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 1,
+    "explanation": "State should be updated using the updater function returned by useState, not by directly assigning a value.",
+    "topic": "Hooks"
+  },
+  {
+    "id": "react-013",
+    "type": "code",
+    "prompt": "What will be rendered when this component is mounted?",
+    "description": "Evaluate the use of useState with a function initializer.",
+    "code": "function Counter() {\n  const [count, setCount] = useState(() => 5);\n  return <p>{count}</p>;\n}",
+    "options": [
+      "<p>0</p>",
+      "<p>undefined</p>",
+      "<p>5</p>",
+      "<p>NaN</p>"
+    ],
+    "answerIndex": 2,
+    "explanation": "Passing a function to useState ensures the value is lazily initialized. The returned value (5) is used as initial state.",
+    "topic": "Hooks"
+  },
+  {
+    "id": "react-014",
+    "type": "mcq",
+    "prompt": "What happens when you call the state updater function with the same value as the current state?",
+    "description": "Pick the correct behavior of useState.",
+    "options": [
+      "It always triggers a re-render",
+      "It updates the state and re-renders",
+      "It does nothing and skips re-render",
+      "It throws an error"
+    ],
+    "answerIndex": 2,
+    "explanation": "React will skip rendering if the new state is the same as the previous state.",
+    "topic": "Hooks"
+  }
+  ,
+  {
+    "id": "react-015",
+    "type": "boolean",
+    "prompt": "Calling the state updater returned by useState immediately updates the state variable in the same render.",
+    "description": "Answer true or false.",
+    "options": ["True", "False"],
+    "answerIndex": 1,
+    "explanation": "Calling the updater schedules a re-render; the state does not change during the same render.",
+    "topic": "Hooks"
+  },
+  {
+    "id": "react-016",
+    "type": "mcq",
+    "prompt": "What happens if you call the state updater function multiple times in the same render?",
+    "description": "Choose the correct behavior when calling the updater multiple times.",
+    "options": [
+      "Only the last call is used",
+      "They are batched and applied in order",
+      "Each call immediately updates the state",
+      "It throws an error"
+    ],
+    "answerIndex": 1,
+    "explanation": "React batches state updates and applies them together before the next render.",
+    "topic": "Hooks"
+  },
+  {
+    "id": "react-017",
+    "type": "mcq",
+    "prompt": "Which method is preferred when new state depends on the previous state?",
+    "description": "Pick the safest way to update state from previous value.",
+    "options": [
+      "setCount(count + 1)",
+      "setCount(() => count + 1)",
+      "setCount(c => c + 1)",
+      "setCount = count + 1"
+    ],
+    "answerIndex": 2,
+    "explanation": "The functional form setCount(c => c + 1) is recommended when the new state depends on the previous one.",
+    "topic": "Hooks"
+  },
+  {
+    "id": "react-018",
+    "type": "code",
+    "prompt": "What is logged after clicking the button once?",
+    "description": "Understand functional updates with useState.",
+    "code": "function Example() {\n  const [count, setCount] = useState(0);\n\n  const handleClick = () => {\n    setCount(c => c + 1);\n    setCount(c => c + 1);\n  };\n\n  useEffect(() => {\n    console.log(count);\n  }, [count]);\n\n  return <button onClick={handleClick}>Click</button>;\n}",
+    "options": [
+      "1",
+      "2",
+      "0",
+      "undefined"
+    ],
+    "answerIndex": 1,
+    "explanation": "Both updates use the previous value, so count goes from 0 → 1 → 2.",
+    "topic": "Hooks"
+  },
+  {
+    "id": "react-019",
+    "type": "boolean",
+    "prompt": "The initial value passed to useState is only used during the first render.",
+    "description": "Answer true or false.",
+    "options": ["True", "False"],
+    "answerIndex": 0,
+    "explanation": "The initial value is only used on the first render; later renders ignore it.",
+    "topic": "Hooks"
+  },
+  {
+    "id": "react-020",
+    "type": "mcq",
+    "prompt": "Which of the following is NOT a valid reason to use lazy initialization with useState?",
+    "description": "Identify the incorrect usage of lazy state initialization.",
+    "options": [
+      "To defer expensive computation until first render",
+      "To avoid recomputation during re-renders",
+      "To share state between components",
+      "To improve performance for heavy initial states"
+    ],
+    "answerIndex": 2,
+    "explanation": "useState is local to each component, and cannot be shared across them.",
+    "topic": "Hooks"
+  },
+  {
+    "id": "react-021",
+    "type": "mcq",
+    "prompt": "How does React determine whether to re-render a component after setState?",
+    "description": "Understand React's update behavior.",
+    "options": [
+      "It always re-renders after any setState call",
+      "It checks if the new value is different by reference",
+      "It waits for user input",
+      "It compares the component name"
+    ],
+    "answerIndex": 1,
+    "explanation": "React performs a shallow comparison of the new and previous state values. If equal, it skips re-rendering.",
+    "topic": "Hooks"
+  },
+  {
+    "id": "react-022",
+    "type": "code",
+    "prompt": "What is the result of this code?",
+    "description": "Test behavior of reassigning the state variable directly.",
+    "code": "function Demo() {\n  const [count, setCount] = useState(0);\n\n  count = 5;\n\n  return <p>{count}</p>;\n}",
+    "options": [
+      "It compiles and shows 5",
+      "It throws a runtime error",
+      "It shows 0",
+      "It throws a compile-time error"
+    ],
+    "answerIndex": 1,
+    "explanation": "Directly assigning to a state variable is not allowed and causes an error.",
+    "topic": "Hooks"
+  },
+  {
+    "id": "react-023",
+    "type": "mcq",
+    "prompt": "What happens if you pass an object to useState and then mutate it directly?",
+    "description": "Understand state immutability.",
+    "options": [
+      "React will re-render with the mutated value",
+      "Nothing happens unless you call the updater",
+      "It will throw an error",
+      "The object is automatically cloned"
+    ],
+    "answerIndex": 1,
+    "explanation": "React only triggers re-render when the updater is called with a new reference. Mutating directly doesn't do anything.",
+    "topic": "Hooks"
+  },
+  {
+    "id": "react-024",
+    "type": "boolean",
+    "prompt": "Using useState with objects or arrays requires careful copying and updates.",
+    "description": "Answer true or false.",
+    "options": ["True", "False"],
+    "answerIndex": 0,
+    "explanation": "Objects and arrays are reference types. To trigger updates, you must pass a new copy.",
+    "topic": "Hooks"
+  },
+  {
+    "id": "react-025",
+    "type": "mcq",
+    "prompt": "Which updater is best for toggling a boolean state?",
+    "description": "Choose the cleanest approach.",
+    "options": [
+      "setFlag(!flag)",
+      "setFlag(flag => !flag)",
+      "setFlag = !flag",
+      "setFlag(() => flag = !flag)"
+    ],
+    "answerIndex": 1,
+    "explanation": "Using the previous state in a functional update ensures correctness, especially if multiple updates are batched.",
+    "topic": "Hooks"
+  },
+  {
+    "id": "react-026",
+    "type": "mcq",
+    "prompt": "When does a component re-render in React?",
+    "description": "Choose the correct condition for triggering a render.",
+    "options": [
+      "When props or state change",
+      "Every second",
+      "Only on mount and unmount",
+      "Only when the user clicks"
+    ],
+    "answerIndex": 0,
+    "explanation": "React re-renders when props or state change.",
+    "topic": "Hooks"
+  },
+  {
+    "id": "react-027",
+    "type": "code",
+    "prompt": "What value is printed on the first render?",
+    "description": "Understand lazy initialization.",
+    "code": "function Init() {\n  const [value] = useState(() => {\n    console.log('initializing');\n    return 42;\n  });\n  return <p>{value}</p>;\n}",
+    "options": [
+      "It logs 'initializing' and renders 42",
+      "It logs 'initializing' and renders nothing",
+      "It renders 42 without logging",
+      "It throws an error"
+    ],
+    "answerIndex": 0,
+    "explanation": "The lazy initializer runs once on first render and logs 'initializing'.",
+    "topic": "Hooks"
+  },
+  {
+    "id": "react-028",
+    "type": "boolean",
+    "prompt": "Calling the state updater inside the component body (not inside a handler or effect) is safe and will not cause issues.",
+    "description": "Answer true or false.",
+    "options": ["True", "False"],
+    "answerIndex": 1,
+    "explanation": "Calling the updater during render creates an infinite loop or error. It should be used inside handlers or effects.",
+    "topic": "Hooks"
+  },
+  {
+    "id": "react-029",
+    "type": "mcq",
+    "prompt": "What’s the recommended way to initialize useState from a function?",
+    "description": "Choose the efficient pattern.",
+    "options": [
+      "useState(() => expensiveComputation())",
+      "useState(expensiveComputation())",
+      "useState = expensiveComputation",
+      "const result = useState(); result.current = expensiveComputation()"
+    ],
+    "answerIndex": 0,
+    "explanation": "The function form delays the computation until the initial render, which avoids unnecessary work.",
+    "topic": "Hooks"
+  },
+  {
+    "id": "react-030",
+    "type": "boolean",
+    "prompt": "Does the state variable update immediately after calling its updater function?",
+    "description": "Answer true or false.",
+    "options": ["True", "False"],
+    "answerIndex": 1,
+    "explanation": "useState schedules a re-render; the new state value will be available on the next render, not immediately after calling the updater function.",
+    "topic": "Hooks"
   }
 ]
