@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import {
+  Animated,
   Pressable,
   PressableProps,
   StyleProp,
@@ -27,12 +28,36 @@ export const OptionButton: React.FC<OptionButtonProps> = ({
   status = 'default',
   containerStyle,
   disabled,
+  onPressIn,
+  onPressOut,
   ...pressableProps
 }) => {
   const statusColors = getStatusColors(selected, status);
+  const scale = useRef(new Animated.Value(1)).current;
+
+  const animateTo = (value: number) => {
+    Animated.spring(scale, {
+      toValue: value,
+      friction: 7,
+      tension: 180,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const handlePressIn = (event: any) => {
+    animateTo(0.97);
+    onPressIn?.(event);
+  };
+
+  const handlePressOut = (event: any) => {
+    animateTo(1);
+    onPressOut?.(event);
+  };
 
   return (
-    <View style={[styles.wrapper, containerStyle]}>
+    <Animated.View
+      style={[styles.wrapper, containerStyle, { transform: [{ scale }] }]}
+    >
       <Pressable
         accessibilityRole="button"
         accessibilityState={{
@@ -47,8 +72,10 @@ export const OptionButton: React.FC<OptionButtonProps> = ({
             borderColor: statusColors.border,
             opacity: disabled ? 0.6 : 1,
           },
-          pressed && !disabled ? styles.pressed : null,
+          pressed && !disabled ? styles.pressedBackground : null,
         ]}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
         {...pressableProps}
       >
         <View style={styles.content}>
@@ -74,7 +101,7 @@ export const OptionButton: React.FC<OptionButtonProps> = ({
           ) : null}
         </View>
       </Pressable>
-    </View>
+    </Animated.View>
   );
 };
 
@@ -129,8 +156,8 @@ const styles = StyleSheet.create({
     ...typography.caption,
     textTransform: 'none',
   },
-  pressed: {
-    transform: [{ scale: 0.99 }],
+  pressedBackground: {
+    backgroundColor: 'rgba(37, 99, 235, 0.08)',
   },
 });
 

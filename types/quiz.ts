@@ -9,6 +9,7 @@ export interface Question {
   options: string[];
   answerIndex: number;
   explanation?: string;
+  topic: string;
 }
 
 export interface AnswerRecord {

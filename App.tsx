@@ -15,6 +15,7 @@ import { HomeScreen } from './screens/HomeScreen';
 import { LoginScreen } from './screens/LoginScreen';
 import { QuizScreen } from './screens/QuizScreen';
 import { ResultScreen } from './screens/ResultScreen';
+import { ScoreScreen } from './screens/ScoreScreen';
 import { AnswerRecord, Question } from './types/quiz';
 
 type UserProfile = {
@@ -28,14 +29,14 @@ type UserProfile = {
   completion: number;
 };
 
-type ActiveScreen = 'home' | 'quiz' | 'result';
+type ActiveScreen = 'home' | 'quiz' | 'score' | 'result';
 type Difficulty = 'easy' | 'medium' | 'hard';
 
 const QUESTIONS: Question[] = questionsData as Question[];
 const QUESTION_COUNT_BY_DIFFICULTY: Record<Difficulty, number> = {
-  easy: 5,
-  medium: 10,
-  hard: 20,
+  easy: 10,
+  medium: 25,
+  hard: 50,
 };
 
 function App(): React.JSX.Element {
@@ -47,6 +48,9 @@ function App(): React.JSX.Element {
   const [activeQuestions, setActiveQuestions] = useState<Question[]>([]);
   const [completedQuestions, setCompletedQuestions] = useState<Question[]>([]);
   const [difficulty, setDifficulty] = useState<Difficulty>('easy');
+  const [dailyWarmupQuestion, setDailyWarmupQuestion] = useState<Question>(() =>
+    pickRandomQuestion(),
+  );
 
   const handleSignIn = async () => {
     try {
@@ -109,12 +113,13 @@ function App(): React.JSX.Element {
 
   const handleExitQuiz = () => {
     setActiveScreen('home');
+    setDailyWarmupQuestion(pickRandomQuestion());
   };
 
   const handleQuizComplete = (answers: AnswerRecord[]) => {
     setQuizAnswers(answers);
-    setActiveScreen('result');
     setCompletedQuestions(activeQuestions);
+    setActiveScreen('score');
 
     const correctCount = answers.filter((answer) => answer.isCorrect).length;
 
@@ -130,6 +135,7 @@ function App(): React.JSX.Element {
           }
         : prev,
     );
+    setDailyWarmupQuestion(pickRandomQuestion());
   };
 
   const handleRetryQuiz = () => {
@@ -140,6 +146,14 @@ function App(): React.JSX.Element {
   };
 
   const handleCloseResults = () => {
+    setActiveScreen('home');
+  };
+
+  const handleReviewAnswers = () => {
+    setActiveScreen('result');
+  };
+
+  const handleScoreGoHome = () => {
     setActiveScreen('home');
   };
 
@@ -157,6 +171,18 @@ function App(): React.JSX.Element {
             loading={authLoading}
           />
         </ScrollView>
+      );
+    }
+
+    if (activeScreen === 'score') {
+      return (
+        <ScoreScreen
+          questions={completedQuestions}
+          answers={quizAnswers}
+          onReviewAnswers={handleReviewAnswers}
+          onRetakeQuiz={handleRetryQuiz}
+          onGoHome={handleScoreGoHome}
+        />
       );
     }
 
@@ -185,6 +211,8 @@ function App(): React.JSX.Element {
         difficulty={difficulty}
         onSelectDifficulty={setDifficulty}
         questionPoolSize={QUESTIONS.length}
+        warmupQuestion={dailyWarmupQuestion}
+        onRefreshWarmup={() => setDailyWarmupQuestion(pickRandomQuestion())}
         totalAnswered={user.answered}
         totalCorrect={user.correct}
         streakDays={user.streak}
@@ -268,4 +296,9 @@ function pickQuestionsForDifficulty(difficulty: Difficulty): Question[] {
     [pool[i], pool[j]] = [pool[j], pool[i]];
   }
   return pool.slice(0, maxCount);
+}
+
+function pickRandomQuestion(): Question {
+  const index = Math.floor(Math.random() * QUESTIONS.length);
+  return QUESTIONS[index];
 }

@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View, ViewProps } from 'react-native';
+import ConfettiCannon from 'react-native-confetti-cannon';
 import {
   OptionButton,
   ProgressBar,
@@ -10,13 +11,7 @@ import {
   spacing,
   typography,
 } from '../components';
-
-const SAMPLE_OPTIONS = [
-  'useMemo memoizes the result of a calculation so long as dependencies are stable.',
-  'useMemo ensures a value recomputes on every render regardless of dependencies.',
-  'useMemo returns a memoized function rather than a value.',
-  'useMemo is only intended for primitive values such as strings or numbers.',
-];
+import { Question } from '../types/quiz';
 
 export interface HomeScreenProps extends ViewProps {
   username: string;
@@ -28,6 +23,8 @@ export interface HomeScreenProps extends ViewProps {
   difficulty: 'easy' | 'medium' | 'hard';
   onSelectDifficulty: (difficulty: 'easy' | 'medium' | 'hard') => void;
   questionPoolSize: number;
+  warmupQuestion: Question;
+  onRefreshWarmup: () => void;
   totalAnswered: number;
   totalCorrect: number;
   streakDays: number;
@@ -44,6 +41,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   difficulty,
   onSelectDifficulty,
   questionPoolSize,
+  warmupQuestion,
+  onRefreshWarmup,
   totalAnswered,
   totalCorrect,
   streakDays,
@@ -52,6 +51,14 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   ...rest
 }) => {
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
+  const [confettiKey, setConfettiKey] = useState(0);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const options = useMemo(() => warmupQuestion.options, [warmupQuestion]);
+
+  useEffect(() => {
+    setSelectedOption(null);
+    setShowConfetti(false);
+  }, [warmupQuestion.id]);
 
   const subtitle = isGuest
     ? 'You are exploring ReactGauge in guest mode. Sign in to track your growth.'
@@ -81,7 +88,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             results, earn streaks, and sync across devices.
           </Text>
           {onRequestSignIn ? (
-            <Pressable style={styles.guestSignInButton} onPress={onRequestSignIn}>
+            <Pressable
+              style={({ pressed }) => [
+                styles.guestSignInButton,
+                pressed && styles.guestSignInButtonPressed,
+              ]}
+              onPress={onRequestSignIn}
+            >
               <Text style={styles.guestSignInText}>Sign in with GitHub</Text>
             </Pressable>
           ) : null}
@@ -112,9 +125,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               key={option.value}
               accessibilityRole="button"
               accessibilityState={{ selected: difficulty === option.value }}
-              style={[
+              style={({ pressed }) => [
                 styles.difficultyChip,
                 difficulty === option.value && styles.difficultyChipActive,
+                pressed && styles.difficultyChipPressed,
               ]}
               onPress={() => onSelectDifficulty(option.value)}
             >
@@ -141,23 +155,73 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
       <QuestionCard
         title="Daily Warm-up"
-        description="Try this sample question to prep your brain before starting the full quiz."
-        codeSnippet={`const memoizedValue = useMemo(() => heavyWork(data), [data]);`}
+        description={warmupQuestion.description}
+        codeSnippet={warmupQuestion.code}
         footer={
-          <Pressable style={styles.cta} onPress={onStartQuiz}>
-            <Text style={styles.ctaText}>Start Today&apos;s Quiz</Text>
-          </Pressable>
+          <View style={styles.warmupFooter}>
+            <Pressable
+              style={({ pressed }) => [
+                styles.refreshButton,
+                pressed && styles.refreshButtonPressed,
+              ]}
+              onPress={() => {
+                setSelectedOption(null);
+                setShowConfetti(false);
+                onRefreshWarmup();
+              }}
+            >
+              <Text style={styles.refreshButtonText}>Try Different Question</Text>
+            </Pressable>
+            <Pressable
+              style={({ pressed }) => [
+                styles.cta,
+                pressed && styles.ctaPressed,
+              ]}
+              onPress={onStartQuiz}
+            >
+              <Text style={styles.ctaText}>Start Today&apos;s Quiz</Text>
+            </Pressable>
+          </View>
         }
       >
-        {SAMPLE_OPTIONS.map((option, index) => (
+        {showConfetti ? (
+          <View pointerEvents="none" style={styles.confettiLayer}>
+            <ConfettiCannon
+              key={confettiKey}
+              count={30}
+              origin={{ x: 0, y: 0 }}
+              fadeOut
+              explosionSpeed={220}
+              fallSpeed={1800}
+            />
+          </View>
+        ) : null}
+        <Text style={styles.warmupPrompt}>{warmupQuestion.prompt}</Text>
+        {options.map((option, index) => (
           <OptionButton
             key={option}
             label={option}
             selected={selectedOption === index}
-            onPress={() => setSelectedOption(index)}
-            containerStyle={index < SAMPLE_OPTIONS.length - 1 && styles.option}
+            onPress={() => {
+              setSelectedOption(index);
+              if (index === warmupQuestion.answerIndex) {
+                setConfettiKey((prev) => prev + 1);
+                setShowConfetti(true);
+                setTimeout(() => setShowConfetti(false), 1200);
+              } else {
+                setShowConfetti(false);
+              }
+            }}
+            containerStyle={index < options.length - 1 && styles.option}
           />
         ))}
+        {selectedOption != null ? (
+          <Text style={styles.warmupFeedback}>
+            {selectedOption === warmupQuestion.answerIndex
+              ? 'Great job! You nailed it.'
+              : 'Not quite right—review the explanation and take another shot.'}
+          </Text>
+        ) : null}
       </QuestionCard>
     </View>
   );
@@ -192,9 +256,9 @@ const ProgressRow = ({
 };
 
 const difficultyOptions = [
-  { value: 'easy' as const, label: 'Easy', count: 5 },
-  { value: 'medium' as const, label: 'Medium', count: 10 },
-  { value: 'hard' as const, label: 'Hard', count: 20 },
+  { value: 'easy' as const, label: 'Easy', count: 10 },
+  { value: 'medium' as const, label: 'Medium', count: 25 },
+  { value: 'hard' as const, label: 'Hard', count: 50 },
 ];
 
 const styles = StyleSheet.create({
@@ -246,6 +310,9 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     color: colors.surface,
   },
+  guestSignInButtonPressed: {
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+  },
   difficultyCard: {
     backgroundColor: colors.surface,
     borderRadius: radius.md,
@@ -273,6 +340,9 @@ const styles = StyleSheet.create({
   difficultyChipActive: {
     backgroundColor: colors.primary,
     borderColor: colors.primary,
+  },
+  difficultyChipPressed: {
+    backgroundColor: 'rgba(37, 99, 235, 0.12)',
   },
   difficultyChipText: {
     ...typography.caption,
@@ -314,6 +384,25 @@ const styles = StyleSheet.create({
   option: {
     marginBottom: spacing.md,
   },
+  warmupFooter: {
+    gap: spacing.md,
+  },
+  refreshButton: {
+    alignSelf: 'flex-start',
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    borderColor: colors.primary,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
+  },
+  refreshButtonText: {
+    ...typography.caption,
+    textTransform: 'uppercase',
+    color: colors.primary,
+  },
+  refreshButtonPressed: {
+    backgroundColor: 'rgba(37, 99, 235, 0.08)',
+  },
   cta: {
     marginTop: spacing.lg,
     backgroundColor: colors.primary,
@@ -325,6 +414,24 @@ const styles = StyleSheet.create({
   ctaText: {
     ...typography.heading,
     color: colors.textOnPrimary,
+  },
+  ctaPressed: {
+    backgroundColor: '#1d4ed8',
+  },
+  warmupPrompt: {
+    ...typography.body,
+    color: colors.textPrimary,
+    marginBottom: spacing.md,
+  },
+  warmupFeedback: {
+    ...typography.caption,
+    color: colors.textSecondary,
+    marginTop: spacing.md,
+  },
+  confettiLayer: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 5,
+    pointerEvents: 'none',
   },
 });
 

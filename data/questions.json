@@ -1,6 +1,6 @@
 [
   {
-    "id": "react-001",
+    "id": "question-00001",
     "type": "mcq",
     "prompt": "Which hook memoizes the result of an expensive calculation?",
     "description": "Select the hook that ensures a value is recomputed only when its dependencies change.",
@@ -15,7 +15,7 @@
     "topic": "Hooks"
   },
   {
-    "id": "react-002",
+    "id": "question-00002",
     "type": "boolean",
     "prompt": "React components must return a single root element.",
     "description": "Answer true or false.",
@@ -28,7 +28,7 @@
     "topic": "Component Structure"
   },
   {
-    "id": "react-003",
+    "id": "question-00003",
     "type": "code",
     "prompt": "What will be logged to the console?",
     "description": "Review the snippet and choose the correct console output.",
@@ -42,10 +42,9 @@
     "answerIndex": 1,
     "explanation": "Each interval tick schedules a state update, causing the component to re-render and log the incremented count.",
     "topic": "Rendering"
-  }
-  ,
+  },
   {
-    "id": "react-004",
+    "id": "question-00004",
     "type": "mcq",
     "prompt": "Which React hook is used to perform side effects in functional components?",
     "description": "Choose the correct hook that lets you run effects like data fetching or subscriptions.",
@@ -60,7 +59,7 @@
     "topic": "Hooks"
   },
   {
-    "id": "react-005",
+    "id": "question-00005",
     "type": "boolean",
     "prompt": "The useState hook can only be called at the top level of a component.",
     "description": "Answer true or false.",
@@ -73,7 +72,7 @@
     "topic": "Hooks"
   },
   {
-    "id": "react-006",
+    "id": "question-00006",
     "type": "code",
     "prompt": "What is the output of this component?",
     "description": "Evaluate the render behavior based on the useRef hook.",
@@ -87,10 +86,9 @@
     "answerIndex": 2,
     "explanation": "`useRef` stores a mutable value that persists across renders. The `renderCount` value increases every render.",
     "topic": "Hooks"
-  }
-  ,
+  },
   {
-    "id": "react-007",
+    "id": "question-00007",
     "type": "mcq",
     "prompt": "What is the primary purpose of React.memo?",
     "description": "Choose the best description of React.memo behavior.",
@@ -105,7 +103,7 @@
     "topic": "Hooks"
   },
   {
-    "id": "react-008",
+    "id": "question-00008",
     "type": "boolean",
     "prompt": "Keys provided to list items should be unique among their siblings.",
     "description": "Answer true or false.",
@@ -118,7 +116,7 @@
     "topic": "Keys"
   },
   {
-    "id": "react-009",
+    "id": "question-00009",
     "type": "code",
     "prompt": "What will be logged to the console on the initial render?",
     "description": "Consider how state updates inside useEffect affect the first render's console output.",
@@ -134,7 +132,7 @@
     "topic": "Rendering"
   },
   {
-    "id": "react-010",
+    "id": "question-00010",
     "type": "mcq",
     "prompt": "Which is the best choice for a React list key?",
     "description": "Select the recommended value to use as a key when rendering lists.",
@@ -147,10 +145,9 @@
     "answerIndex": 1,
     "explanation": "A stable unique id is preferred for keys because it remains consistent between renders and helps React efficiently update the list.",
     "topic": "Keys"
-  }
-,
+  },
   {
-    "id": "react-011",
+    "id": "question-00011",
     "type": "mcq",
     "prompt": "What does the useState hook return?",
     "description": "Select the correct return structure of the useState hook.",
@@ -165,7 +162,7 @@
     "topic": "Hooks"
   },
   {
-    "id": "react-012",
+    "id": "question-00012",
     "type": "boolean",
     "prompt": "You can update the state directly by assigning a new value to it when using useState.",
     "description": "Answer true or false.",
@@ -178,7 +175,7 @@
     "topic": "Hooks"
   },
   {
-    "id": "react-013",
+    "id": "question-00013",
     "type": "code",
     "prompt": "What will be rendered when this component is mounted?",
     "description": "Evaluate the use of useState with a function initializer.",
@@ -194,7 +191,7 @@
     "topic": "Hooks"
   },
   {
-    "id": "react-014",
+    "id": "question-00014",
     "type": "mcq",
     "prompt": "What happens when you call the state updater function with the same value as the current state?",
     "description": "Pick the correct behavior of useState.",
@@ -207,20 +204,22 @@
     "answerIndex": 2,
     "explanation": "React will skip rendering if the new state is the same as the previous state.",
     "topic": "Hooks"
-  }
-  ,
+  },
   {
-    "id": "react-015",
+    "id": "question-00015",
     "type": "boolean",
     "prompt": "Calling the state updater returned by useState immediately updates the state variable in the same render.",
     "description": "Answer true or false.",
-    "options": ["True", "False"],
+    "options": [
+      "True",
+      "False"
+    ],
     "answerIndex": 1,
     "explanation": "Calling the updater schedules a re-render; the state does not change during the same render.",
     "topic": "Hooks"
   },
   {
-    "id": "react-016",
+    "id": "question-00016",
     "type": "mcq",
     "prompt": "What happens if you call the state updater function multiple times in the same render?",
     "description": "Choose the correct behavior when calling the updater multiple times.",
@@ -235,7 +234,7 @@
     "topic": "Hooks"
   },
   {
-    "id": "react-017",
+    "id": "question-00017",
     "type": "mcq",
     "prompt": "Which method is preferred when new state depends on the previous state?",
     "description": "Pick the safest way to update state from previous value.",
@@ -250,7 +249,7 @@
     "topic": "Hooks"
   },
   {
-    "id": "react-018",
+    "id": "question-00018",
     "type": "code",
     "prompt": "What is logged after clicking the button once?",
     "description": "Understand functional updates with useState.",
@@ -266,17 +265,20 @@
     "topic": "Hooks"
   },
   {
-    "id": "react-019",
+    "id": "question-00019",
     "type": "boolean",
     "prompt": "The initial value passed to useState is only used during the first render.",
     "description": "Answer true or false.",
-    "options": ["True", "False"],
+    "options": [
+      "True",
+      "False"
+    ],
     "answerIndex": 0,
     "explanation": "The initial value is only used on the first render; later renders ignore it.",
     "topic": "Hooks"
   },
   {
-    "id": "react-020",
+    "id": "question-00020",
     "type": "mcq",
     "prompt": "Which of the following is NOT a valid reason to use lazy initialization with useState?",
     "description": "Identify the incorrect usage of lazy state initialization.",
@@ -291,7 +293,7 @@
     "topic": "Hooks"
   },
   {
-    "id": "react-021",
+    "id": "question-00021",
     "type": "mcq",
     "prompt": "How does React determine whether to re-render a component after setState?",
     "description": "Understand React's update behavior.",
@@ -306,7 +308,7 @@
     "topic": "Hooks"
   },
   {
-    "id": "react-022",
+    "id": "question-00022",
     "type": "code",
     "prompt": "What is the result of this code?",
     "description": "Test behavior of reassigning the state variable directly.",
@@ -322,7 +324,7 @@
     "topic": "Hooks"
   },
   {
-    "id": "react-023",
+    "id": "question-00023",
     "type": "mcq",
     "prompt": "What happens if you pass an object to useState and then mutate it directly?",
     "description": "Understand state immutability.",
@@ -337,17 +339,20 @@
     "topic": "Hooks"
   },
   {
-    "id": "react-024",
+    "id": "question-00024",
     "type": "boolean",
     "prompt": "Using useState with objects or arrays requires careful copying and updates.",
     "description": "Answer true or false.",
-    "options": ["True", "False"],
+    "options": [
+      "True",
+      "False"
+    ],
     "answerIndex": 0,
     "explanation": "Objects and arrays are reference types. To trigger updates, you must pass a new copy.",
     "topic": "Hooks"
   },
   {
-    "id": "react-025",
+    "id": "question-00025",
     "type": "mcq",
     "prompt": "Which updater is best for toggling a boolean state?",
     "description": "Choose the cleanest approach.",
@@ -362,7 +367,7 @@
     "topic": "Hooks"
   },
   {
-    "id": "react-026",
+    "id": "question-00026",
     "type": "mcq",
     "prompt": "When does a component re-render in React?",
     "description": "Choose the correct condition for triggering a render.",
@@ -377,7 +382,7 @@
     "topic": "Hooks"
   },
   {
-    "id": "react-027",
+    "id": "question-00027",
     "type": "code",
     "prompt": "What value is printed on the first render?",
     "description": "Understand lazy initialization.",
@@ -393,17 +398,20 @@
     "topic": "Hooks"
   },
   {
-    "id": "react-028",
+    "id": "question-00028",
     "type": "boolean",
     "prompt": "Calling the state updater inside the component body (not inside a handler or effect) is safe and will not cause issues.",
     "description": "Answer true or false.",
-    "options": ["True", "False"],
+    "options": [
+      "True",
+      "False"
+    ],
     "answerIndex": 1,
     "explanation": "Calling the updater during render creates an infinite loop or error. It should be used inside handlers or effects.",
     "topic": "Hooks"
   },
   {
-    "id": "react-029",
+    "id": "question-00029",
     "type": "mcq",
     "prompt": "What’s the recommended way to initialize useState from a function?",
     "description": "Choose the efficient pattern.",
@@ -418,13 +426,1726 @@
     "topic": "Hooks"
   },
   {
-    "id": "react-030",
+    "id": "question-00030",
     "type": "boolean",
     "prompt": "Does the state variable update immediately after calling its updater function?",
     "description": "Answer true or false.",
-    "options": ["True", "False"],
+    "options": [
+      "True",
+      "False"
+    ],
     "answerIndex": 1,
     "explanation": "useState schedules a re-render; the new state value will be available on the next render, not immediately after calling the updater function.",
     "topic": "Hooks"
+  },
+  {
+    "id": "question-00031",
+    "type": "mcq",
+    "prompt": "When should you use useCallback in a component?",
+    "description": "Choose the correct scenario for using useCallback.",
+    "options": [
+      "To memoize values",
+      "To delay rendering",
+      "To memoize functions",
+      "To fetch data asynchronously"
+    ],
+    "answerIndex": 2,
+    "explanation": "`useCallback` returns a memoized version of the callback function that only changes if one of the dependencies has changed.",
+    "topic": "Hooks"
+  },
+  {
+    "id": "question-00032",
+    "type": "boolean",
+    "prompt": "useCallback is useful when passing callbacks to memoized child components.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "Without useCallback, a new function instance is created on each render, which causes memoized children to re-render unnecessarily.",
+    "topic": "Hooks"
+  },
+  {
+    "id": "question-00033",
+    "type": "mcq",
+    "prompt": "Which hook allows components to access context values?",
+    "description": "Choose the hook that retrieves the current context value.",
+    "options": [
+      "useReducer",
+      "useRef",
+      "useContext",
+      "useEffect"
+    ],
+    "answerIndex": 2,
+    "explanation": "`useContext(MyContext)` returns the current context value for MyContext.",
+    "topic": "Hooks"
+  },
+  {
+    "id": "question-00034",
+    "type": "boolean",
+    "prompt": "useContext can only be used with a valid React Context object.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "Passing anything other than a context object returned by `React.createContext` will throw an error.",
+    "topic": "Hooks"
+  },
+  {
+    "id": "question-00035",
+    "type": "mcq",
+    "prompt": "Which hook is most suitable for managing complex local state with many sub-values?",
+    "description": "Choose the hook designed for managing complex state logic.",
+    "options": [
+      "useState",
+      "useMemo",
+      "useReducer",
+      "useRef"
+    ],
+    "answerIndex": 2,
+    "explanation": "`useReducer` is a good choice when you have complex state logic involving multiple sub-values or when the next state depends on the previous one.",
+    "topic": "Hooks"
+  },
+  {
+    "id": "question-00036",
+    "type": "boolean",
+    "prompt": "useReducer requires a reducer function and an initial state.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "The signature is `const [state, dispatch] = useReducer(reducer, initialState)`, so both arguments are required.",
+    "topic": "Hooks"
+  },
+  {
+    "id": "question-00037",
+    "type": "mcq",
+    "prompt": "What is the primary difference between useEffect and useLayoutEffect?",
+    "description": "Choose the correct distinction.",
+    "options": [
+      "useLayoutEffect runs asynchronously",
+      "useEffect blocks DOM painting",
+      "useLayoutEffect runs before paint, useEffect runs after",
+      "They are functionally identical"
+    ],
+    "answerIndex": 2,
+    "explanation": "`useLayoutEffect` runs synchronously after DOM mutations but before the browser paints, making it useful for layout calculations.",
+    "topic": "Hooks"
+  },
+  {
+    "id": "question-00038",
+    "type": "boolean",
+    "prompt": "useLayoutEffect can cause visual jank if used improperly.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "Because it blocks painting, improper use can lead to layout thrashing or visual glitches.",
+    "topic": "Hooks"
+  },
+  {
+    "id": "question-00039",
+    "type": "mcq",
+    "prompt": "Which hook is used to expose imperative methods from a component?",
+    "description": "Choose the correct hook for imperative logic.",
+    "options": [
+      "useEffect",
+      "useRef",
+      "useImperativeHandle",
+      "useState"
+    ],
+    "answerIndex": 2,
+    "explanation": "`useImperativeHandle` customizes the instance value exposed when using `ref` in parent components.",
+    "topic": "Hooks"
+  },
+  {
+    "id": "question-00040",
+    "type": "boolean",
+    "prompt": "useImperativeHandle must be used with forwardRef.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "`useImperativeHandle` is only useful when forwarding refs using `React.forwardRef`.",
+    "topic": "Hooks"
+  },
+  {
+    "id": "question-00041",
+    "type": "mcq",
+    "prompt": "What does useId return?",
+    "description": "Understand the behavior of the useId hook.",
+    "options": [
+      "An object with unique key",
+      "A stable unique string identifier",
+      "A random number",
+      "A reference object"
+    ],
+    "answerIndex": 1,
+    "explanation": "`useId` returns a stable unique ID for use in accessibility and hydration-safe situations.",
+    "topic": "Hooks"
+  },
+  {
+    "id": "question-00042",
+    "type": "boolean",
+    "prompt": "useId helps avoid hydration mismatches in SSR.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "React ensures the `useId` generated value remains consistent across client and server renders.",
+    "topic": "Hooks"
+  },
+  {
+    "id": "question-00043",
+    "type": "mcq",
+    "prompt": "Which hook is useful to mark non-urgent state transitions?",
+    "description": "Identify the hook that allows marking transitions.",
+    "options": [
+      "useState",
+      "useEffect",
+      "useTransition",
+      "useCallback"
+    ],
+    "answerIndex": 2,
+    "explanation": "`useTransition` allows you to mark updates as transitions so they don’t block the user interface.",
+    "topic": "Hooks"
+  },
+  {
+    "id": "question-00044",
+    "type": "boolean",
+    "prompt": "The startTransition function lets you defer non-urgent updates.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "Transitions help separate urgent from non-urgent updates for a smoother UI.",
+    "topic": "Hooks"
+  },
+  {
+    "id": "question-00045",
+    "type": "mcq",
+    "prompt": "What does the array returned by useTransition contain?",
+    "description": "Understand the return value of useTransition.",
+    "options": [
+      "[isPending, setTransition]",
+      "[transition, startTransition]",
+      "[startTransition, isPending]",
+      "[defer, callback]"
+    ],
+    "answerIndex": 2,
+    "explanation": "`useTransition` returns a tuple `[startTransition, isPending]`.",
+    "topic": "Hooks"
+  },
+  {
+    "id": "question-00046",
+    "type": "boolean",
+    "prompt": "useTransition should not be used for controlled inputs.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "Transitions are async and may cause issues with real-time input if used improperly.",
+    "topic": "Hooks"
+  },
+  {
+    "id": "question-00047",
+    "type": "mcq",
+    "prompt": "Which of the following is NOT a valid use case for useCallback?",
+    "description": "Identify the incorrect use case.",
+    "options": [
+      "Memoizing a callback passed to child component",
+      "Preventing re-renders from props changes",
+      "Storing a persistent mutable value",
+      "Improving performance in render loops"
+    ],
+    "answerIndex": 2,
+    "explanation": "`useCallback` memoizes functions, not mutable values. Use `useRef` for that.",
+    "topic": "Hooks"
+  },
+  {
+    "id": "question-00048",
+    "type": "boolean",
+    "prompt": "useContext causes a component to re-render when the context value changes.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "When a context value changes, all consumers re-render to reflect the new value.",
+    "topic": "Hooks"
+  },
+  {
+    "id": "question-00049",
+    "type": "mcq",
+    "prompt": "Which hook works best for capturing DOM layout information before painting?",
+    "description": "Pick the right tool for reading layout values.",
+    "options": [
+      "useEffect",
+      "useTransition",
+      "useLayoutEffect",
+      "useId"
+    ],
+    "answerIndex": 2,
+    "explanation": "`useLayoutEffect` runs before the browser paints, ideal for reading layout details.",
+    "topic": "Hooks"
+  },
+  {
+    "id": "question-00050",
+    "type": "boolean",
+    "prompt": "useReducer can take a third argument for lazy initialization.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "`useReducer` supports a third lazy initializer argument similar to `useState`.",
+    "topic": "Hooks"
+  },
+  {
+    "id": "question-00051",
+    "type": "mcq",
+    "prompt": "Which array method creates a new array with only elements that pass the test implemented by the provided function?",
+    "description": "Select the method that filters elements.",
+    "options": [
+      "map",
+      "reduce",
+      "filter",
+      "forEach"
+    ],
+    "answerIndex": 2,
+    "explanation": "`filter` returns a new array containing elements that pass the given predicate.",
+    "topic": "Array"
+  },
+  {
+    "id": "question-00052",
+    "type": "boolean",
+    "prompt": "The `map` method mutates the original array.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 1,
+    "explanation": "`map` returns a new array and does not modify the original one.",
+    "topic": "Array"
+  },
+  {
+    "id": "question-00053",
+    "type": "code",
+    "prompt": "What is the output of this code?",
+    "description": "Evaluate the behavior of `reduce`.",
+    "code": "[1, 2, 3, 4].reduce((acc, cur) => acc + cur, 0)",
+    "options": [
+      "10",
+      "24",
+      "0",
+      "undefined"
+    ],
+    "answerIndex": 0,
+    "explanation": "`reduce` adds each item to the accumulator starting at 0, resulting in 10.",
+    "topic": "Array"
+  },
+  {
+    "id": "question-00054",
+    "type": "mcq",
+    "prompt": "Which method returns a shallow copy of a portion of an array into a new array object?",
+    "description": "Pick the correct array method.",
+    "options": [
+      "slice",
+      "splice",
+      "concat",
+      "copyWithin"
+    ],
+    "answerIndex": 0,
+    "explanation": "`slice` returns a shallow copy without modifying the original array.",
+    "topic": "Array"
+  },
+  {
+    "id": "question-00055",
+    "type": "boolean",
+    "prompt": "`splice` modifies the original array.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "`splice` removes or replaces elements in the original array.",
+    "topic": "Array"
+  },
+  {
+    "id": "question-00056",
+    "type": "mcq",
+    "prompt": "Which array method executes a provided function once for each array element?",
+    "description": "Choose the method for iteration.",
+    "options": [
+      "map",
+      "forEach",
+      "filter",
+      "reduce"
+    ],
+    "answerIndex": 1,
+    "explanation": "`forEach` executes a function for each array element.",
+    "topic": "Array"
+  },
+  {
+    "id": "question-00057",
+    "type": "boolean",
+    "prompt": "The `find` method returns the first element that satisfies the provided testing function.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "`find` returns the first matching element, or undefined if none match.",
+    "topic": "Array"
+  },
+  {
+    "id": "question-00058",
+    "type": "code",
+    "prompt": "What does `[1, 2, 3].includes(2)` return?",
+    "description": "Test the includes method.",
+    "code": "[1, 2, 3].includes(2)",
+    "options": [
+      "true",
+      "false",
+      "undefined",
+      "2"
+    ],
+    "answerIndex": 0,
+    "explanation": "`includes` returns true if the array contains the specified element.",
+    "topic": "Array"
+  },
+  {
+    "id": "question-00059",
+    "type": "mcq",
+    "prompt": "Which method can flatten a nested array structure?",
+    "description": "Pick the flattening method.",
+    "options": [
+      "flat",
+      "map",
+      "fill",
+      "reverse"
+    ],
+    "answerIndex": 0,
+    "explanation": "`flat` creates a new array with all sub-array elements concatenated into it.",
+    "topic": "Array"
+  },
+  {
+    "id": "question-00060",
+    "type": "boolean",
+    "prompt": "`Array.from('foo')` returns `[\"f\", \"o\", \"o\"]`.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "`Array.from` creates an array from an iterable object, such as a string.",
+    "topic": "Array"
+  },
+  {
+    "id": "question-00061",
+    "type": "mcq",
+    "prompt": "Which string method returns the calling string value converted to upper case?",
+    "description": "Pick the correct string method.",
+    "options": [
+      "toUpperCase",
+      "toLowerCase",
+      "trim",
+      "slice"
+    ],
+    "answerIndex": 0,
+    "explanation": "`toUpperCase` converts all characters to uppercase.",
+    "topic": "String"
+  },
+  {
+    "id": "question-00062",
+    "type": "boolean",
+    "prompt": "The `trim` method removes whitespace only from the start of a string.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 1,
+    "explanation": "`trim` removes whitespace from both ends of a string.",
+    "topic": "String"
+  },
+  {
+    "id": "question-00063",
+    "type": "code",
+    "prompt": "What is the result of `'hello'.slice(1, 3)`?",
+    "description": "Test the slice method on strings.",
+    "code": "'hello'.slice(1, 3)",
+    "options": [
+      "'el'",
+      "'he'",
+      "'ll'",
+      "'lo'"
+    ],
+    "answerIndex": 0,
+    "explanation": "Slice extracts characters from index 1 up to, but not including, 3: 'el'.",
+    "topic": "String"
+  },
+  {
+    "id": "question-00064",
+    "type": "mcq",
+    "prompt": "Which method checks if a string contains a specified substring?",
+    "description": "Pick the method for substring detection.",
+    "options": [
+      "includes",
+      "replace",
+      "split",
+      "repeat"
+    ],
+    "answerIndex": 0,
+    "explanation": "`includes` checks if a substring exists within a string.",
+    "topic": "String"
+  },
+  {
+    "id": "question-00065",
+    "type": "boolean",
+    "prompt": "The `repeat` method can be used to create a new string with a specified number of copies of the original string.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "`repeat` repeats the string as many times as specified.",
+    "topic": "String"
+  },
+  {
+    "id": "question-00066",
+    "type": "mcq",
+    "prompt": "Which string method splits a string into an array of substrings?",
+    "description": "Select the correct method.",
+    "options": [
+      "split",
+      "join",
+      "replace",
+      "padEnd"
+    ],
+    "answerIndex": 0,
+    "explanation": "`split` divides a string into an ordered list of substrings.",
+    "topic": "String"
+  },
+  {
+    "id": "question-00067",
+    "type": "boolean",
+    "prompt": "`'JavaScript'.startsWith('Java')` returns true.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "`startsWith` checks if a string begins with the specified substring.",
+    "topic": "String"
+  },
+  {
+    "id": "question-00068",
+    "type": "code",
+    "prompt": "What does `'abc'.padEnd(5, 'x')` return?",
+    "description": "Test the padEnd method.",
+    "code": "'abc'.padEnd(5, 'x')",
+    "options": [
+      "'abcxx'",
+      "'abc'",
+      "'abxx'",
+      "'abcx'"
+    ],
+    "answerIndex": 0,
+    "explanation": "`padEnd(5, 'x')` pads the string to length 5 with 'x'.",
+    "topic": "String"
+  },
+  {
+    "id": "question-00069",
+    "type": "mcq",
+    "prompt": "Which method replaces the first occurrence of a substring with another string?",
+    "description": "Pick the replacement method.",
+    "options": [
+      "replace",
+      "replaceAll",
+      "split",
+      "concat"
+    ],
+    "answerIndex": 0,
+    "explanation": "`replace` replaces only the first occurrence.",
+    "topic": "String"
+  },
+  {
+    "id": "question-00070",
+    "type": "boolean",
+    "prompt": "`'foo-bar'.replaceAll('-', '_')` returns `'foo_bar'`.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "`replaceAll` replaces all matches of the substring.",
+    "topic": "String"
+  },
+  {
+    "id": "question-00071",
+    "type": "mcq",
+    "prompt": "How do you access the value of the property 'name' in the object `{ name: 'Alice' }`?",
+    "description": "Choose the correct syntax.",
+    "options": [
+      "object.name",
+      "object['name']",
+      "Both A and B",
+      "object->name"
+    ],
+    "answerIndex": 2,
+    "explanation": "Both dot and bracket notation can access object properties.",
+    "topic": "Object"
+  },
+  {
+    "id": "question-00072",
+    "type": "boolean",
+    "prompt": "Objects in JavaScript are compared by value.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 1,
+    "explanation": "Objects are compared by reference, not by value.",
+    "topic": "Object"
+  },
+  {
+    "id": "question-00073",
+    "type": "code",
+    "prompt": "What is the output of `Object.keys({ a: 1, b: 2 })`?",
+    "description": "Test Object.keys.",
+    "code": "Object.keys({ a: 1, b: 2 })",
+    "options": [
+      "['a', 'b']",
+      "['1', '2']",
+      "[1, 2]",
+      "['a', 1]"
+    ],
+    "answerIndex": 0,
+    "explanation": "`Object.keys` returns an array of property names.",
+    "topic": "Object"
+  },
+  {
+    "id": "question-00074",
+    "type": "mcq",
+    "prompt": "Which method creates a shallow copy of an object?",
+    "description": "Pick the method for shallow copy.",
+    "options": [
+      "Object.assign",
+      "Object.freeze",
+      "Object.seal",
+      "Object.is"
+    ],
+    "answerIndex": 0,
+    "explanation": "`Object.assign({}, obj)` creates a shallow copy.",
+    "topic": "Object"
+  },
+  {
+    "id": "question-00075",
+    "type": "boolean",
+    "prompt": "You can add properties to an object after its creation.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "Properties can be added to objects at any time, unless the object is frozen.",
+    "topic": "Object"
+  },
+  {
+    "id": "question-00076",
+    "type": "mcq",
+    "prompt": "Which method returns an array of a given object's own enumerable property values?",
+    "description": "Pick the correct method.",
+    "options": [
+      "Object.values",
+      "Object.keys",
+      "Object.entries",
+      "Object.hasOwn"
+    ],
+    "answerIndex": 0,
+    "explanation": "`Object.values(obj)` returns the values of the object's properties.",
+    "topic": "Object"
+  },
+  {
+    "id": "question-00077",
+    "type": "boolean",
+    "prompt": "The spread operator (`...`) can be used to clone an object.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "The spread operator can be used to create a shallow copy of an object.",
+    "topic": "Object"
+  },
+  {
+    "id": "question-00078",
+    "type": "code",
+    "prompt": "What is the output of `Object.entries({x: 1, y: 2})`?",
+    "description": "Test Object.entries.",
+    "code": "Object.entries({x: 1, y: 2})",
+    "options": [
+      "[['x', 1], ['y', 2]]",
+      "[['1', 'x'], ['2', 'y']]",
+      "[1, 2]",
+      "[['x', 'y']]"
+    ],
+    "answerIndex": 0,
+    "explanation": "`Object.entries` returns an array of [key, value] pairs.",
+    "topic": "Object"
+  },
+  {
+    "id": "question-00079",
+    "type": "mcq",
+    "prompt": "Which method can deeply clone an object in JavaScript (including nested objects and arrays)?",
+    "description": "Pick the method for deep cloning.",
+    "options": [
+      "Object.assign",
+      "structuredClone",
+      "Object.freeze",
+      "Object.is"
+    ],
+    "answerIndex": 1,
+    "explanation": "`structuredClone` creates a deep clone of a value, including nested objects.",
+    "topic": "structuredClone"
+  },
+  {
+    "id": "question-00080",
+    "type": "boolean",
+    "prompt": "`structuredClone` can clone objects with circular references.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "`structuredClone` supports cyclic objects, unlike JSON.parse/stringify.",
+    "topic": "structuredClone"
+  },
+  {
+    "id": "question-00081",
+    "type": "code",
+    "prompt": "What is the output of `structuredClone({a: 1, b: {c: 2}})`?",
+    "description": "Test deep cloning.",
+    "code": "structuredClone({a: 1, b: {c: 2}})",
+    "options": [
+      "{a: 1, b: {c: 2}} (deeply cloned)",
+      "{a: 1, b: {c: 2}} (shallow copy)",
+      "undefined",
+      "Throws an error"
+    ],
+    "answerIndex": 0,
+    "explanation": "`structuredClone` deeply clones the object.",
+    "topic": "structuredClone"
+  },
+  {
+    "id": "question-00082",
+    "type": "mcq",
+    "prompt": "Which of the following cannot be cloned by `structuredClone`?",
+    "description": "Pick the unsupported type.",
+    "options": [
+      "DOM elements",
+      "ArrayBuffers",
+      "Plain objects",
+      "Arrays"
+    ],
+    "answerIndex": 0,
+    "explanation": "DOM elements cannot be cloned; an error is thrown.",
+    "topic": "structuredClone"
+  },
+  {
+    "id": "question-00083",
+    "type": "boolean",
+    "prompt": "The `structuredClone` method can clone Map and Set objects.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "Map and Set are supported by `structuredClone`.",
+    "topic": "structuredClone"
+  },
+  {
+    "id": "question-00084",
+    "type": "mcq",
+    "prompt": "What happens if you try to clone a function with `structuredClone`?",
+    "description": "Pick the correct behavior.",
+    "options": [
+      "It clones the function",
+      "It throws a DataCloneError",
+      "It returns undefined",
+      "It ignores the function"
+    ],
+    "answerIndex": 1,
+    "explanation": "`structuredClone` throws an error when cloning functions.",
+    "topic": "structuredClone"
+  },
+  {
+    "id": "question-00085",
+    "type": "boolean",
+    "prompt": "`structuredClone` can clone Date objects.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "Date objects are supported by `structuredClone`.",
+    "topic": "structuredClone"
+  },
+  {
+    "id": "question-00086",
+    "type": "mcq",
+    "prompt": "Which method is used to abort a fetch request in JavaScript?",
+    "description": "Pick the correct abort method.",
+    "options": [
+      "AbortController",
+      "AbortSignal",
+      "controller.abort()",
+      "signal.abort()"
+    ],
+    "answerIndex": 2,
+    "explanation": "You call `controller.abort()` to abort a fetch using AbortController.",
+    "topic": "AbortSignal"
+  },
+  {
+    "id": "question-00087",
+    "type": "boolean",
+    "prompt": "AbortSignal is read-only and used to communicate with a DOM request.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "AbortSignal is used to notify about an abort, but cannot be triggered directly.",
+    "topic": "AbortSignal"
+  },
+  {
+    "id": "question-00088",
+    "type": "code",
+    "prompt": "What is the result of calling `controller.abort()` on a fetch request?",
+    "description": "Test aborting a fetch.",
+    "code": "const controller = new AbortController();\nfetch(url, { signal: controller.signal });\ncontroller.abort();",
+    "options": [
+      "The fetch is aborted and promise rejects",
+      "The fetch continues as normal",
+      "It throws a synchronous error",
+      "Nothing happens"
+    ],
+    "answerIndex": 0,
+    "explanation": "Aborting causes the fetch promise to reject with an AbortError.",
+    "topic": "AbortSignal"
+  },
+  {
+    "id": "question-00089",
+    "type": "mcq",
+    "prompt": "How do you listen for an abort event on an AbortSignal?",
+    "description": "Pick the correct event.",
+    "options": [
+      "signal.onabort = () => {}",
+      "signal.addEventListener('abort', handler)",
+      "signal.abort(handler)",
+      "signal.abortEvent(handler)"
+    ],
+    "answerIndex": 1,
+    "explanation": "Use `addEventListener('abort', ...)` to listen for abort events.",
+    "topic": "AbortSignal"
+  },
+  {
+    "id": "question-00090",
+    "type": "boolean",
+    "prompt": "A fetch request can only be aborted if it was started with an AbortSignal.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "The fetch must be created with a signal to be aborted.",
+    "topic": "AbortSignal"
+  },
+  {
+    "id": "question-00091",
+    "type": "mcq",
+    "prompt": "Which object allows you to intercept and customize fundamental operations on another object?",
+    "description": "Pick the object for interception.",
+    "options": [
+      "Proxy",
+      "Reflect",
+      "Handler",
+      "Observer"
+    ],
+    "answerIndex": 0,
+    "explanation": "Proxy can intercept and redefine operations for an object.",
+    "topic": "Proxy"
+  },
+  {
+    "id": "question-00092",
+    "type": "boolean",
+    "prompt": "A Proxy can intercept property access, assignment, and function invocation.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "Proxy handlers can intercept many operations including get, set, apply, etc.",
+    "topic": "Proxy"
+  },
+  {
+    "id": "question-00093",
+    "type": "code",
+    "prompt": "What will `proxy.foo` return in this example?\n\nconst target = { foo: 'bar' };\nconst proxy = new Proxy(target, {\n  get(obj, prop) {\n    return prop === 'foo' ? 'baz' : obj[prop];\n  }\n});",
+    "description": "Test Proxy get handler.",
+    "code": "const target = { foo: 'bar' };\nconst proxy = new Proxy(target, {\n  get(obj, prop) {\n    return prop === 'foo' ? 'baz' : obj[prop];\n  }\n});\nproxy.foo",
+    "options": [
+      "'baz'",
+      "'bar'",
+      "undefined",
+      "Throws an error"
+    ],
+    "answerIndex": 0,
+    "explanation": "The get handler returns 'baz' when 'foo' is accessed.",
+    "topic": "Proxy"
+  },
+  {
+    "id": "question-00094",
+    "type": "mcq",
+    "prompt": "Which handler allows you to intercept property assignment in a Proxy?",
+    "description": "Pick the handler for assignment.",
+    "options": [
+      "get",
+      "set",
+      "apply",
+      "construct"
+    ],
+    "answerIndex": 1,
+    "explanation": "The set handler intercepts property assignments.",
+    "topic": "Proxy"
+  },
+  {
+    "id": "question-00095",
+    "type": "boolean",
+    "prompt": "A Proxy can be used to implement validation logic for object properties.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "Proxies can be used to validate property assignments.",
+    "topic": "Proxy"
+  },
+  {
+    "id": "question-00096",
+    "type": "mcq",
+    "prompt": "Which handler would you implement to intercept function calls on a Proxy function?",
+    "description": "Pick the handler for function invocation.",
+    "options": [
+      "apply",
+      "get",
+      "set",
+      "construct"
+    ],
+    "answerIndex": 0,
+    "explanation": "The apply handler intercepts function calls.",
+    "topic": "Proxy"
+  },
+  {
+    "id": "question-00097",
+    "type": "boolean",
+    "prompt": "A Proxy can wrap arrays as well as objects.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "Proxy can wrap any object, including arrays.",
+    "topic": "Proxy"
+  },
+  {
+    "id": "question-00098",
+    "type": "mcq",
+    "prompt": "What does the `construct` handler in a Proxy intercept?",
+    "description": "Pick the operation intercepted by construct.",
+    "options": [
+      "Property assignment",
+      "Property access",
+      "Object instantiation with `new`",
+      "Function calls"
+    ],
+    "answerIndex": 2,
+    "explanation": "The construct handler intercepts calls to the Proxy with the `new` operator.",
+    "topic": "Proxy"
+  },
+  {
+    "id": "question-00099",
+    "type": "boolean",
+    "prompt": "Reflect can be used together with Proxy to forward intercepted operations.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "Reflect methods allow forwarding operations inside Proxy handlers.",
+    "topic": "Proxy"
+  },
+  {
+    "id": "question-00100",
+    "type": "mcq",
+    "prompt": "Which of the following is NOT a trap that can be defined in a Proxy handler?",
+    "description": "Pick the invalid trap.",
+    "options": [
+      "get",
+      "set",
+      "delete",
+      "listen"
+    ],
+    "answerIndex": 3,
+    "explanation": "There is no 'listen' trap in Proxy handlers.",
+    "topic": "Proxy"
+  },
+  {
+    "id": "question-00101",
+    "type": "mcq",
+    "prompt": "What is the difference between `let` and `var` in JavaScript?",
+    "description": "Choose the correct statement about block scoping.",
+    "options": [
+      "`let` is function-scoped, `var` is block-scoped",
+      "`let` is block-scoped, `var` is function-scoped",
+      "Both are block-scoped",
+      "Both are function-scoped"
+    ],
+    "answerIndex": 1,
+    "explanation": "`let` is block-scoped, meaning it is only available within the nearest enclosing block. `var` is function-scoped.",
+    "topic": "Basics"
+  },
+  {
+    "id": "question-00102",
+    "type": "boolean",
+    "prompt": "Variables declared with `const` must be assigned a value at declaration.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "`const` declarations must be initialized at the time of declaration.",
+    "topic": "Basics"
+  },
+  {
+    "id": "question-00103",
+    "type": "mcq",
+    "prompt": "What is the output of the following code?\n\n```js\nlet x = 10;\nif (true) {\n  let x = 20;\n}\nconsole.log(x);\n```",
+    "description": "Test block scoping of `let`.",
+    "options": [
+      "10",
+      "20",
+      "undefined",
+      "ReferenceError"
+    ],
+    "answerIndex": 0,
+    "explanation": "The inner `x` is block-scoped and does not affect the outer `x`. The output is 10.",
+    "topic": "ES6+"
+  },
+  {
+    "id": "question-00104",
+    "type": "boolean",
+    "prompt": "Arrow functions do not have their own `this` context.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "Arrow functions capture `this` from their surrounding context.",
+    "topic": "ES6+"
+  },
+  {
+    "id": "question-00105",
+    "type": "mcq",
+    "prompt": "Which is the correct syntax for an arrow function that returns the sum of two parameters?",
+    "description": "Choose the correct arrow function.",
+    "options": [
+      "(a, b) => a + b",
+      "(a, b) => { return a + b }",
+      "Both A and B",
+      "a, b => a + b"
+    ],
+    "answerIndex": 2,
+    "explanation": "Both A and B are valid arrow function syntax for returning the sum.",
+    "topic": "ES6+"
+  },
+  {
+    "id": "question-00106",
+    "type": "code",
+    "prompt": "What does this code log?\n\n```js\nconst add = (a = 2, b = 3) => a + b;\nconsole.log(add(4));\n```",
+    "description": "Test default parameters in arrow functions.",
+    "code": "const add = (a = 2, b = 3) => a + b;\nconsole.log(add(4));",
+    "options": [
+      "7",
+      "5",
+      "6",
+      "Error"
+    ],
+    "answerIndex": 0,
+    "explanation": "Passing 4 as the first argument, b uses its default value 3. So 4 + 3 = 7.",
+    "topic": "ES6+"
+  },
+  {
+    "id": "question-00107",
+    "type": "mcq",
+    "prompt": "Which syntax correctly uses array destructuring?",
+    "description": "Choose the correct destructuring example.",
+    "options": [
+      "const [a, b] = [1, 2];",
+      "const a, b = [1, 2];",
+      "const (a, b) = [1, 2];",
+      "const {a, b} = [1, 2];"
+    ],
+    "answerIndex": 0,
+    "explanation": "Array destructuring uses square brackets.",
+    "topic": "ES6+"
+  },
+  {
+    "id": "question-00108",
+    "type": "boolean",
+    "prompt": "Object destructuring can assign default values to variables.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "You can assign default values in object destructuring: `const {x = 5} = obj`.",
+    "topic": "ES6+"
+  },
+  {
+    "id": "question-00109",
+    "type": "mcq",
+    "prompt": "What is the output?\n\n```js\nconst { a, b = 2 } = { a: 1 };\nconsole.log(a, b);\n```",
+    "description": "Test object destructuring with default values.",
+    "options": [
+      "1 2",
+      "1 undefined",
+      "undefined 2",
+      "Throws an error"
+    ],
+    "answerIndex": 0,
+    "explanation": "a is 1, b uses its default value 2.",
+    "topic": "ES6+"
+  },
+  {
+    "id": "question-00110",
+    "type": "boolean",
+    "prompt": "The rest operator (`...rest`) collects remaining elements into an array or object.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "The rest operator gathers remaining elements into an array (in arrays) or object (in objects).",
+    "topic": "ES6+"
+  },
+  {
+    "id": "question-00111",
+    "type": "mcq",
+    "prompt": "Which line correctly uses the spread operator to combine arrays?",
+    "description": "Choose the correct syntax.",
+    "options": [
+      "const arr = [...arr1, ...arr2];",
+      "const arr = arr1 + arr2;",
+      "const arr = [arr1, arr2];",
+      "const arr = {...arr1, ...arr2};"
+    ],
+    "answerIndex": 0,
+    "explanation": "Spread syntax expands the arrays into a new one.",
+    "topic": "ES6+"
+  },
+  {
+    "id": "question-00112",
+    "type": "code",
+    "prompt": "What is the result of this code?\n\n```js\nconst [first, ...rest] = [1, 2, 3, 4];\nconsole.log(rest);\n```",
+    "description": "Test array destructuring with rest.",
+    "code": "const [first, ...rest] = [1, 2, 3, 4];\nconsole.log(rest);",
+    "options": [
+      "[2, 3, 4]",
+      "[1, 2, 3]",
+      "[1, 2, 3, 4]",
+      "[3, 4]"
+    ],
+    "answerIndex": 0,
+    "explanation": "The rest operator collects the remaining elements after the first.",
+    "topic": "ES6+"
+  },
+  {
+    "id": "question-00113",
+    "type": "mcq",
+    "prompt": "Which syntax creates a template literal in JavaScript?",
+    "description": "Pick the correct syntax for template literals.",
+    "options": [
+      "`Hello, ${name}`",
+      "'Hello, ${name}'",
+      "\"Hello, ${name}\"",
+      "Hello, ${name}"
+    ],
+    "answerIndex": 0,
+    "explanation": "Template literals use backticks and `${}` for interpolation.",
+    "topic": "ES6+"
+  },
+  {
+    "id": "question-00114",
+    "type": "boolean",
+    "prompt": "Template literals can span multiple lines without needing escape characters.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "Template literals preserve line breaks.",
+    "topic": "ES6+"
+  },
+  {
+    "id": "question-00115",
+    "type": "mcq",
+    "prompt": "What does the following code output?\n\n```js\nconst name = 'Sam';\nconsole.log(`Hello, ${name}!`);\n```",
+    "description": "Test template literal interpolation.",
+    "options": [
+      "Hello, Sam!",
+      "Hello, ${name}!",
+      "Hello, !",
+      "Error"
+    ],
+    "answerIndex": 0,
+    "explanation": "The template literal interpolates the value of name.",
+    "topic": "ES6+"
+  },
+  {
+    "id": "question-00116",
+    "type": "mcq",
+    "prompt": "Which of the following is NOT a valid use of `async/await`?",
+    "description": "Select the invalid usage.",
+    "options": [
+      "Using `await` inside a function marked as `async`",
+      "Using `await` at the top level in a module (with ES2022+)",
+      "Using `await` inside a regular function",
+      "Using `await` inside an async arrow function"
+    ],
+    "answerIndex": 2,
+    "explanation": "`await` can only be used inside async functions (or at the top level in ES2022+ modules).",
+    "topic": "ES6+"
+  },
+  {
+    "id": "question-00117",
+    "type": "code",
+    "prompt": "What is logged to the console?\n\n```js\nasync function foo() {\n  return 5;\n}\nfoo().then(console.log);\n```",
+    "description": "Test async function return values.",
+    "code": "async function foo() {\n  return 5;\n}\nfoo().then(console.log);",
+    "options": [
+      "5",
+      "Promise { 5 }",
+      "undefined",
+      "Error"
+    ],
+    "answerIndex": 0,
+    "explanation": "Async functions return a Promise that resolves with the return value. `.then(console.log)` logs 5.",
+    "topic": "ES6+"
+  },
+  {
+    "id": "question-00118",
+    "type": "mcq",
+    "prompt": "What does `Object.entries(obj)` return?",
+    "description": "Choose the correct return value.",
+    "options": [
+      "An array of [key, value] pairs",
+      "An array of property names",
+      "An array of property values",
+      "A shallow copy of the object"
+    ],
+    "answerIndex": 0,
+    "explanation": "`Object.entries(obj)` returns an array of [key, value] pairs.",
+    "topic": "ES6+"
+  },
+  {
+    "id": "question-00119",
+    "type": "boolean",
+    "prompt": "`Object.values(obj)` returns an array of the object's own enumerable property values.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "`Object.values(obj)` gives an array of values.",
+    "topic": "ES6+"
+  },
+  {
+    "id": "question-00120",
+    "type": "mcq",
+    "prompt": "How can you get an array of all the values in an object `{a: 1, b: 2}`?",
+    "description": "Choose the correct method.",
+    "options": [
+      "Object.values({a: 1, b: 2})",
+      "Object.keys({a: 1, b: 2})",
+      "Object.entries({a: 1, b: 2})",
+      "Object.getOwnPropertyNames({a: 1, b: 2})"
+    ],
+    "answerIndex": 0,
+    "explanation": "`Object.values` returns an array of property values.",
+    "topic": "ES6+"
+  },
+  {
+    "id": "question-00121",
+    "type": "boolean",
+    "prompt": "Optional chaining (`?.`) prevents errors when accessing properties of `null` or `undefined`.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "Optional chaining returns `undefined` instead of throwing if a property is missing.",
+    "topic": "ES6+"
+  },
+  {
+    "id": "question-00122",
+    "type": "mcq",
+    "prompt": "What is the result of `obj?.a?.b` if `obj` is `undefined`?",
+    "description": "Test optional chaining behavior.",
+    "options": [
+      "undefined",
+      "Throws an error",
+      "null",
+      "0"
+    ],
+    "answerIndex": 0,
+    "explanation": "Optional chaining safely returns `undefined` if any property in the chain is nullish.",
+    "topic": "ES6+"
+  },
+  {
+    "id": "question-00123",
+    "type": "mcq",
+    "prompt": "What does the nullish coalescing operator (`??`) do?",
+    "description": "Choose the correct description.",
+    "options": [
+      "Returns the right-hand value if the left-hand value is `null` or `undefined`",
+      "Returns the right-hand value if the left-hand value is falsy",
+      "Returns the left-hand value if it is truthy",
+      "Throws an error if the left-hand value is null"
+    ],
+    "answerIndex": 0,
+    "explanation": "`??` only falls back if the left side is `null` or `undefined`.",
+    "topic": "ES6+"
+  },
+  {
+    "id": "question-00124",
+    "type": "boolean",
+    "prompt": "`0 ?? 42` evaluates to 0.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "Nullish coalescing does not treat 0 as nullish.",
+    "topic": "ES6+"
+  },
+  {
+    "id": "question-00125",
+    "type": "mcq",
+    "prompt": "Which syntax demonstrates dynamic import in JavaScript?",
+    "description": "Pick the correct dynamic import syntax.",
+    "options": [
+      "import('module.js').then(...)",
+      "require('module.js')",
+      "import module from 'module.js'",
+      "import module = require('module.js')"
+    ],
+    "answerIndex": 0,
+    "explanation": "Dynamic imports use the `import()` function, which returns a promise.",
+    "topic": "ES6+"
+  },
+  {
+    "id": "question-00126",
+    "type": "boolean",
+    "prompt": "Dynamic imports return a Promise that resolves to the module.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "Dynamic import returns a Promise resolving to the module namespace object.",
+    "topic": "ES6+"
+  },
+  {
+    "id": "question-00127",
+    "type": "mcq",
+    "prompt": "What does `[1, 2, 3].flatMap(x => [x, x * 2])` return?",
+    "description": "Test the flatMap method.",
+    "options": [
+      "[1, 2, 2, 4, 3, 6]",
+      "[[1, 2], [2, 4], [3, 6]]",
+      "[2, 4, 6]",
+      "[1, 2, 3, 2, 4, 6]"
+    ],
+    "answerIndex": 0,
+    "explanation": "`flatMap` maps and then flattens one level.",
+    "topic": "ES10"
+  },
+  {
+    "id": "question-00128",
+    "type": "boolean",
+    "prompt": "`flatMap` can only flatten one level of nesting.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "`flatMap` is equivalent to `map` followed by `flat(1)`.",
+    "topic": "ES10"
+  },
+  {
+    "id": "question-00129",
+    "type": "mcq",
+    "prompt": "What is the result of `'  hello  '.trimStart()`?",
+    "description": "Test the trimStart method.",
+    "options": [
+      "'hello  '",
+      "'  hello'",
+      "'hello'",
+      "'  hello  '"
+    ],
+    "answerIndex": 0,
+    "explanation": "`trimStart` removes whitespace only from the start of the string.",
+    "topic": "ES10"
+  },
+  {
+    "id": "question-00130",
+    "type": "boolean",
+    "prompt": "`trimEnd` and `trimRight` are equivalent in modern JavaScript.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "`trimEnd` is the standardized name, but `trimRight` is an alias.",
+    "topic": "ES10"
+  },
+  {
+    "id": "question-00131",
+    "type": "mcq",
+    "prompt": "What does `Object.fromEntries([['a', 1], ['b', 2]])` return?",
+    "description": "Test Object.fromEntries usage.",
+    "options": [
+      "{ a: 1, b: 2 }",
+      "[['a', 1], ['b', 2]]",
+      "{ '0': ['a', 1], '1': ['b', 2] }",
+      "Error"
+    ],
+    "answerIndex": 0,
+    "explanation": "`Object.fromEntries` creates an object from an array of key-value pairs.",
+    "topic": "ES10"
+  },
+  {
+    "id": "question-00132",
+    "type": "boolean",
+    "prompt": "`Object.fromEntries(Object.entries(obj))` is equivalent to a shallow copy of `obj`.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "This creates a new object with the same enumerable properties.",
+    "topic": "ES10"
+  },
+  {
+    "id": "question-00133",
+    "type": "mcq",
+    "prompt": "How do you declare a constant whose value cannot be reassigned?",
+    "description": "Choose the correct declaration.",
+    "options": [
+      "const PI = 3.14;",
+      "let PI = 3.14;",
+      "var PI = 3.14;",
+      "PI = 3.14;"
+    ],
+    "answerIndex": 0,
+    "explanation": "`const` prevents reassignment.",
+    "topic": "Basics"
+  },
+  {
+    "id": "question-00134",
+    "type": "boolean",
+    "prompt": "A `const` object can have its properties changed.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "The binding is constant, but the object's contents can be mutated.",
+    "topic": "Basics"
+  },
+  {
+    "id": "question-00135",
+    "type": "mcq",
+    "prompt": "What is the output?\n\n```js\nlet a = 1;\n{\n  let a = 2;\n  console.log(a);\n}\nconsole.log(a);\n```",
+    "description": "Test block scoping with `let`.",
+    "options": [
+      "2 then 1",
+      "1 then 2",
+      "2 then 2",
+      "1 then 1"
+    ],
+    "answerIndex": 0,
+    "explanation": "The inner `a` shadows the outer; so prints 2, then 1.",
+    "topic": "Basics"
+  },
+  {
+    "id": "question-00136",
+    "type": "boolean",
+    "prompt": "Arrow functions cannot be used as constructors.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "Arrow functions lack a `[[Construct]]` method and cannot be used with `new`.",
+    "topic": "ES6+"
+  },
+  {
+    "id": "question-00137",
+    "type": "mcq",
+    "prompt": "Which code correctly uses destructuring with renaming?",
+    "description": "Pick the correct syntax.",
+    "options": [
+      "const {a: x} = {a: 10};",
+      "const {a = x} = {a: 10};",
+      "const {a > x} = {a: 10};",
+      "const a: x = {a: 10};"
+    ],
+    "answerIndex": 0,
+    "explanation": "The syntax `{a: x}` assigns property `a` to variable `x`.",
+    "topic": "ES6+"
+  },
+  {
+    "id": "question-00138",
+    "type": "boolean",
+    "prompt": "The spread operator can be used to merge objects in JavaScript.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "You can use `{...obj1, ...obj2}` to merge objects.",
+    "topic": "ES6+"
+  },
+  {
+    "id": "question-00139",
+    "type": "mcq",
+    "prompt": "What is the result of `[...'abc']`?",
+    "description": "Test spreading a string into an array.",
+    "options": [
+      "['a', 'b', 'c']",
+      "['abc']",
+      "['a b c']",
+      "Error"
+    ],
+    "answerIndex": 0,
+    "explanation": "Spread syntax splits the string into array elements.",
+    "topic": "ES6+"
+  },
+  {
+    "id": "question-00140",
+    "type": "boolean",
+    "prompt": "Destructuring can be used in function parameters.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "You can destructure arrays or objects directly in function parameter lists.",
+    "topic": "ES6+"
+  },
+  {
+    "id": "question-00141",
+    "type": "mcq",
+    "prompt": "Which code uses rest parameters to collect extra arguments?",
+    "description": "Pick the correct function definition.",
+    "options": [
+      "function foo(...args) {}",
+      "function foo(args...) {}",
+      "function foo(..args) {}",
+      "function foo(args) {}"
+    ],
+    "answerIndex": 0,
+    "explanation": "`...args` collects all additional arguments into an array.",
+    "topic": "ES6+"
+  },
+  {
+    "id": "question-00142",
+    "type": "boolean",
+    "prompt": "A function can have both default and rest parameters.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "Default and rest parameters can be combined.",
+    "topic": "ES6+"
+  },
+  {
+    "id": "question-00143",
+    "type": "mcq",
+    "prompt": "What is the output of this code?\n\n```js\nfunction greet({name = 'Guest'} = {}) {\n  return `Hello, ${name}!`;\n}\ngreet();\n```",
+    "description": "Test destructuring with default parameters.",
+    "options": [
+      "'Hello, Guest!'",
+      "'Hello, undefined!'",
+      "'Hello, !'",
+      "Error"
+    ],
+    "answerIndex": 0,
+    "explanation": "The default parameter and destructuring ensure name is 'Guest' if not provided.",
+    "topic": "ES6+"
+  },
+  {
+    "id": "question-00144",
+    "type": "boolean",
+    "prompt": "Async functions always return a Promise.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "An async function always returns a Promise, even if you return a non-promise value.",
+    "topic": "ES6+"
+  },
+  {
+    "id": "question-00145",
+    "type": "mcq",
+    "prompt": "How do you catch errors in an async function using `await`?",
+    "description": "Pick the correct error handling method.",
+    "options": [
+      "Use try...catch around await",
+      "Use .catch() after await",
+      "Errors can't be caught with await",
+      "Use catch...finally"
+    ],
+    "answerIndex": 0,
+    "explanation": "Wrap `await` in a try...catch to catch errors.",
+    "topic": "ES6+"
+  },
+  {
+    "id": "question-00146",
+    "type": "boolean",
+    "prompt": "`Promise.all` resolves when all promises are resolved, or rejects if any promise rejects.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "If any promise rejects, `Promise.all` immediately rejects.",
+    "topic": "ES6+"
+  },
+  {
+    "id": "question-00147",
+    "type": "mcq",
+    "prompt": "What is the output?\n\n```js\nconst obj = { a: 1 };\nconsole.log(obj?.b?.c);\n```",
+    "description": "Test optional chaining with missing properties.",
+    "options": [
+      "undefined",
+      "null",
+      "Error",
+      "0"
+    ],
+    "answerIndex": 0,
+    "explanation": "`obj?.b` is undefined, so `obj?.b?.c` is also undefined.",
+    "topic": "ES6+"
+  },
+  {
+    "id": "question-00148",
+    "type": "boolean",
+    "prompt": "`Promise.finally` is called regardless of promise fulfillment or rejection.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "`finally` runs after promise settles, whether resolved or rejected.",
+    "topic": "ES6+"
+  },
+  {
+    "id": "question-00149",
+    "type": "mcq",
+    "prompt": "What is the result of `undefined ?? 'default'`?",
+    "description": "Test nullish coalescing with undefined.",
+    "options": [
+      "'default'",
+      "undefined",
+      "null",
+      "Error"
+    ],
+    "answerIndex": 0,
+    "explanation": "If the left side is `undefined`, the right side is returned.",
+    "topic": "ES6+"
+  },
+  {
+    "id": "question-00150",
+    "type": "boolean",
+    "prompt": "Dynamic import can be used to load modules conditionally at runtime.",
+    "description": "Answer true or false.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answerIndex": 0,
+    "explanation": "Dynamic import lets you load code only when needed.",
+    "topic": "ES6+"
   }
 ]
