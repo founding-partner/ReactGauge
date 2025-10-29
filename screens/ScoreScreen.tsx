@@ -11,6 +11,12 @@ import {
 } from 'react-native';
 import ViewShot, { captureRef } from 'react-native-view-shot';
 import Share from 'react-native-share';
+import {
+  IconArrowPath,
+  IconDocumentText,
+  IconHome,
+  IconShare,
+} from '../components/icons';
 import { ProgressBar, colors, radius, spacing, typography } from '../components';
 import { AnswerRecord, Question } from '../types/quiz';
 
@@ -145,19 +151,34 @@ export const ScoreScreen: React.FC<ScoreScreenProps> = ({
           style={({ pressed }) => [styles.primaryButton, pressed && styles.primaryPressed]}
           onPress={onRetakeQuiz}
         >
-          <Text style={styles.primaryText}>Retake Quiz</Text>
+          <View style={styles.buttonContent}>
+            <View style={styles.buttonIconWrapper}>
+              <IconArrowPath size={20} color={colors.textOnPrimary} />
+            </View>
+            <Text style={styles.primaryText}>Retake Quiz</Text>
+          </View>
         </Pressable>
         <Pressable
           style={({ pressed }) => [styles.secondaryButton, pressed && styles.secondaryPressed]}
           onPress={onReviewAnswers}
         >
-          <Text style={styles.secondaryText}>Review Answers</Text>
+          <View style={styles.buttonContent}>
+            <View style={styles.buttonIconWrapper}>
+              <IconDocumentText size={20} color={colors.primary} />
+            </View>
+            <Text style={styles.secondaryText}>Review Answers</Text>
+          </View>
         </Pressable>
         <Pressable
           style={({ pressed }) => [styles.tertiaryButton, pressed && styles.tertiaryPressed]}
           onPress={onGoHome}
         >
-          <Text style={styles.tertiaryText}>Back to Home</Text>
+          <View style={styles.buttonContent}>
+            <View style={styles.buttonIconWrapper}>
+              <IconHome size={20} color={colors.surface} />
+            </View>
+            <Text style={styles.tertiaryText}>Back to Home</Text>
+          </View>
         </Pressable>
         <Pressable
           style={({ pressed }) => [
@@ -168,7 +189,12 @@ export const ScoreScreen: React.FC<ScoreScreenProps> = ({
           onPress={handleShare}
           disabled={sharing}
         >
-          <Text style={styles.shareText}>{sharing ? 'Preparing…' : 'Share Scorecard'}</Text>
+          <View style={styles.buttonContent}>
+            <View style={styles.buttonIconWrapper}>
+              <IconShare size={20} color={colors.surface} />
+            </View>
+            <Text style={styles.shareText}>{sharing ? 'Preparing…' : 'Share Scorecard'}</Text>
+          </View>
         </Pressable>
       </View>
     </ScrollView>
@@ -363,6 +389,16 @@ const styles = StyleSheet.create({
   },
   shareDisabled: {
     opacity: 0.6,
+  },
+  buttonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  buttonIconWrapper: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: spacing.xs,
   },
 });
 

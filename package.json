@@ -15,8 +15,11 @@
     "react-native": "0.82.1",
     "react-native-app-auth": "^8.1.0",
     "react-native-confetti-cannon": "^1.5.2",
+    "react-native-heroicons": "^4.0.0",
     "react-native-safe-area-context": "^5.5.2",
     "react-native-share": "^12.2.0",
+    "react-native-svg": "^15.14.0",
+    "react-native-svg-transformer": "^1.5.1",
     "react-native-view-shot": "^4.0.3"
   },
   "devDependencies": {

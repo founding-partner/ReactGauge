@@ -10,8 +10,16 @@ import {
   ViewStyle,
 } from 'react-native';
 import { colors, radius, spacing, typography } from './theme';
+import Svg, { Circle } from 'react-native-svg';
+import { IconCheckCircle } from './icons';
 
 type FeedbackStatus = 'default' | 'correct' | 'incorrect';
+
+const DefaultBulletIcon: React.FC<{ color: string }> = ({ color }) => (
+  <Svg width={20} height={20} viewBox="0 0 24 24">
+    <Circle cx="12" cy="12" r="8" stroke={color} strokeWidth={2} fill="none" />
+  </Svg>
+);
 
 export interface OptionButtonProps extends Omit<PressableProps, 'style'> {
   label: string;
@@ -79,14 +87,23 @@ export const OptionButton: React.FC<OptionButtonProps> = ({
         {...pressableProps}
       >
         <View style={styles.content}>
-          <Text
-            style={[
-              styles.label,
-              { color: selected ? colors.textOnPrimary : colors.textPrimary },
-            ]}
-          >
-            {label}
-          </Text>
+            <View style={styles.labelRow}>
+              <View style={styles.iconWrapper}>
+                {selected ? (
+                  <IconCheckCircle size={20} color={colors.textOnPrimary} />
+                ) : (
+                  <DefaultBulletIcon color={colors.primary} />
+                )}
+              </View>
+            <Text
+              style={[
+                styles.label,
+                { color: selected ? colors.textOnPrimary : colors.textPrimary },
+              ]}
+            >
+              {label}
+            </Text>
+          </View>
           {description ? (
             <Text
               style={[
@@ -147,6 +164,18 @@ const styles = StyleSheet.create({
   },
   content: {
     gap: spacing.sm,
+  },
+  labelRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  iconWrapper: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  icon: {
+    marginRight: 0,
   },
   label: {
     ...typography.body,

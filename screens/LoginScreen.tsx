@@ -10,6 +10,7 @@ import {
   ViewProps,
 } from 'react-native';
 import { colors, radius, spacing, typography } from '../components';
+import { IconLockClosed, IconBeaker } from '../components/icons';
 
 export interface LoginScreenProps extends ViewProps {
   onSignIn: () => void;
@@ -60,7 +61,12 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
           {loading ? (
             <ActivityIndicator color={colors.background} />
           ) : (
-            <Text style={styles.signInText}>Continue with GitHub</Text>
+            <View style={styles.buttonRow}>
+              <View style={styles.buttonIconWrapper}>
+                <IconLockClosed size={20} color={colors.background} />
+              </View>
+              <Text style={styles.signInText}>Continue with GitHub</Text>
+            </View>
           )}
         </Pressable>
 
@@ -73,7 +79,12 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
           onPress={onContinueAsGuest}
           disabled={loading}
         >
-          <Text style={styles.guestButtonText}>Continue as Guest</Text>
+          <View style={styles.buttonRow}>
+            <View style={styles.buttonIconWrapper}>
+              <IconBeaker size={20} color={colors.surface} />
+            </View>
+            <Text style={styles.guestButtonText}>Continue as Guest</Text>
+          </View>
         </Pressable>
       </View>
 
@@ -150,6 +161,16 @@ const styles = StyleSheet.create({
   },
   actions: {
     gap: spacing.md,
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  buttonIconWrapper: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: spacing.xs,
   },
   signInButton: {
     backgroundColor: colors.surface,

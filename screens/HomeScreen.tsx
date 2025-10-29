@@ -2,6 +2,14 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View, ViewProps } from 'react-native';
 import ConfettiCannon from 'react-native-confetti-cannon';
 import {
+  IconArrowPath,
+  IconFire,
+  IconPlayCircle,
+  IconRocketLaunch,
+  IconShieldCheck,
+  IconSparkles,
+} from '../components/icons';
+import {
   OptionButton,
   ProgressBar,
   QuestionCard,
@@ -95,7 +103,12 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               ]}
               onPress={onRequestSignIn}
             >
-              <Text style={styles.guestSignInText}>Sign in with GitHub</Text>
+              <View style={styles.buttonRow}>
+                <View style={styles.buttonIconWrapper}>
+                  <IconShieldCheck size={20} color={colors.surface} />
+                </View>
+                <Text style={styles.guestSignInText}>Sign in with GitHub</Text>
+              </View>
             </Pressable>
           ) : null}
         </View>
@@ -132,22 +145,36 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               ]}
               onPress={() => onSelectDifficulty(option.value)}
             >
-              <Text
-                style={[
-                  styles.difficultyChipText,
-                  difficulty === option.value && styles.difficultyChipTextActive,
-                ]}
-              >
-                {option.label}
-              </Text>
-              <Text
-                style={[
-                  styles.difficultyChipCount,
-                  difficulty === option.value && styles.difficultyChipTextActive,
-                ]}
-              >
-                {option.count} Qs
-              </Text>
+              <View style={styles.difficultyContent}>
+                {(() => {
+                  const IconComponent = difficultyIconMap[option.value];
+                  const iconColor =
+                    difficulty === option.value ? colors.textOnPrimary : colors.primary;
+                  return (
+                    <View style={styles.buttonIconWrapper}>
+                      <IconComponent size={20} color={iconColor} />
+                    </View>
+                  );
+                })()}
+                <View style={styles.difficultyTextGroup}>
+                  <Text
+                    style={[
+                      styles.difficultyChipText,
+                      difficulty === option.value && styles.difficultyChipTextActive,
+                    ]}
+                  >
+                    {option.label}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.difficultyChipCount,
+                      difficulty === option.value && styles.difficultyChipTextActive,
+                    ]}
+                  >
+                    {option.count} Qs
+                  </Text>
+                </View>
+              </View>
             </Pressable>
           ))}
         </View>
@@ -170,7 +197,12 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 onRefreshWarmup();
               }}
             >
-              <Text style={styles.refreshButtonText}>Try Different Question</Text>
+              <View style={styles.buttonRow}>
+                <View style={styles.buttonIconWrapper}>
+                  <IconArrowPath size={20} color={colors.primary} />
+                </View>
+                <Text style={styles.refreshButtonText}>Try Different Question</Text>
+              </View>
             </Pressable>
             <Pressable
               style={({ pressed }) => [
@@ -179,7 +211,12 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               ]}
               onPress={onStartQuiz}
             >
-              <Text style={styles.ctaText}>Start Today&apos;s Quiz</Text>
+              <View style={styles.buttonRow}>
+                <View style={styles.buttonIconWrapper}>
+                  <IconPlayCircle size={20} color={colors.textOnPrimary} />
+                </View>
+                <Text style={styles.ctaText}>Start Today&apos;s Quiz</Text>
+              </View>
             </Pressable>
           </View>
         }
@@ -261,6 +298,12 @@ const difficultyOptions = [
   { value: 'hard' as const, label: 'Hard', count: 50 },
 ];
 
+const difficultyIconMap = {
+  easy: IconSparkles,
+  medium: IconRocketLaunch,
+  hard: IconFire,
+} as const;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -313,6 +356,16 @@ const styles = StyleSheet.create({
   guestSignInButtonPressed: {
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
+  buttonRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  buttonIconWrapper: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: spacing.xs,
+  },
   difficultyCard: {
     backgroundColor: colors.surface,
     borderRadius: radius.md,
@@ -343,6 +396,14 @@ const styles = StyleSheet.create({
   },
   difficultyChipPressed: {
     backgroundColor: 'rgba(37, 99, 235, 0.12)',
+  },
+  difficultyContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  difficultyTextGroup: {
+    gap: spacing.xs,
   },
   difficultyChipText: {
     ...typography.caption,

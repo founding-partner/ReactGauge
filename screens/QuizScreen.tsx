@@ -2,6 +2,13 @@ import React, { useMemo, useState } from 'react';
 import { Dimensions, Pressable, StyleSheet, Text, View, ViewProps } from 'react-native';
 import ConfettiCannon from 'react-native-confetti-cannon';
 import {
+  IconArrowLeft,
+  IconArrowLeftOnRectangle,
+  IconArrowRight,
+  IconCheck,
+  IconTrophy,
+} from '../components/icons';
+import {
   OptionButton,
   ProgressBar,
   QuestionCard,
@@ -172,9 +179,16 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
   const footer = (
     <View style={styles.footer}>
       <Pressable style={styles.secondaryButton} onPress={handlePrevious}>
-        <Text style={styles.secondaryButtonText}>
-          {currentIndex === 0 ? 'Exit' : 'Previous'}
-        </Text>
+        <View style={styles.buttonRow}>
+          {currentIndex === 0 ? (
+            <IconArrowLeftOnRectangle size={20} color={colors.surface} />
+          ) : (
+            <IconArrowLeft size={20} color={colors.surface} />
+          )}
+          <Text style={styles.secondaryButtonText}>
+            {currentIndex === 0 ? 'Exit' : 'Previous'}
+          </Text>
+        </View>
       </Pressable>
       <Pressable
         style={[
@@ -184,9 +198,20 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
         onPress={handleNext}
         disabled={selectedOption == null && !submitted}
       >
-        <Text style={styles.primaryButtonText}>
-          {submitted ? (isLastQuestion ? 'Finish' : 'Next') : 'Submit'}
-        </Text>
+        <View style={styles.buttonRow}>
+          {submitted ? (
+            isLastQuestion ? (
+              <IconTrophy size={20} color={colors.textOnPrimary} />
+            ) : (
+              <IconArrowRight size={20} color={colors.textOnPrimary} />
+            )
+          ) : (
+            <IconCheck size={20} color={colors.textOnPrimary} />
+          )}
+          <Text style={styles.primaryButtonText}>
+            {submitted ? (isLastQuestion ? 'Finish' : 'Next') : 'Submit'}
+          </Text>
+        </View>
       </Pressable>
     </View>
   );
@@ -319,6 +344,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     gap: spacing.lg,
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  buttonIcon: {
+    marginRight: spacing.xs,
   },
   primaryButton: {
     flex: 1,
