@@ -12,11 +12,15 @@ import {
 import { colors, radius, spacing, typography } from './theme';
 import Svg, { Circle } from 'react-native-svg';
 import { IconCheckCircle } from './icons';
+import { useAppStore } from '../store/useAppStore';
 
 type FeedbackStatus = 'default' | 'correct' | 'incorrect';
 
-const DefaultBulletIcon: React.FC<{ color: string }> = ({ color }) => (
-  <Svg width={20} height={20} viewBox="0 0 24 24">
+const DefaultBulletIcon: React.FC<{ color: string; size: number }> = ({
+  color,
+  size,
+}) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24">
     <Circle cx="12" cy="12" r="8" stroke={color} strokeWidth={2} fill="none" />
   </Svg>
 );
@@ -42,6 +46,7 @@ export const OptionButton: React.FC<OptionButtonProps> = ({
 }) => {
   const statusColors = getStatusColors(selected, status);
   const scale = useRef(new Animated.Value(1)).current;
+  const iconSize = useAppStore((state) => state.iconSize);
 
   const animateTo = (value: number) => {
     Animated.spring(scale, {
@@ -87,14 +92,14 @@ export const OptionButton: React.FC<OptionButtonProps> = ({
         {...pressableProps}
       >
         <View style={styles.content}>
-            <View style={styles.labelRow}>
-              <View style={styles.iconWrapper}>
-                {selected ? (
-                  <IconCheckCircle size={20} color={colors.textOnPrimary} />
-                ) : (
-                  <DefaultBulletIcon color={colors.primary} />
-                )}
-              </View>
+          <View style={styles.labelRow}>
+            <View style={styles.iconWrapper}>
+              {selected ? (
+                <IconCheckCircle size={iconSize} color={colors.textOnPrimary} />
+              ) : (
+                <DefaultBulletIcon color={colors.primary} size={iconSize} />
+              )}
+            </View>
             <Text
               style={[
                 styles.label,

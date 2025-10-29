@@ -20,6 +20,7 @@ import {
   typography,
 } from '../components';
 import { Question } from '../types/quiz';
+import { useAppStore } from '../store/useAppStore';
 
 export interface HomeScreenProps extends ViewProps {
   username: string;
@@ -62,6 +63,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   const [confettiKey, setConfettiKey] = useState(0);
   const [showConfetti, setShowConfetti] = useState(false);
   const options = useMemo(() => warmupQuestion.options, [warmupQuestion]);
+  const iconSize = useAppStore((state) => state.iconSize);
 
   useEffect(() => {
     setSelectedOption(null);
@@ -105,7 +107,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             >
               <View style={styles.buttonRow}>
                 <View style={styles.buttonIconWrapper}>
-                  <IconShieldCheck size={20} color={colors.surface} />
+                  <IconShieldCheck size={iconSize} color={colors.surface} />
                 </View>
                 <Text style={styles.guestSignInText}>Sign in with GitHub</Text>
               </View>
@@ -152,7 +154,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                     difficulty === option.value ? colors.textOnPrimary : colors.primary;
                   return (
                     <View style={styles.buttonIconWrapper}>
-                      <IconComponent size={20} color={iconColor} />
+                      <IconComponent size={iconSize} color={iconColor} />
                     </View>
                   );
                 })()}
@@ -199,7 +201,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             >
               <View style={styles.buttonRow}>
                 <View style={styles.buttonIconWrapper}>
-                  <IconArrowPath size={20} color={colors.primary} />
+                  <IconArrowPath size={iconSize} color={colors.primary} />
                 </View>
                 <Text style={styles.refreshButtonText}>Try Different Question</Text>
               </View>
@@ -213,7 +215,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             >
               <View style={styles.buttonRow}>
                 <View style={styles.buttonIconWrapper}>
-                  <IconPlayCircle size={20} color={colors.textOnPrimary} />
+                  <IconPlayCircle size={iconSize} color={colors.textOnPrimary} />
                 </View>
                 <Text style={styles.ctaText}>Start Today&apos;s Quiz</Text>
               </View>

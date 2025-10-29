@@ -19,6 +19,7 @@ import {
   typography,
 } from '../components';
 import { AnswerRecord, Question } from '../types/quiz';
+import { useAppStore } from '../store/useAppStore';
 
 export interface QuizScreenProps extends ViewProps {
   questions: Question[];
@@ -47,6 +48,7 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
   const [submitted, setSubmitted] = useState(false);
   const [answers, setAnswers] = useState<AnswerRecord[]>([]);
   const [confettiBurst, setConfettiBurst] = useState(0);
+  const iconSize = useAppStore((state) => state.iconSize);
 
   const currentQuestion = questions[currentIndex];
   const totalQuestions = questions.length;
@@ -181,9 +183,9 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
       <Pressable style={styles.secondaryButton} onPress={handlePrevious}>
         <View style={styles.buttonRow}>
           {currentIndex === 0 ? (
-            <IconArrowLeftOnRectangle size={20} color={colors.surface} />
+            <IconArrowLeftOnRectangle size={iconSize} color={colors.surface} />
           ) : (
-            <IconArrowLeft size={20} color={colors.surface} />
+            <IconArrowLeft size={iconSize} color={colors.surface} />
           )}
           <Text style={styles.secondaryButtonText}>
             {currentIndex === 0 ? 'Exit' : 'Previous'}
@@ -201,12 +203,12 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
         <View style={styles.buttonRow}>
           {submitted ? (
             isLastQuestion ? (
-              <IconTrophy size={20} color={colors.textOnPrimary} />
+              <IconTrophy size={iconSize} color={colors.textOnPrimary} />
             ) : (
-              <IconArrowRight size={20} color={colors.textOnPrimary} />
+              <IconArrowRight size={iconSize} color={colors.textOnPrimary} />
             )
           ) : (
-            <IconCheck size={20} color={colors.textOnPrimary} />
+            <IconCheck size={iconSize} color={colors.textOnPrimary} />
           )}
           <Text style={styles.primaryButtonText}>
             {submitted ? (isLastQuestion ? 'Finish' : 'Next') : 'Submit'}

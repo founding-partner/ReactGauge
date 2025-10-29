@@ -19,6 +19,7 @@ import {
 } from '../components/icons';
 import { ProgressBar, colors, radius, spacing, typography } from '../components';
 import { AnswerRecord, Question } from '../types/quiz';
+import { useAppStore } from '../store/useAppStore';
 
 interface TopicStat {
   topic: string;
@@ -41,6 +42,7 @@ export const ScoreScreen: React.FC<ScoreScreenProps> = ({
   onRetakeQuiz,
   onGoHome,
 }) => {
+  const iconSize = useAppStore((state) => state.iconSize);
   const { topicStats, totalCorrect, totalQuestions } = useMemo(
     () => deriveTopicStats(questions, answers),
     [questions, answers],
@@ -153,7 +155,7 @@ export const ScoreScreen: React.FC<ScoreScreenProps> = ({
         >
           <View style={styles.buttonContent}>
             <View style={styles.buttonIconWrapper}>
-              <IconArrowPath size={20} color={colors.textOnPrimary} />
+              <IconArrowPath size={iconSize} color={colors.textOnPrimary} />
             </View>
             <Text style={styles.primaryText}>Retake Quiz</Text>
           </View>
@@ -164,7 +166,7 @@ export const ScoreScreen: React.FC<ScoreScreenProps> = ({
         >
           <View style={styles.buttonContent}>
             <View style={styles.buttonIconWrapper}>
-              <IconDocumentText size={20} color={colors.primary} />
+              <IconDocumentText size={iconSize} color={colors.primary} />
             </View>
             <Text style={styles.secondaryText}>Review Answers</Text>
           </View>
@@ -175,7 +177,7 @@ export const ScoreScreen: React.FC<ScoreScreenProps> = ({
         >
           <View style={styles.buttonContent}>
             <View style={styles.buttonIconWrapper}>
-              <IconHome size={20} color={colors.surface} />
+              <IconHome size={iconSize} color={colors.surface} />
             </View>
             <Text style={styles.tertiaryText}>Back to Home</Text>
           </View>
@@ -191,7 +193,7 @@ export const ScoreScreen: React.FC<ScoreScreenProps> = ({
         >
           <View style={styles.buttonContent}>
             <View style={styles.buttonIconWrapper}>
-              <IconShare size={20} color={colors.surface} />
+              <IconShare size={iconSize} color={colors.surface} />
             </View>
             <Text style={styles.shareText}>{sharing ? 'Preparing…' : 'Share Scorecard'}</Text>
           </View>

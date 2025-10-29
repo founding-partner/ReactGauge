@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Alert,
   ScrollView,
@@ -10,13 +10,17 @@ import {
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { colors, spacing } from './components';
 import { signInWithGitHub } from './auth/githubAuth';
-import questionsData from './data/questions.json';
 import { HomeScreen } from './screens/HomeScreen';
 import { LoginScreen } from './screens/LoginScreen';
 import { QuizScreen } from './screens/QuizScreen';
 import { ResultScreen } from './screens/ResultScreen';
 import { ScoreScreen } from './screens/ScoreScreen';
 import { AnswerRecord, Question } from './types/quiz';
+import {
+  LOCAL_QUESTIONS,
+  REMOTE_QUESTIONS_URL,
+  useAppStore,
+} from './store/useAppStore';
 
 type UserProfile = {
   mode: 'github' | 'guest';
@@ -30,27 +34,84 @@ type UserProfile = {
 };
 
 type ActiveScreen = 'home' | 'quiz' | 'score' | 'result';
-type Difficulty = 'easy' | 'medium' | 'hard';
-
-const QUESTIONS: Question[] = questionsData as Question[];
-const QUESTION_COUNT_BY_DIFFICULTY: Record<Difficulty, number> = {
-  easy: 10,
-  medium: 25,
-  hard: 50,
-};
-
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   const [user, setUser] = useState<UserProfile | null>(null);
   const [authLoading, setAuthLoading] = useState(false);
   const [activeScreen, setActiveScreen] = useState<ActiveScreen>('home');
-  const [quizAnswers, setQuizAnswers] = useState<AnswerRecord[]>([]);
-  const [activeQuestions, setActiveQuestions] = useState<Question[]>([]);
-  const [completedQuestions, setCompletedQuestions] = useState<Question[]>([]);
-  const [difficulty, setDifficulty] = useState<Difficulty>('easy');
-  const [dailyWarmupQuestion, setDailyWarmupQuestion] = useState<Question>(() =>
-    pickRandomQuestion(),
+  const setQuestions = useAppStore((state) => state.setQuestions);
+  const allQuestions = useAppStore((state) => state.allQuestions);
+  const difficulty = useAppStore((state) => state.difficulty);
+  const setDifficulty = useAppStore((state) => state.setDifficulty);
+  const dailyWarmupQuestion = useAppStore((state) => state.dailyWarmupQuestion);
+  const refreshWarmupQuestion = useAppStore(
+    (state) => state.refreshWarmupQuestion,
   );
+  const pickQuestionsForDifficulty = useAppStore(
+    (state) => state.pickQuestionsForDifficulty,
+  );
+  const activeQuestions = useAppStore((state) => state.activeQuestions);
+  const setActiveQuestions = useAppStore((state) => state.setActiveQuestions);
+  const completedQuestions = useAppStore((state) => state.completedQuestions);
+  const setCompletedQuestions = useAppStore(
+    (state) => state.setCompletedQuestions,
+  );
+  const quizAnswers = useAppStore((state) => state.quizAnswers);
+  const setQuizAnswers = useAppStore((state) => state.setQuizAnswers);
+
+  const warmupQuestion = useMemo(
+    () => dailyWarmupQuestion ?? allQuestions[0],
+    [allQuestions, dailyWarmupQuestion],
+  );
+
+  const latestSetQuestions = useRef(setQuestions);
+  useEffect(() => {
+    latestSetQuestions.current = setQuestions;
+  }, [setQuestions]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const applyQuestions = (questions: Question[]) => {
+      if (!cancelled) {
+        latestSetQuestions.current(questions);
+      }
+    };
+
+    const fetchLatestQuestions = async () => {
+      try {
+        const response = await fetch(REMOTE_QUESTIONS_URL, {
+          headers: { Accept: 'application/json' },
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch questions (${response.status})`);
+        }
+
+        const data = (await response.json()) as unknown;
+
+        if (!Array.isArray(data)) {
+          throw new Error('Questions payload is not an array.');
+        }
+
+        applyQuestions(data as Question[]);
+      } catch (error) {
+        console.warn(
+          '[ReactGauge] Unable to load latest questions, using local fallback.',
+          error,
+        );
+        if (useAppStore.getState().allQuestions !== LOCAL_QUESTIONS) {
+          applyQuestions([...LOCAL_QUESTIONS]);
+        }
+      }
+    };
+
+    fetchLatestQuestions();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [setQuestions]);
 
   const handleSignIn = async () => {
     try {
@@ -113,7 +174,7 @@ function App(): React.JSX.Element {
 
   const handleExitQuiz = () => {
     setActiveScreen('home');
-    setDailyWarmupQuestion(pickRandomQuestion());
+    refreshWarmupQuestion();
   };
 
   const handleQuizComplete = (answers: AnswerRecord[]) => {
@@ -135,7 +196,7 @@ function App(): React.JSX.Element {
           }
         : prev,
     );
-    setDailyWarmupQuestion(pickRandomQuestion());
+    refreshWarmupQuestion();
   };
 
   const handleRetryQuiz = () => {
@@ -210,9 +271,9 @@ function App(): React.JSX.Element {
         isGuest={user.mode === 'guest'}
         difficulty={difficulty}
         onSelectDifficulty={setDifficulty}
-        questionPoolSize={QUESTIONS.length}
-        warmupQuestion={dailyWarmupQuestion}
-        onRefreshWarmup={() => setDailyWarmupQuestion(pickRandomQuestion())}
+        questionPoolSize={allQuestions.length}
+        warmupQuestion={warmupQuestion}
+        onRefreshWarmup={refreshWarmupQuestion}
         totalAnswered={user.answered}
         totalCorrect={user.correct}
         streakDays={user.streak}
@@ -286,19 +347,3 @@ const styles = StyleSheet.create({
 });
 
 export default App;
-
-function pickQuestionsForDifficulty(difficulty: Difficulty): Question[] {
-  const desiredCount = QUESTION_COUNT_BY_DIFFICULTY[difficulty];
-  const pool = [...QUESTIONS];
-  const maxCount = Math.min(desiredCount, pool.length);
-  for (let i = pool.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [pool[i], pool[j]] = [pool[j], pool[i]];
-  }
-  return pool.slice(0, maxCount);
-}
-
-function pickRandomQuestion(): Question {
-  const index = Math.floor(Math.random() * QUESTIONS.length);
-  return QUESTIONS[index];
-}

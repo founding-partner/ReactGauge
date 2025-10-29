@@ -20,7 +20,8 @@
     "react-native-share": "^12.2.0",
     "react-native-svg": "^15.14.0",
     "react-native-svg-transformer": "^1.5.1",
-    "react-native-view-shot": "^4.0.3"
+    "react-native-view-shot": "^4.0.3",
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

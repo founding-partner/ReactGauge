@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { colors, radius, spacing, typography } from '../components';
 import { IconLockClosed, IconBeaker } from '../components/icons';
+import { useAppStore } from '../store/useAppStore';
 
 export interface LoginScreenProps extends ViewProps {
   onSignIn: () => void;
@@ -25,6 +26,8 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
   style,
   ...rest
 }) => {
+  const iconSize = useAppStore((state) => state.iconSize);
+
   return (
     <ScrollView
       style={style}
@@ -61,12 +64,12 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
           {loading ? (
             <ActivityIndicator color={colors.background} />
           ) : (
-            <View style={styles.buttonRow}>
-              <View style={styles.buttonIconWrapper}>
-                <IconLockClosed size={20} color={colors.background} />
+              <View style={styles.buttonRow}>
+                <View style={styles.buttonIconWrapper}>
+                  <IconLockClosed size={iconSize} color={colors.background} />
+                </View>
+                <Text style={styles.signInText}>Continue with GitHub</Text>
               </View>
-              <Text style={styles.signInText}>Continue with GitHub</Text>
-            </View>
           )}
         </Pressable>
 
@@ -81,7 +84,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
         >
           <View style={styles.buttonRow}>
             <View style={styles.buttonIconWrapper}>
-              <IconBeaker size={20} color={colors.surface} />
+              <IconBeaker size={iconSize} color={colors.surface} />
             </View>
             <Text style={styles.guestButtonText}>Continue as Guest</Text>
           </View>
