@@ -8,6 +8,7 @@ import {
   IconRocketLaunch,
   IconShieldCheck,
   IconSparkles,
+  IconDocumentText,
 } from '../components/icons';
 import {
   OptionButton,
@@ -38,6 +39,7 @@ export interface HomeScreenProps extends ViewProps {
   totalCorrect: number;
   streakDays: number;
   completionRatio: number;
+  onOpenHistory: () => void;
 }
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({
@@ -56,6 +58,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   totalCorrect,
   streakDays,
   completionRatio,
+  onOpenHistory,
   style,
   ...rest
 }) => {
@@ -148,6 +151,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               onPress={() => onSelectDifficulty(option.value)}
             >
               <View style={styles.difficultyContent}>
+                <View style={styles.difficultyTextGroup}>
                 {(() => {
                   const IconComponent = difficultyIconMap[option.value];
                   const iconColor =
@@ -158,7 +162,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                     </View>
                   );
                 })()}
-                <View style={styles.difficultyTextGroup}>
+                
                   <Text
                     style={[
                       styles.difficultyChipText,
@@ -179,6 +183,38 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               </View>
             </Pressable>
           ))}
+        </View>
+
+        <View style={styles.primaryActionColumn}>
+          <Pressable
+            style={({ pressed }) => [
+              styles.cta,
+              pressed && styles.ctaPressed,
+            ]}
+            onPress={onStartQuiz}
+          >
+            <View style={styles.buttonRow}>
+              <View style={styles.buttonIconWrapper}>
+                <IconPlayCircle size={iconSize} color={colors.textOnPrimary} />
+              </View>
+              <Text style={styles.ctaText}>Start Today&apos;s Quiz</Text>
+            </View>
+          </Pressable>
+
+          <Pressable
+            style={({ pressed }) => [
+              styles.historyButton,
+              pressed && styles.historyButtonPressed,
+            ]}
+            onPress={onOpenHistory}
+          >
+            <View style={styles.buttonRow}>
+              <View style={styles.buttonIconWrapper}>
+                <IconDocumentText size={iconSize} color={colors.primary} />
+              </View>
+              <Text style={styles.historyButtonText}>View History</Text>
+            </View>
+          </Pressable>
         </View>
       </View>
 
@@ -204,20 +240,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   <IconArrowPath size={iconSize} color={colors.primary} />
                 </View>
                 <Text style={styles.refreshButtonText}>Try Different Question</Text>
-              </View>
-            </Pressable>
-            <Pressable
-              style={({ pressed }) => [
-                styles.cta,
-                pressed && styles.ctaPressed,
-              ]}
-              onPress={onStartQuiz}
-            >
-              <View style={styles.buttonRow}>
-                <View style={styles.buttonIconWrapper}>
-                  <IconPlayCircle size={iconSize} color={colors.textOnPrimary} />
-                </View>
-                <Text style={styles.ctaText}>Start Today&apos;s Quiz</Text>
               </View>
             </Pressable>
           </View>
@@ -355,6 +377,31 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     color: colors.surface,
   },
+  primaryActionColumn: {
+    marginTop: spacing.lg,
+    gap: spacing.md,
+  },
+  historyButton: {
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    borderColor: colors.primary,
+    backgroundColor: 'rgba(37, 99, 235, 0.08)',
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+  },
+  historyButtonPressed: {
+    backgroundColor: 'rgba(37, 99, 235, 0.16)',
+  },
+  historyButtonText: {
+    ...typography.caption,
+    textTransform: 'uppercase',
+    color: colors.primary,
+    letterSpacing: 0.6,
+    fontWeight: '600'
+  },
   guestSignInButtonPressed: {
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
@@ -457,22 +504,25 @@ const styles = StyleSheet.create({
     borderColor: colors.primary,
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.lg,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
   },
   refreshButtonText: {
     ...typography.caption,
     textTransform: 'uppercase',
-    color: colors.primary,
+    color: colors.primary
   },
   refreshButtonPressed: {
     backgroundColor: 'rgba(37, 99, 235, 0.08)',
   },
   cta: {
-    marginTop: spacing.lg,
     backgroundColor: colors.primary,
     borderRadius: radius.lg,
     paddingVertical: spacing.lg,
     alignItems: 'center',
     justifyContent: 'center',
+    width: '100%',
   },
   ctaText: {
     ...typography.heading,

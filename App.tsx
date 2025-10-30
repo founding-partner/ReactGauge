@@ -15,6 +15,8 @@ import { LoginScreen } from './screens/LoginScreen';
 import { QuizScreen } from './screens/QuizScreen';
 import { ResultScreen } from './screens/ResultScreen';
 import { ScoreScreen } from './screens/ScoreScreen';
+import { HistoryScreen } from './screens/HistoryScreen';
+import { HistoryDetailScreen } from './screens/HistoryDetailScreen';
 import { AnswerRecord, Question } from './types/quiz';
 import {
   LOCAL_QUESTIONS,
@@ -22,15 +24,23 @@ import {
   useAppStore,
 } from './store/useAppStore';
 import { UserProfile } from './types/user';
+import { QuizAttempt, QuizAttemptHistory, AttemptQuestion } from './types/history';
 import { loadUserProfile, saveUserProfile } from './storage/userStorage';
+import {
+  appendAttempt,
+  clearHistory as clearHistoryStorage,
+  loadHistory,
+} from './storage/historyStorage';
 
-type ActiveScreen = 'home' | 'quiz' | 'score' | 'result';
+type ActiveScreen = 'home' | 'quiz' | 'score' | 'result' | 'history' | 'historyDetail';
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   const [user, setUser] = useState<UserProfile | null>(null);
   const [authLoading, setAuthLoading] = useState(false);
   const [activeScreen, setActiveScreen] = useState<ActiveScreen>('home');
   const [profileHydrated, setProfileHydrated] = useState(false);
+  const [historyAttempts, setHistoryAttempts] = useState<QuizAttemptHistory>([]);
+  const [selectedAttempt, setSelectedAttempt] = useState<QuizAttempt | null>(null);
   const setQuestions = useAppStore((state) => state.setQuestions);
   const allQuestions = useAppStore((state) => state.allQuestions);
   const difficulty = useAppStore((state) => state.difficulty);
@@ -73,6 +83,19 @@ function App(): React.JSX.Element {
     }
     void saveUserProfile(user);
   }, [user, profileHydrated]);
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      const storedHistory = await loadHistory();
+      if (mounted) {
+        setHistoryAttempts(storedHistory);
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const warmupQuestion = useMemo(
     () => dailyWarmupQuestion ?? allQuestions[0],
@@ -217,6 +240,36 @@ function App(): React.JSX.Element {
       }
       return nextProfile;
     });
+
+    const attempt: QuizAttempt = {
+      id: `${Date.now()}`,
+      timestamp: new Date().toISOString(),
+      difficulty,
+      score: {
+        correct: correctCount,
+        total: answers.length,
+      },
+      streak: user?.streak ?? 0,
+      userMode: user?.mode ?? 'guest',
+      userLogin: user?.login ?? 'guest',
+      questions: activeQuestions.map((question) => {
+        const mapped: AttemptQuestion = {
+          id: question.id,
+          prompt: question.prompt,
+          options: question.options,
+          answerIndex: question.answerIndex,
+          description: question.description,
+          code: question.code,
+          topic: question.topic,
+          explanation: question.explanation,
+        };
+        return mapped;
+      }),
+      answers,
+    };
+
+    setHistoryAttempts((prev) => [attempt, ...prev]);
+    void appendAttempt(attempt);
     refreshWarmupQuestion();
   };
 
@@ -237,6 +290,30 @@ function App(): React.JSX.Element {
 
   const handleScoreGoHome = () => {
     setActiveScreen('home');
+  };
+
+  const handleOpenHistory = () => {
+    setActiveScreen('history');
+  };
+
+  const handleCloseHistory = () => {
+    setActiveScreen('home');
+  };
+
+  const handleSelectHistoryAttempt = (attempt: QuizAttempt) => {
+    setSelectedAttempt(attempt);
+    setActiveScreen('historyDetail');
+  };
+
+  const handleCloseHistoryDetail = () => {
+    setSelectedAttempt(null);
+    setActiveScreen('history');
+  };
+
+  const handleClearHistory = () => {
+    setHistoryAttempts([]);
+    setSelectedAttempt(null);
+    void clearHistoryStorage();
   };
 
   const renderScreen = () => {
@@ -281,6 +358,37 @@ function App(): React.JSX.Element {
       );
     }
 
+    if (activeScreen === 'history') {
+      return (
+        <HistoryScreen
+          attempts={historyAttempts}
+          onSelectAttempt={handleSelectHistoryAttempt}
+          onClose={handleCloseHistory}
+          onClearHistory={handleClearHistory}
+        />
+      );
+    }
+
+    if (activeScreen === 'historyDetail') {
+      if (!selectedAttempt) {
+        return (
+          <HistoryScreen
+            attempts={historyAttempts}
+            onSelectAttempt={handleSelectHistoryAttempt}
+            onClose={handleCloseHistory}
+            onClearHistory={handleClearHistory}
+          />
+        );
+      }
+
+      return (
+        <HistoryDetailScreen
+          attempt={selectedAttempt}
+          onClose={handleCloseHistoryDetail}
+        />
+      );
+    }
+
     const isHome = activeScreen === 'home';
     const content = isHome ? (
       <HomeScreen
@@ -299,6 +407,7 @@ function App(): React.JSX.Element {
         totalCorrect={user.correct}
         streakDays={user.streak}
         completionRatio={user.completion}
+        onOpenHistory={handleOpenHistory}
       />
     ) : (
       <QuizScreen
