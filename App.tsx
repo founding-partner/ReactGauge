@@ -117,6 +117,9 @@ function App(): React.JSX.Element {
     try {
       setAuthLoading(true);
       const session = await signInWithGitHub();
+
+      console.log("session", session)
+
       setUser((previous) => {
         const answered = previous?.answered ?? 0;
         const correct = previous?.correct ?? 0;

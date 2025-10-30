@@ -29,16 +29,16 @@ export async function signInWithGitHub(): Promise<GitHubAuthSession> {
   const config = buildAuthConfig();
 
   const authState = await authorize(config);
-  const user = await fetchGitHubUser(authState.accessToken);
+  const tokens = await exchangeGitHubCode({
+    code: authState.authorizationCode,
+    clientId: config.clientId,
+    clientSecret: config.clientSecret || '',
+    redirectUrl: config.redirectUrl,
+    codeVerifier: authState.codeVerifier,
+  });
+  const user = await fetchGitHubUser(tokens.accessToken);
 
-  return {
-    tokens: {
-      accessToken: authState.accessToken,
-      accessTokenExpirationDate: authState.accessTokenExpirationDate,
-      refreshToken: authState.refreshToken,
-    },
-    user,
-  };
+  return { tokens, user };
 }
 
 async function fetchGitHubUser(
@@ -87,6 +87,7 @@ function buildAuthConfig(): AuthConfiguration {
     additionalParameters: {
       allow_signup: 'false',
     },
+    skipCodeExchange: true,
   };
 }
 
@@ -109,4 +110,63 @@ function validateRedirectUri(uri: string) {
       'GITHUB_REDIRECT_URI must be a valid deep link (e.g., com.reactgauge://oauthredirect).',
     );
   }
+}
+
+async function exchangeGitHubCode({
+  code,
+  clientId,
+  clientSecret,
+  redirectUrl,
+  codeVerifier,
+}: {
+  code?: string;
+  clientId: string;
+  clientSecret: string;
+  redirectUrl: string;
+  codeVerifier?: string;
+}): Promise<GitHubAuthSession['tokens']> {
+  if (!code) {
+    throw new Error('Missing authorization code from GitHub.');
+  }
+
+  const response = await fetch(serviceConfiguration.tokenEndpoint, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      client_id: clientId,
+      client_secret: clientSecret,
+      code,
+      redirect_uri: redirectUrl,
+      code_verifier: codeVerifier,
+    }),
+  });
+
+  if (!response.ok) {
+    const errorBody = await response.text();
+    throw new Error(
+      `GitHub token exchange failed (${response.status}): ${errorBody}`,
+    );
+  }
+
+  const payload = (await response.json()) as {
+    access_token: string;
+    refresh_token?: string;
+    expires_in?: number;
+    token_type?: string;
+    scope?: string;
+  };
+
+  const accessTokenExpirationDate =
+    typeof payload.expires_in === 'number'
+      ? new Date(Date.now() + payload.expires_in * 1000).toISOString()
+      : undefined;
+
+  return {
+    accessToken: payload.access_token,
+    refreshToken: payload.refresh_token,
+    accessTokenExpirationDate,
+  };
 }
