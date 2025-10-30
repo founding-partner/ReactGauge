@@ -21,17 +21,8 @@ import {
   REMOTE_QUESTIONS_URL,
   useAppStore,
 } from './store/useAppStore';
-
-type UserProfile = {
-  mode: 'github' | 'guest';
-  login: string;
-  name?: string;
-  avatarUrl?: string;
-  answered: number;
-  correct: number;
-  streak: number;
-  completion: number;
-};
+import { UserProfile } from './types/user';
+import { loadUserProfile, saveUserProfile } from './storage/userStorage';
 
 type ActiveScreen = 'home' | 'quiz' | 'score' | 'result';
 function App(): React.JSX.Element {
@@ -39,6 +30,7 @@ function App(): React.JSX.Element {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [authLoading, setAuthLoading] = useState(false);
   const [activeScreen, setActiveScreen] = useState<ActiveScreen>('home');
+  const [profileHydrated, setProfileHydrated] = useState(false);
   const setQuestions = useAppStore((state) => state.setQuestions);
   const allQuestions = useAppStore((state) => state.allQuestions);
   const difficulty = useAppStore((state) => state.difficulty);
@@ -58,6 +50,29 @@ function App(): React.JSX.Element {
   );
   const quizAnswers = useAppStore((state) => state.quizAnswers);
   const setQuizAnswers = useAppStore((state) => state.setQuizAnswers);
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      const storedProfile = await loadUserProfile();
+      if (mounted && storedProfile) {
+        setUser(storedProfile);
+      }
+      if (mounted) {
+        setProfileHydrated(true);
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!profileHydrated) {
+      return;
+    }
+    void saveUserProfile(user);
+  }, [user, profileHydrated]);
 
   const warmupQuestion = useMemo(
     () => dailyWarmupQuestion ?? allQuestions[0],
@@ -117,8 +132,6 @@ function App(): React.JSX.Element {
     try {
       setAuthLoading(true);
       const session = await signInWithGitHub();
-
-      console.log("session", session)
 
       setUser((previous) => {
         const answered = previous?.answered ?? 0;
@@ -187,18 +200,23 @@ function App(): React.JSX.Element {
 
     const correctCount = answers.filter((answer) => answer.isCorrect).length;
 
-    setUser((prev) =>
-      prev
-        ? {
-            ...prev,
-            answered: prev.answered + answers.length,
-            correct: prev.correct + correctCount,
-            completion: answers.length
-              ? correctCount / answers.length
-              : prev.completion,
-          }
-        : prev,
-    );
+    setUser((prev) => {
+      if (!prev) {
+        return prev;
+      }
+      const nextProfile: UserProfile = {
+        ...prev,
+        answered: prev.answered + answers.length,
+        correct: prev.correct + correctCount,
+        completion: answers.length
+          ? correctCount / answers.length
+          : prev.completion,
+      };
+      if (profileHydrated) {
+        void saveUserProfile(nextProfile);
+      }
+      return nextProfile;
+    });
     refreshWarmupQuestion();
   };
 
