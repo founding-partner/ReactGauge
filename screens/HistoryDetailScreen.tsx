@@ -30,7 +30,7 @@ export const HistoryDetailScreen: React.FC<HistoryDetailScreenProps> = ({
     <View style={[styles.container, style]} {...rest}>
       <View style={styles.header}>
         <Pressable style={styles.backButton} onPress={onClose}>
-          <IconArrowLeft size={20} color={colors.textPrimary} />
+          <IconArrowLeft size={20} color={colors.surface} />
           <Text style={styles.backButtonText}>Back</Text>
         </Pressable>
         <Text style={styles.title}>Attempt Details</Text>
@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
   },
   backButtonText: {
     ...typography.body,
-    color: colors.textPrimary,
+    color: colors.surface,
   },
   title: {
     ...typography.heading,
