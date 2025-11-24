@@ -18,6 +18,8 @@ import { ScoreScreen } from './screens/ScoreScreen';
 import { HistoryScreen } from './screens/HistoryScreen';
 import { HistoryDetailScreen } from './screens/HistoryDetailScreen';
 import { AnswerRecord, Question } from './types/quiz';
+import './localization/i18n';
+import { useTranslation } from 'react-i18next';
 import {
   LOCAL_QUESTIONS,
   REMOTE_QUESTIONS_URL,
@@ -31,20 +33,28 @@ import {
   clearHistory as clearHistoryStorage,
   loadHistory,
 } from './storage/historyStorage';
+import {
+  loadLanguagePreference,
+  saveLanguagePreference,
+} from './storage/settingsStorage';
 
 type ActiveScreen = 'home' | 'quiz' | 'score' | 'result' | 'history' | 'historyDetail';
 function App(): React.JSX.Element {
+  const { t, i18n } = useTranslation();
   const isDarkMode = useColorScheme() === 'dark';
   const [user, setUser] = useState<UserProfile | null>(null);
   const [authLoading, setAuthLoading] = useState(false);
   const [activeScreen, setActiveScreen] = useState<ActiveScreen>('home');
   const [profileHydrated, setProfileHydrated] = useState(false);
+  const [languageHydrated, setLanguageHydrated] = useState(false);
   const [historyAttempts, setHistoryAttempts] = useState<QuizAttemptHistory>([]);
   const [selectedAttempt, setSelectedAttempt] = useState<QuizAttempt | null>(null);
   const setQuestions = useAppStore((state) => state.setQuestions);
   const allQuestions = useAppStore((state) => state.allQuestions);
   const difficulty = useAppStore((state) => state.difficulty);
   const setDifficulty = useAppStore((state) => state.setDifficulty);
+  const language = useAppStore((state) => state.language);
+  const setLanguageCode = useAppStore((state) => state.setLanguage);
   const dailyWarmupQuestion = useAppStore((state) => state.dailyWarmupQuestion);
   const refreshWarmupQuestion = useAppStore(
     (state) => state.refreshWarmupQuestion,
@@ -78,11 +88,41 @@ function App(): React.JSX.Element {
   }, []);
 
   useEffect(() => {
+    let mounted = true;
+    (async () => {
+      const storedLanguage = await loadLanguagePreference();
+      if (mounted && storedLanguage) {
+        setLanguageCode(storedLanguage);
+      }
+      if (mounted) {
+        setLanguageHydrated(true);
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, [setLanguageCode]);
+
+  useEffect(() => {
     if (!profileHydrated) {
       return;
     }
     void saveUserProfile(user);
   }, [user, profileHydrated]);
+
+  useEffect(() => {
+    if (!language) {
+      return;
+    }
+    i18n
+      .changeLanguage(language)
+      .catch((error) =>
+        console.warn('[ReactGauge] Unable to switch language', error),
+      );
+    if (languageHydrated) {
+      void saveLanguagePreference(language);
+    }
+  }, [language, languageHydrated, i18n]);
 
   useEffect(() => {
     let mounted = true;
@@ -176,8 +216,8 @@ function App(): React.JSX.Element {
       setActiveScreen('home');
     } catch (error) {
       const message =
-        error instanceof Error ? error.message : 'Something went wrong.';
-      Alert.alert('GitHub Login Failed', message);
+        error instanceof Error ? error.message : t('alerts.genericError');
+      Alert.alert(t('alerts.githubLoginFailedTitle'), message);
     } finally {
       setAuthLoading(false);
     }
@@ -202,8 +242,8 @@ function App(): React.JSX.Element {
     const selected = pickQuestionsForDifficulty(difficulty);
     if (selected.length === 0) {
       Alert.alert(
-        'No Questions Available',
-        'Add more questions to the question bank to start a quiz for this difficulty.',
+        t('alerts.noQuestionsTitle'),
+        t('alerts.noQuestionsBody'),
       );
       return;
     }
@@ -408,6 +448,8 @@ function App(): React.JSX.Element {
         streakDays={user.streak}
         completionRatio={user.completion}
         onOpenHistory={handleOpenHistory}
+        language={language}
+        onChangeLanguage={setLanguageCode}
       />
     ) : (
       <QuizScreen

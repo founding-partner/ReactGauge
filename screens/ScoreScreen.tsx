@@ -9,6 +9,7 @@ import {
   View,
   Image,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import ViewShot, { captureRef } from 'react-native-view-shot';
 import Share from 'react-native-share';
 import {
@@ -43,6 +44,7 @@ export const ScoreScreen: React.FC<ScoreScreenProps> = ({
   onGoHome,
 }) => {
   const iconSize = useAppStore((state) => state.iconSize);
+  const { t } = useTranslation();
   const { topicStats, totalCorrect, totalQuestions } = useMemo(
     () => deriveTopicStats(questions, answers),
     [questions, answers],
@@ -68,7 +70,7 @@ export const ScoreScreen: React.FC<ScoreScreenProps> = ({
       });
 
       if (!uri) {
-        throw new Error('Unable to capture score screenshot.');
+        throw new Error(t('alerts.shareCaptureError'));
       }
 
       const shareUrl = Platform.OS === 'android' ? 'file://' + uri : uri;
@@ -76,7 +78,7 @@ export const ScoreScreen: React.FC<ScoreScreenProps> = ({
       await Share.open({
         url: shareUrl,
         type: 'image/png',
-        title: 'ReactGauge Scorecard',
+        title: t('score.shareTitle'),
         failOnCancel: false,
       });
     } catch (error) {
@@ -85,8 +87,8 @@ export const ScoreScreen: React.FC<ScoreScreenProps> = ({
         (error as { message?: string }).message?.includes('User did not share');
 
       if (!isCancelled) {
-        const message = error instanceof Error ? error.message : 'Unable to share results.';
-        Alert.alert('Share Failed', message);
+        const message = error instanceof Error ? error.message : t('alerts.shareFailedBody');
+        Alert.alert(t('alerts.shareFailedTitle'), message);
       }
     } finally {
       setSharing(false);
@@ -106,9 +108,12 @@ export const ScoreScreen: React.FC<ScoreScreenProps> = ({
       >
         <View style={styles.capturableContent}>
           <View style={styles.headerCard}>
-            <Text style={styles.headerTitle}>Score Breakdown</Text>
+            <Text style={styles.headerTitle}>{t('score.title')}</Text>
             <Text style={styles.headerSubtitle}>
-              You answered {totalCorrect} of {totalQuestions} questions correctly.
+              {t('score.subtitle', {
+                correct: totalCorrect,
+                total: totalQuestions,
+              })}
             </Text>
             <View style={styles.overallBadge}>
               <Text style={styles.overallScore}>{overallPercentage}</Text>
@@ -117,25 +122,27 @@ export const ScoreScreen: React.FC<ScoreScreenProps> = ({
             {overallPercentage >= 60 ? (
               <View style={styles.congratsWrapper}>
                 <Text style={styles.congratsEmoji}>🎉</Text>
-                <Text style={styles.congratsText}>Great work! You&apos;re leveling up your React skills.</Text>
+                <Text style={styles.congratsText}>{t('score.congrats')}</Text>
                 <Image
                   source={require('../app.png')}
                   style={styles.congratsLogo}
                   resizeMode="contain"
-                  accessibilityLabel="ReactGauge Logo"
+                  accessibilityLabel={t('login.logoAlt')}
                 />
               </View>
             ) : null}
           </View>
 
           <View style={styles.topicCard}>
-            <Text style={styles.topicHeading}>By Topic</Text>
+            <Text style={styles.topicHeading}>{t('score.byTopic')}</Text>
             {topicStats.map((stat) => {
               const progress = stat.total ? stat.correct / stat.total : 0;
+              const topicLabel =
+                stat.topic === 'General' ? t('score.generalTopic') : stat.topic;
               return (
                 <View key={stat.topic} style={styles.topicRow}>
                   <View style={styles.topicHeader}>
-                    <Text style={styles.topicTitle}>{stat.topic}</Text>
+                    <Text style={styles.topicTitle}>{topicLabel}</Text>
                     <Text style={styles.topicCount}>
                       {stat.correct}/{stat.total}
                     </Text>
@@ -157,7 +164,7 @@ export const ScoreScreen: React.FC<ScoreScreenProps> = ({
             <View style={styles.buttonIconWrapper}>
               <IconArrowPath size={iconSize} color={colors.textOnPrimary} />
             </View>
-            <Text style={styles.primaryText}>Retake Quiz</Text>
+            <Text style={styles.primaryText}>{t('common.actions.retakeQuiz')}</Text>
           </View>
         </Pressable>
         <Pressable
@@ -168,7 +175,7 @@ export const ScoreScreen: React.FC<ScoreScreenProps> = ({
             <View style={styles.buttonIconWrapper}>
               <IconDocumentText size={iconSize} color={colors.primary} />
             </View>
-            <Text style={styles.secondaryText}>Review Answers</Text>
+            <Text style={styles.secondaryText}>{t('common.actions.reviewAnswers')}</Text>
           </View>
         </Pressable>
         <Pressable
@@ -179,7 +186,7 @@ export const ScoreScreen: React.FC<ScoreScreenProps> = ({
             <View style={styles.buttonIconWrapper}>
               <IconHome size={iconSize} color={colors.surface} />
             </View>
-            <Text style={styles.tertiaryText}>Back to Home</Text>
+            <Text style={styles.tertiaryText}>{t('common.actions.backHome')}</Text>
           </View>
         </Pressable>
         <Pressable
@@ -195,7 +202,9 @@ export const ScoreScreen: React.FC<ScoreScreenProps> = ({
             <View style={styles.buttonIconWrapper}>
               <IconShare size={iconSize} color={colors.surface} />
             </View>
-            <Text style={styles.shareText}>{sharing ? 'Preparing…' : 'Share Scorecard'}</Text>
+            <Text style={styles.shareText}>
+              {sharing ? t('common.actions.preparing') : t('common.actions.shareScorecard')}
+            </Text>
           </View>
         </Pressable>
       </View>

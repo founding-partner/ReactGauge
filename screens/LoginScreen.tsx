@@ -9,6 +9,7 @@ import {
   View,
   ViewProps,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { colors, radius, spacing, typography } from '../components';
 import { IconLockClosed, IconBeaker } from '../components/icons';
 import { useAppStore } from '../store/useAppStore';
@@ -27,6 +28,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
   ...rest
 }) => {
   const iconSize = useAppStore((state) => state.iconSize);
+  const { t } = useTranslation();
 
   return (
     <ScrollView
@@ -40,13 +42,10 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
           source={require('../app.png')}
           style={styles.logoImage}
           resizeMode="contain"
-          accessibilityLabel="React Gauge Logo"
+          accessibilityLabel={t('login.logoAlt')}
         />
-        <Text style={styles.title}>Level up your React skills</Text>
-        <Text style={styles.subtitle}>
-          Take curated quizzes, review detailed explanations, and track your
-          growth as a React engineer.
-        </Text>
+        <Text style={styles.title}>{t('login.heroTitle')}</Text>
+        <Text style={styles.subtitle}>{t('login.heroSubtitle')}</Text>
       </View>
 
       <View style={styles.actions}>
@@ -68,7 +67,9 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                 <View style={styles.buttonIconWrapper}>
                   <IconLockClosed size={iconSize} color={colors.background} />
                 </View>
-                <Text style={styles.signInText}>Continue with GitHub</Text>
+                <Text style={styles.signInText}>
+                  {t('common.actions.continueGitHub')}
+                </Text>
               </View>
           )}
         </Pressable>
@@ -86,31 +87,33 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
             <View style={styles.buttonIconWrapper}>
               <IconBeaker size={iconSize} color={colors.surface} />
             </View>
-            <Text style={styles.guestButtonText}>Continue as Guest</Text>
+            <Text style={styles.guestButtonText}>
+              {t('common.actions.continueGuest')}
+            </Text>
           </View>
         </Pressable>
       </View>
 
       <View style={styles.callouts}>
         <View style={styles.callout}>
-          <Text style={styles.calloutTitle}>Curated Questions</Text>
+          <Text style={styles.calloutTitle}>
+            {t('login.callouts.curatedTitle')}
+          </Text>
           <Text style={styles.calloutBody}>
-            Each quiz pulls directly from GitHub to keep content fresh and
-            relevant.
+            {t('login.callouts.curatedBody')}
           </Text>
         </View>
         <View style={styles.callout}>
-          <Text style={styles.calloutTitle}>Offline Friendly</Text>
+          <Text style={styles.calloutTitle}>
+            {t('login.callouts.offlineTitle')}
+          </Text>
           <Text style={styles.calloutBody}>
-            Cache questions and results so you can practice anytime, anywhere.
+            {t('login.callouts.offlineBody')}
           </Text>
         </View>
       </View>
 
-      <Text style={styles.disclaimer}>
-        GitHub login is used only to personalize your experience. We never post
-        on your behalf.
-      </Text>
+      <Text style={styles.disclaimer}>{t('login.disclaimer')}</Text>
     </ScrollView>
   );
 };

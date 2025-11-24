@@ -8,9 +8,11 @@ import {
   View,
   ViewProps,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { colors, radius, spacing, typography } from '../components';
 import { QuizAttempt } from '../types/history';
 import { IconArrowLeft, IconArrowRight } from '../components/icons';
+import { Difficulty } from '../store/useAppStore';
 
 export interface HistoryScreenProps extends ViewProps {
   attempts: QuizAttempt[];
@@ -27,17 +29,18 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
   style,
   ...rest
 }) => {
+  const { t } = useTranslation();
   const handleClear = () => {
     if (attempts.length === 0) {
       return;
     }
     Alert.alert(
-      'Clear quiz history',
-      'This will permanently remove all saved attempts. Continue?',
+      t('alerts.clearHistoryTitle'),
+      t('alerts.clearHistoryBody'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.actions.cancel'), style: 'cancel' },
         {
-          text: 'Clear',
+          text: t('common.actions.clear'),
           style: 'destructive',
           onPress: onClearHistory,
         },
@@ -50,15 +53,15 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
       <View style={styles.header}>
         <Pressable style={styles.backButton} onPress={onClose}>
           <IconArrowLeft size={20} color={colors.surface} />
-          <Text style={styles.backButtonText}>Back</Text>
+          <Text style={styles.backButtonText}>{t('common.actions.back')}</Text>
         </Pressable>
-        <Text style={styles.title}>Quiz History</Text>
+        <Text style={styles.title}>{t('history.title')}</Text>
         <Pressable
           style={[styles.clearButton, attempts.length === 0 && styles.clearButtonDisabled]}
           onPress={handleClear}
           disabled={attempts.length === 0}
         >
-          <Text style={styles.clearButtonText}>Clear</Text>
+          <Text style={styles.clearButtonText}>{t('common.actions.clear')}</Text>
         </Pressable>
       </View>
 
@@ -69,9 +72,9 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         ListEmptyComponent={() => (
           <View style={styles.emptyState}>
-            <Text style={styles.emptyTitle}>No attempts yet</Text>
+            <Text style={styles.emptyTitle}>{t('history.emptyTitle')}</Text>
             <Text style={styles.emptySubtitle}>
-              Complete a quiz to see your history here.
+              {t('history.emptySubtitle')}
             </Text>
           </View>
         )}
@@ -85,7 +88,9 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
           >
             <View style={styles.attemptHeader}>
               <View style={styles.attemptMeta}>
-                <Text style={styles.attemptDifficulty}>{capitalize(item.difficulty)}</Text>
+                <Text style={styles.attemptDifficulty}>
+                  {t(difficultyLabelKeys[item.difficulty])}
+                </Text>
                 <Text style={styles.attemptTimestamp}>
                   {new Date(item.timestamp).toLocaleString()}
                 </Text>
@@ -98,7 +103,10 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
             </View>
             <View style={styles.attemptFooter}>
               <Text style={styles.attemptDetail}>
-                {item.userMode === 'guest' ? 'Guest' : item.userLogin} · Streak {item.streak}
+                {item.userMode === 'guest'
+                  ? t('history.guestAttempt')
+                  : item.userLogin}{' '}
+                · {t('history.streak', { count: item.streak })}
               </Text>
               <IconArrowRight size={18} color={colors.textSecondary} />
             </View>
@@ -109,9 +117,16 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
   );
 };
 
-function capitalize(value: string) {
-  return value.charAt(0).toUpperCase() + value.slice(1);
-}
+const difficultyLabelKeys: Record<
+  Difficulty,
+  | 'common.difficulties.easy'
+  | 'common.difficulties.medium'
+  | 'common.difficulties.hard'
+> = {
+  easy: 'common.difficulties.easy',
+  medium: 'common.difficulties.medium',
+  hard: 'common.difficulties.hard',
+};
 
 const styles = StyleSheet.create({
   container: {

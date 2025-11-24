@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View, ViewProps } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import ConfettiCannon from 'react-native-confetti-cannon';
 import {
   IconArrowPath,
@@ -22,6 +23,7 @@ import {
 } from '../components';
 import { Question } from '../types/quiz';
 import { useAppStore } from '../store/useAppStore';
+import { SupportedLanguageCode, supportedLanguages } from '../localization/i18n';
 
 export interface HomeScreenProps extends ViewProps {
   username: string;
@@ -40,6 +42,8 @@ export interface HomeScreenProps extends ViewProps {
   streakDays: number;
   completionRatio: number;
   onOpenHistory: () => void;
+  language: SupportedLanguageCode;
+  onChangeLanguage: (language: SupportedLanguageCode) => void;
 }
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({
@@ -59,6 +63,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   streakDays,
   completionRatio,
   onOpenHistory,
+  language,
+  onChangeLanguage,
   style,
   ...rest
 }) => {
@@ -67,24 +73,26 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   const [showConfetti, setShowConfetti] = useState(false);
   const options = useMemo(() => warmupQuestion.options, [warmupQuestion]);
   const iconSize = useAppStore((state) => state.iconSize);
+  const { t } = useTranslation();
 
   useEffect(() => {
     setSelectedOption(null);
     setShowConfetti(false);
   }, [warmupQuestion.id]);
 
+  const greeting = t('home.welcome', { name: displayName ?? username });
   const subtitle = isGuest
-    ? 'You are exploring ReactGauge in guest mode. Sign in to track your growth.'
-    : 'Tune your React instincts with fresh questions each session.';
+    ? t('home.subtitleGuest')
+    : t('home.subtitleSignedIn');
 
   const streakLabel = isGuest
-    ? 'Guest mode'
-    : `${streakDays} day streak`;
+    ? t('common.guestMode')
+    : t('common.streakDays', { count: Math.max(streakDays, 0) });
 
   return (
     <View style={[styles.container, style]} {...rest}>
       <QuizHeader
-        title={`Welcome back, ${displayName ?? username}`}
+        title={greeting}
         subtitle={subtitle}
         avatarUri={avatarUrl}
         initials={getInitials(displayName ?? username)}
@@ -93,13 +101,45 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         timeRemainingLabel={streakLabel}
       />
 
+      {/* <View style={styles.languageSection}>
+        <Text style={styles.languageLabel}>{t('home.languageLabel')}</Text>
+        <View style={styles.languageRow}>
+          {supportedLanguages.map((entry) => {
+            const isActive = entry.code === language;
+            return (
+              <Pressable
+                key={entry.code}
+                accessibilityRole="button"
+                accessibilityState={{ selected: isActive }}
+                style={({ pressed }) => [
+                  styles.languageChip,
+                  isActive && styles.languageChipActive,
+                  pressed && styles.languageChipPressed,
+                ]}
+                onPress={() => {
+                  if (!isActive) {
+                    onChangeLanguage(entry.code);
+                  }
+                }}
+              >
+                <Text
+                  style={[
+                    styles.languageChipText,
+                    isActive && styles.languageChipTextActive,
+                  ]}
+                >
+                  {entry.label}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
+      </View> */}
+
       {isGuest ? (
         <View style={styles.guestCard}>
-          <Text style={styles.guestTitle}>Guest mode enabled</Text>
-          <Text style={styles.guestBody}>
-            Your progress will reset when you leave. Sign in with GitHub to save
-            results, earn streaks, and sync across devices.
-          </Text>
+          <Text style={styles.guestTitle}>{t('home.guestCardTitle')}</Text>
+          <Text style={styles.guestBody}>{t('home.guestCardBody')}</Text>
           {onRequestSignIn ? (
             <Pressable
               style={({ pressed }) => [
@@ -112,18 +152,20 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 <View style={styles.buttonIconWrapper}>
                   <IconShieldCheck size={iconSize} color={colors.surface} />
                 </View>
-                <Text style={styles.guestSignInText}>Sign in with GitHub</Text>
+                <Text style={styles.guestSignInText}>
+                  {t('common.actions.signIn')}
+                </Text>
               </View>
             </Pressable>
           ) : null}
         </View>
       ) : (
         <View style={styles.section}>
-          <Text style={styles.sectionHeading}>Progress Overview</Text>
-          <ProgressRow label="Questions answered" value={totalAnswered} />
-          <ProgressRow label="Correct answers" value={totalCorrect} />
+          <Text style={styles.sectionHeading}>{t('home.progressTitle')}</Text>
+          <ProgressRow label={t('home.progressAnswered')} value={totalAnswered} />
+          <ProgressRow label={t('home.progressCorrect')} value={totalCorrect} />
           <View style={styles.progressBlock}>
-            <Text style={styles.progressLabel}>Weekly completion</Text>
+            <Text style={styles.progressLabel}>{t('home.progressWeekly')}</Text>
             <ProgressBar
               progress={completionRatio}
               milestones={[0.25, 0.5, 0.75, 1]}
@@ -133,9 +175,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       )}
 
       <View style={styles.difficultyCard}>
-        <Text style={styles.sectionHeading}>Difficulty</Text>
+        <Text style={styles.sectionHeading}>{t('home.difficultyTitle')}</Text>
         <Text style={styles.difficultySubtext}>
-          Choose how many questions you want to tackle. Question bank currently holds {questionPoolSize} prompts.
+          {t('home.difficultyDescription', { count: questionPoolSize })}
         </Text>
         <View style={styles.difficultyRow}>
           {difficultyOptions.map((option) => (
@@ -169,7 +211,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                       difficulty === option.value && styles.difficultyChipTextActive,
                     ]}
                   >
-                    {option.label}
+                    {t(difficultyTranslationKeys[option.value])}
                   </Text>
                   <Text
                     style={[
@@ -177,7 +219,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                       difficulty === option.value && styles.difficultyChipTextActive,
                     ]}
                   >
-                    {option.count} Qs
+                    {t('home.difficultyCountLabel', { count: option.count })}
                   </Text>
                 </View>
               </View>
@@ -197,7 +239,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               <View style={styles.buttonIconWrapper}>
                 <IconPlayCircle size={iconSize} color={colors.textOnPrimary} />
               </View>
-              <Text style={styles.ctaText}>Start Today&apos;s Quiz</Text>
+              <Text style={styles.ctaText}>{t('common.actions.startQuiz')}</Text>
             </View>
           </Pressable>
 
@@ -212,14 +254,14 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               <View style={styles.buttonIconWrapper}>
                 <IconDocumentText size={iconSize} color={colors.primary} />
               </View>
-              <Text style={styles.historyButtonText}>View History</Text>
+              <Text style={styles.historyButtonText}>{t('common.actions.viewHistory')}</Text>
             </View>
           </Pressable>
         </View>
       </View>
 
       <QuestionCard
-        title="Daily Warm-up"
+        title={t('home.warmupTitle')}
         description={warmupQuestion.description}
         codeSnippet={warmupQuestion.code}
         footer={
@@ -239,7 +281,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 <View style={styles.buttonIconWrapper}>
                   <IconArrowPath size={iconSize} color={colors.primary} />
                 </View>
-                <Text style={styles.refreshButtonText}>Try Different Question</Text>
+                <Text style={styles.refreshButtonText}>{t('common.actions.refreshQuestion')}</Text>
               </View>
             </Pressable>
           </View>
@@ -279,8 +321,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         {selectedOption != null ? (
           <Text style={styles.warmupFeedback}>
             {selectedOption === warmupQuestion.answerIndex
-              ? 'Great job! You nailed it.'
-              : 'Not quite right—review the explanation and take another shot.'}
+              ? t('home.warmupSuccess')
+              : t('home.warmupRetry')}
           </Text>
         ) : null}
       </QuestionCard>
@@ -317,10 +359,21 @@ const ProgressRow = ({
 };
 
 const difficultyOptions = [
-  { value: 'easy' as const, label: 'Easy', count: 10 },
-  { value: 'medium' as const, label: 'Medium', count: 25 },
-  { value: 'hard' as const, label: 'Hard', count: 50 },
+  { value: 'easy' as const, count: 10 },
+  { value: 'medium' as const, count: 25 },
+  { value: 'hard' as const, count: 50 },
 ];
+
+const difficultyTranslationKeys: Record<
+  (typeof difficultyOptions)[number]['value'],
+  | 'common.difficulties.easy'
+  | 'common.difficulties.medium'
+  | 'common.difficulties.hard'
+> = {
+  easy: 'common.difficulties.easy',
+  medium: 'common.difficulties.medium',
+  hard: 'common.difficulties.hard',
+};
 
 const difficultyIconMap = {
   easy: IconSparkles,
@@ -343,6 +396,49 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 6,
+  },
+  languageSection: {
+    backgroundColor: colors.surface,
+    borderRadius: radius.md,
+    padding: spacing.lg,
+    gap: spacing.sm,
+    elevation: 1,
+  },
+  languageLabel: {
+    ...typography.caption,
+    color: colors.textSecondary,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  languageRow: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
+  languageChip: {
+    flex: 1,
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    borderColor: colors.border,
+    paddingVertical: spacing.sm,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  languageChipActive: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+  },
+  languageChipPressed: {
+    backgroundColor: 'rgba(37, 99, 235, 0.08)',
+  },
+  languageChipText: {
+    ...typography.caption,
+    color: colors.textPrimary,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    fontWeight: '600',
+  },
+  languageChipTextActive: {
+    color: colors.textOnPrimary,
   },
   sectionHeading: {
     ...typography.heading,

@@ -7,9 +7,11 @@ import {
   ViewProps,
   Pressable,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { colors, radius, spacing, typography } from '../components';
 import { QuizAttempt } from '../types/history';
 import { IconArrowLeft } from '../components/icons';
+import { Difficulty } from '../store/useAppStore';
 
 export interface HistoryDetailScreenProps extends ViewProps {
   attempt: QuizAttempt;
@@ -25,15 +27,16 @@ export const HistoryDetailScreen: React.FC<HistoryDetailScreenProps> = ({
   const answerLookup = useMemo(() => {
     return new Map(attempt.answers.map((answer) => [answer.questionId, answer]));
   }, [attempt.answers]);
+  const { t } = useTranslation();
 
   return (
     <View style={[styles.container, style]} {...rest}>
       <View style={styles.header}>
         <Pressable style={styles.backButton} onPress={onClose}>
           <IconArrowLeft size={20} color={colors.surface} />
-          <Text style={styles.backButtonText}>Back</Text>
+          <Text style={styles.backButtonText}>{t('common.actions.back')}</Text>
         </Pressable>
-        <Text style={styles.title}>Attempt Details</Text>
+        <Text style={styles.title}>{t('historyDetail.title')}</Text>
         <View style={styles.scorePill}>
           <Text style={styles.scoreText}>
             {attempt.score.correct}/{attempt.score.total}
@@ -42,14 +45,20 @@ export const HistoryDetailScreen: React.FC<HistoryDetailScreenProps> = ({
       </View>
 
       <View style={styles.metaRow}>
-        <Text style={styles.metaPrimary}>{formatDifficulty(attempt.difficulty)}</Text>
+        <Text style={styles.metaPrimary}>
+          {t(difficultyLabelKeys[attempt.difficulty])}
+        </Text>
         <Text style={styles.metaSecondary}>{new Date(attempt.timestamp).toLocaleString()}</Text>
       </View>
       <View style={styles.metaRow}>
         <Text style={styles.metaSecondary}>
-          {attempt.userMode === 'guest' ? 'Guest attempt' : `Signed in as ${attempt.userLogin}`}
+          {attempt.userMode === 'guest'
+            ? t('historyDetail.guestAttempt')
+            : t('historyDetail.signedInAs', { user: attempt.userLogin })}
         </Text>
-        <Text style={styles.metaSecondary}>Streak {attempt.streak}</Text>
+        <Text style={styles.metaSecondary}>
+          {t('historyDetail.streak', { count: attempt.streak })}
+        </Text>
       </View>
 
       <ScrollView
@@ -82,14 +91,16 @@ export const HistoryDetailScreen: React.FC<HistoryDetailScreenProps> = ({
                     >
                       <Text style={[styles.optionText, status.text]}>{option}</Text>
                       {status.label ? (
-                        <Text style={[styles.optionBadge, status.badge]}>{status.label}</Text>
+                        <Text style={[styles.optionBadge, status.badge]}>
+                          {t(status.label)}
+                        </Text>
                       ) : null}
                     </View>
                   );
                 })}
               </View>
               <View style={styles.answerSummary}>
-                <Text style={styles.answerLabel}>Your answer</Text>
+                <Text style={styles.answerLabel}>{t('historyDetail.labels.yourAnswer')}</Text>
                 <Text
                   style={[
                     styles.answerValue,
@@ -102,14 +113,14 @@ export const HistoryDetailScreen: React.FC<HistoryDetailScreenProps> = ({
                 </Text>
               </View>
               <View style={styles.answerSummary}>
-                <Text style={styles.answerLabel}>Correct answer</Text>
+                <Text style={styles.answerLabel}>{t('historyDetail.labels.correctAnswer')}</Text>
                 <Text style={[styles.answerValue, styles.answerValueCorrect]}>
                   {question.options[question.answerIndex]}
                 </Text>
               </View>
               {question.explanation ? (
                 <View style={styles.explanationBox}>
-                  <Text style={styles.answerLabel}>Explanation</Text>
+                  <Text style={styles.answerLabel}>{t('historyDetail.labels.explanation')}</Text>
                   <Text style={styles.explanationText}>{question.explanation}</Text>
                 </View>
               ) : null}
@@ -121,16 +132,12 @@ export const HistoryDetailScreen: React.FC<HistoryDetailScreenProps> = ({
   );
 };
 
-function formatDifficulty(value: string) {
-  return value.charAt(0).toUpperCase() + value.slice(1);
-}
-
 function deriveOptionStatus(isSelected: boolean, isCorrect: boolean) {
   if (isCorrect && isSelected) {
     return {
       container: styles.optionCorrect,
       text: styles.optionTextCorrect,
-      label: 'Correct',
+      label: 'historyDetail.badges.correct',
       badge: styles.badgePositive,
     };
   }
@@ -139,7 +146,7 @@ function deriveOptionStatus(isSelected: boolean, isCorrect: boolean) {
     return {
       container: styles.optionHighlight,
       text: styles.optionTextCorrect,
-      label: 'Answer',
+      label: 'historyDetail.badges.answer',
       badge: styles.badgeNeutral,
     };
   }
@@ -148,7 +155,7 @@ function deriveOptionStatus(isSelected: boolean, isCorrect: boolean) {
     return {
       container: styles.optionIncorrect,
       text: styles.optionTextIncorrect,
-      label: 'Your pick',
+      label: 'historyDetail.badges.yourPick',
       badge: styles.badgeWarning,
     };
   }
@@ -333,5 +340,16 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
   },
 });
+
+const difficultyLabelKeys: Record<
+  Difficulty,
+  | 'common.difficulties.easy'
+  | 'common.difficulties.medium'
+  | 'common.difficulties.hard'
+> = {
+  easy: 'common.difficulties.easy',
+  medium: 'common.difficulties.medium',
+  hard: 'common.difficulties.hard',
+};
 
 export default HistoryDetailScreen;

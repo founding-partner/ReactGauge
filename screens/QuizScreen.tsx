@@ -10,6 +10,7 @@ import {
   ViewProps,
   Easing,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import ConfettiCannon from 'react-native-confetti-cannon';
 import {
   IconArrowLeft,
@@ -63,6 +64,7 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
   const insets = useSafeAreaInsets();
   const [explanationVisible, setExplanationVisible] = useState(false);
   const explanationAnim = useRef(new Animated.Value(0)).current;
+  const { t } = useTranslation();
 
   const currentQuestion = questions[currentIndex];
   const totalQuestions = questions.length;
@@ -70,10 +72,8 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
   if (questions.length === 0) {
     return (
       <View style={[styles.root, style, styles.emptyState]} {...rest}>
-        <Text style={styles.emptyTitle}>No questions available</Text>
-        <Text style={styles.emptySubtitle}>
-          Add questions to the bank or choose a different difficulty to begin.
-        </Text>
+        <Text style={styles.emptyTitle}>{t('quiz.emptyTitle')}</Text>
+        <Text style={styles.emptySubtitle}>{t('quiz.emptySubtitle')}</Text>
       </View>
     );
   }
@@ -235,12 +235,12 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
             { color: isCorrect ? colors.success : '#EF4444' },
           ]}
         >
-          {isCorrect ? 'Correct!' : 'Let’s review'}
+          {isCorrect ? t('quiz.explanationCorrect') : t('quiz.explanationReview')}
         </Text>
         <Text style={styles.explanationQuestion}>{currentQuestion.prompt}</Text>
         <View style={styles.explanationAnswers}>
           <View style={styles.answerRow}>
-            <Text style={styles.answerLabel}>Your answer</Text>
+            <Text style={styles.answerLabel}>{t('quiz.yourAnswer')}</Text>
             <Text
               style={[
                 styles.answerValue,
@@ -253,7 +253,7 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
             </Text>
           </View>
           <View style={styles.answerRow}>
-            <Text style={styles.answerLabel}>Correct answer</Text>
+            <Text style={styles.answerLabel}>{t('quiz.correctAnswer')}</Text>
             <Text
               style={[styles.answerValue, styles.answerValueCorrect]}
             >
@@ -266,7 +266,7 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
           style={styles.dismissButton}
           onPress={handleDismissExplanation}
         >
-          <Text style={styles.dismissButtonText}>Okay</Text>
+          <Text style={styles.dismissButtonText}>{t('quiz.dismiss')}</Text>
         </Pressable>
       </Animated.View>
     );
@@ -313,13 +313,20 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
         {...rest}
       >
         <QuizHeader
-          title="React Mastery Quiz"
-          subtitle={`Question ${currentIndex + 1} of ${totalQuestions}`}
+          title={t('quiz.title')}
+          subtitle={t('quiz.subtitle', {
+            current: currentIndex + 1,
+            total: totalQuestions,
+          })}
           avatarUri={avatarUrl}
           initials={getInitials(username)}
           currentQuestion={currentIndex + 1}
           totalQuestions={totalQuestions}
-          timeRemainingLabel={isGuest ? 'Guest mode' : `${streakDays} day streak`}
+          timeRemainingLabel={
+            isGuest
+              ? t('common.guestMode')
+              : t('common.streakDays', { count: Math.max(streakDays, 0) })
+          }
         />
 
         <ProgressBar progress={progress} milestones={milestones} />
@@ -367,7 +374,9 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
                 <IconArrowLeft size={iconSize} color={colors.primary} />
               )}
               <Text style={styles.secondaryButtonText}>
-                {currentIndex === 0 ? 'Exit' : 'Previous'}
+                {currentIndex === 0
+                  ? t('common.actions.exit')
+                  : t('common.actions.previous')}
               </Text>
             </View>
           </Pressable>
@@ -390,7 +399,11 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
                 <IconCheck size={iconSize} color={colors.textOnPrimary} />
               )}
               <Text style={styles.primaryButtonText}>
-                {submitted ? (isLastQuestion ? 'Finish' : 'Next') : 'Submit'}
+                {submitted
+                  ? isLastQuestion
+                    ? t('common.actions.finish')
+                    : t('common.actions.next')
+                  : t('common.actions.submit')}
               </Text>
             </View>
           </Pressable>

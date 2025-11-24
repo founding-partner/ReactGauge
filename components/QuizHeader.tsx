@@ -7,6 +7,7 @@ import {
   View,
   ViewProps,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { colors, radius, spacing, typography } from './theme';
 
 export interface QuizHeaderProps extends ViewProps {
@@ -32,11 +33,14 @@ export const QuizHeader: React.FC<QuizHeaderProps> = ({
   style,
   ...rest
 }) => {
+  const { t } = useTranslation();
+  const fallbackInitials = t('common.userInitials');
+
   return (
     <View style={[styles.container, style]} {...rest}>
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel="User profile"
+        accessibilityLabel={t('common.userProfile')}
         onPress={onAvatarPress}
         disabled={!onAvatarPress}
         style={styles.avatarWrapper}
@@ -45,7 +49,7 @@ export const QuizHeader: React.FC<QuizHeaderProps> = ({
           <Image source={{ uri: avatarUri }} style={styles.avatarImage} />
         ) : (
           <View style={styles.avatarFallback}>
-            <Text style={styles.avatarInitials}>{initials ?? 'YOU'}</Text>
+            <Text style={styles.avatarInitials}>{initials ?? fallbackInitials}</Text>
           </View>
         )}
       </Pressable>

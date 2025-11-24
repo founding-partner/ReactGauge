@@ -1,5 +1,6 @@
 import React from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { CodeBlock, colors, radius, spacing, typography } from '../components';
 import { AnswerRecord, Question } from '../types/quiz';
 
@@ -23,6 +24,7 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
   const totalQuestions = questions.length;
   const correctCount = answers.filter((answer) => answer.isCorrect).length;
   const percentage = Math.round((correctCount / totalQuestions) * 100);
+  const { t } = useTranslation();
 
   return (
     <ScrollView
@@ -31,9 +33,9 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
       showsVerticalScrollIndicator={false}
     >
       <View style={styles.headerCard}>
-        <Text style={styles.title}>Quiz Complete</Text>
+        <Text style={styles.title}>{t('result.title')}</Text>
         <Text style={styles.subtitle}>
-          You answered {correctCount} out of {totalQuestions} questions correctly.
+          {t('result.subtitle', { correct: correctCount, total: totalQuestions })}
         </Text>
         <View style={styles.scorePill}>
           <Text style={styles.scorePillValue}>{percentage}</Text>
@@ -43,30 +45,33 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
 
       <View style={styles.actions}>
         <Pressable style={styles.primaryButton} onPress={onRetry}>
-          <Text style={styles.primaryButtonText}>Retake Quiz</Text>
+          <Text style={styles.primaryButtonText}>
+            {t('common.actions.retakeQuiz')}
+          </Text>
         </Pressable>
         <Pressable style={styles.secondaryButton} onPress={onClose}>
-          <Text style={styles.secondaryButtonText}>Back to Home</Text>
+          <Text style={styles.secondaryButtonText}>
+            {t('common.actions.backHome')}
+          </Text>
         </Pressable>
       </View>
 
       {isGuest ? (
         <View style={styles.guestNotice}>
-          <Text style={styles.guestHeading}>Guest mode reminder</Text>
-          <Text style={styles.guestBody}>
-            Results aren&apos;t stored while in guest mode. Sign in to keep your
-            streaks, sync across devices, and unlock detailed progress analytics.
-          </Text>
+          <Text style={styles.guestHeading}>{t('result.guestTitle')}</Text>
+          <Text style={styles.guestBody}>{t('result.guestBody')}</Text>
           {onRequestSignIn ? (
             <Pressable style={styles.guestButton} onPress={onRequestSignIn}>
-              <Text style={styles.guestButtonText}>Sign in with GitHub</Text>
+              <Text style={styles.guestButtonText}>
+                {t('common.actions.signIn')}
+              </Text>
             </Pressable>
           ) : null}
         </View>
       ) : null}
 
       <View style={styles.reviewCard}>
-        <Text style={styles.reviewTitle}>Review answers</Text>
+        <Text style={styles.reviewTitle}>{t('result.reviewTitle')}</Text>
         {questions.map((question) => {
           const answer = answers.find(
             (entry) => entry.questionId === question.id,
@@ -93,23 +98,23 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
                 ]}
               >
                 <Text style={styles.badgeText}>
-                  {isCorrect ? 'Correct' : 'Incorrect'}
+                  {isCorrect ? t('result.badgeCorrect') : t('result.badgeIncorrect')}
                 </Text>
               </View>
 
-              <Text style={styles.label}>Your answer:</Text>
+              <Text style={styles.label}>{t('result.yourAnswer')}</Text>
               <Text style={styles.answerText}>{selectedOption}</Text>
 
               {!isCorrect ? (
                 <>
-                  <Text style={styles.label}>Correct answer:</Text>
+                  <Text style={styles.label}>{t('result.correctAnswer')}</Text>
                   <Text style={styles.correctAnswerText}>{correctOption}</Text>
                 </>
               ) : null}
 
               {question.explanation ? (
                 <>
-                  <Text style={styles.label}>Explanation:</Text>
+                  <Text style={styles.label}>{t('result.explanation')}</Text>
                   <Text style={styles.explanation}>
                     {question.explanation}
                   </Text>

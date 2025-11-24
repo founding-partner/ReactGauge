@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import questionsData from '../data/questions.json';
 import { AnswerRecord, Question } from '../types/quiz';
+import { SupportedLanguageCode, fallbackLanguage } from '../localization/i18n';
 
 export type Difficulty = 'easy' | 'medium' | 'hard';
 
@@ -14,6 +15,7 @@ type AppStore = {
   allQuestions: Question[];
   difficulty: Difficulty;
   iconSize: number;
+  language: SupportedLanguageCode;
   activeQuestions: Question[];
   completedQuestions: Question[];
   quizAnswers: AnswerRecord[];
@@ -24,6 +26,7 @@ type AppStore = {
   setActiveQuestions: (questions: Question[]) => void;
   setCompletedQuestions: (questions: Question[]) => void;
   setQuizAnswers: (answers: AnswerRecord[]) => void;
+  setLanguage: (language: SupportedLanguageCode) => void;
   refreshWarmupQuestion: () => void;
   pickQuestionsForDifficulty: (difficulty: Difficulty) => Question[];
 };
@@ -55,6 +58,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
   allQuestions: localQuestions,
   difficulty: 'easy',
   iconSize: DEFAULT_ICON_SIZE,
+  language: fallbackLanguage,
   activeQuestions: [],
   completedQuestions: [],
   quizAnswers: [],
@@ -69,6 +73,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
   setActiveQuestions: (questions) => set({ activeQuestions: questions }),
   setCompletedQuestions: (questions) => set({ completedQuestions: questions }),
   setQuizAnswers: (answers) => set({ quizAnswers: answers }),
+  setLanguage: (language) => set({ language }),
   refreshWarmupQuestion: () => {
     const questions = get().allQuestions;
     const next = pickRandomQuestion(questions);
