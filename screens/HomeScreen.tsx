@@ -5,6 +5,7 @@ import ConfettiCannon from 'react-native-confetti-cannon';
 import {
   IconArrowPath,
   IconFire,
+  IconArrowLeftOnRectangle,
   IconPlayCircle,
   IconRocketLaunch,
   IconShieldCheck,
@@ -42,6 +43,8 @@ export interface HomeScreenProps extends ViewProps {
   streakDays: number;
   completionRatio: number;
   onOpenHistory: () => void;
+  onSignOut: () => void;
+  onResetData: () => void;
   language: SupportedLanguageCode;
   onChangeLanguage: (language: SupportedLanguageCode) => void;
 }
@@ -63,6 +66,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   streakDays,
   completionRatio,
   onOpenHistory,
+  onSignOut,
+  onResetData,
   language,
   onChangeLanguage,
   style,
@@ -99,8 +104,54 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         currentQuestion={Math.max(1, Math.round(completionRatio * 10))}
         totalQuestions={10}
         timeRemainingLabel={streakLabel}
+        showProgress={false}
       />
-
+      {!isGuest && (
+        <View style={styles.sessionActions}>
+          <Pressable
+            style={({ pressed }) => [
+              styles.sessionButton,
+              pressed && styles.sessionButtonPressed,
+            ]}
+            onPress={onResetData}
+          >
+            <View style={styles.buttonRow}>
+              <View style={[styles.sessionIconWrapper, styles.resetIconBg]}>
+                <IconArrowPath size={iconSize} color={colors.primary} />
+              </View>
+              <View style={styles.sessionTextGroup}>
+                <Text style={styles.sessionButtonTitle}>
+                  {t('common.actions.resetData')}
+                </Text>
+                <Text style={styles.sessionButtonSubtitle}>
+                  {t('home.resetDataSubtitle')}
+                </Text>
+              </View>
+            </View>
+          </Pressable>
+          <Pressable
+            style={({ pressed }) => [
+              styles.sessionButton,
+              pressed && styles.sessionButtonPressed,
+            ]}
+            onPress={onSignOut}
+          >
+            <View style={styles.buttonRow}>
+              <View style={[styles.sessionIconWrapper, styles.signOutIconBg]}>
+                <IconArrowLeftOnRectangle size={iconSize} color={colors.danger} />
+              </View>
+              <View style={styles.sessionTextGroup}>
+                <Text style={styles.sessionButtonTitle}>
+                  {t('common.actions.signOut')}
+                </Text>
+                <Text style={styles.sessionButtonSubtitle}>
+                  {t('home.signOutSubtitle')}
+                </Text>
+              </View>
+            </View>
+          </Pressable>
+        </View>
+      )}
       {/* <View style={styles.languageSection}>
         <Text style={styles.languageLabel}>{t('home.languageLabel')}</Text>
         <View style={styles.languageRow}>
@@ -385,6 +436,53 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     gap: spacing.xl,
+  },
+  sessionActions: {
+    flexDirection: 'row',
+    gap: spacing.md,
+  },
+  sessionButton: {
+    flex: 1,
+    backgroundColor: colors.surface,
+    borderRadius: radius.md,
+    padding: spacing.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+    shadowColor: colors.background,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 4,
+    elevation: 1,
+  },
+  sessionButtonPressed: {
+    backgroundColor: 'rgba(148, 163, 184, 0.12)',
+  },
+  sessionIconWrapper: {
+    width: 40,
+    height: 40,
+    borderRadius: radius.lg,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: spacing.sm,
+  },
+  resetIconBg: {
+    backgroundColor: 'rgba(37, 99, 235, 0.08)',
+  },
+  signOutIconBg: {
+    backgroundColor: 'rgba(220, 38, 38, 0.1)',
+  },
+  sessionTextGroup: {
+    flexShrink: 1,
+    gap: spacing.xs / 2,
+  },
+  sessionButtonTitle: {
+    ...typography.body,
+    color: colors.textPrimary,
+    fontWeight: '700',
+  },
+  sessionButtonSubtitle: {
+    ...typography.subheading,
+    color: colors.textSecondary,
   },
   section: {
     backgroundColor: colors.surface,

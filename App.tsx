@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import {
   Alert,
   ScrollView,
@@ -320,6 +320,89 @@ function App(): React.JSX.Element {
     setActiveScreen('quiz');
   };
 
+  const resetLocalQuizState = useCallback(() => {
+    setActiveScreen('home');
+    setActiveQuestions([]);
+    setCompletedQuestions([]);
+    setQuizAnswers([]);
+    setSelectedAttempt(null);
+  }, [
+    setActiveQuestions,
+    setActiveScreen,
+    setCompletedQuestions,
+    setQuizAnswers,
+    setSelectedAttempt,
+  ]);
+
+  const performSignOut = useCallback(async () => {
+    resetLocalQuizState();
+    setHistoryAttempts([]);
+    setUser(null);
+    await saveUserProfile(null);
+    await clearHistoryStorage();
+    refreshWarmupQuestion();
+  }, [
+    refreshWarmupQuestion,
+    resetLocalQuizState,
+    setHistoryAttempts,
+    setUser,
+  ]);
+
+  const handleSignOut = () => {
+    Alert.alert(t('alerts.signOutTitle'), t('alerts.signOutBody'), [
+      { text: t('common.actions.cancel'), style: 'cancel' },
+      {
+        text: t('common.actions.signOut'),
+        style: 'destructive',
+        onPress: () => {
+          void performSignOut();
+        },
+      },
+    ]);
+  };
+
+  const performResetData = useCallback(async () => {
+    resetLocalQuizState();
+    setHistoryAttempts([]);
+    await clearHistoryStorage();
+    setUser((prev) => {
+      if (!prev) {
+        return prev;
+      }
+      const resetProfile: UserProfile = {
+        ...prev,
+        answered: 0,
+        correct: 0,
+        streak: 0,
+        completion: 0,
+      };
+      if (profileHydrated) {
+        void saveUserProfile(resetProfile);
+      }
+      return resetProfile;
+    });
+    refreshWarmupQuestion();
+  }, [
+    profileHydrated,
+    refreshWarmupQuestion,
+    resetLocalQuizState,
+    setHistoryAttempts,
+    setUser,
+  ]);
+
+  const handleResetData = () => {
+    Alert.alert(t('alerts.resetDataTitle'), t('alerts.resetDataBody'), [
+      { text: t('common.actions.cancel'), style: 'cancel' },
+      {
+        text: t('common.actions.resetData'),
+        style: 'destructive',
+        onPress: () => {
+          void performResetData();
+        },
+      },
+    ]);
+  };
+
   const handleCloseResults = () => {
     setActiveScreen('home');
   };
@@ -448,6 +531,8 @@ function App(): React.JSX.Element {
         streakDays={user.streak}
         completionRatio={user.completion}
         onOpenHistory={handleOpenHistory}
+        onSignOut={handleSignOut}
+        onResetData={handleResetData}
         language={language}
         onChangeLanguage={setLanguageCode}
       />

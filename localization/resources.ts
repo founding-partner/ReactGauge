@@ -18,10 +18,12 @@ export const resources = {
         actions: {
           back: 'Back',
           signIn: 'Sign in with GitHub',
+          signOut: 'Sign out',
           continueGitHub: 'Continue with GitHub',
           continueGuest: 'Continue as Guest',
           startQuiz: "Start Today's Quiz",
           viewHistory: 'View History',
+          resetData: 'Reset data',
           refreshQuestion: 'Try Different Question',
           retakeQuiz: 'Retake Quiz',
           reviewAnswers: 'Review Answers',
@@ -50,6 +52,12 @@ export const resources = {
         clearHistoryTitle: 'Clear quiz history',
         clearHistoryBody:
           'This will permanently remove all saved attempts. Continue?',
+        signOutTitle: 'Sign out?',
+        signOutBody:
+          'You will be returned to the login screen and local quiz data will be cleared.',
+        resetDataTitle: 'Reset your data?',
+        resetDataBody:
+          'This clears your saved history and resets your progress stats on this device.',
       },
       login: {
         heroTitle: 'Level up your React skills',
@@ -84,6 +92,8 @@ export const resources = {
         difficultyDescription:
           'Choose how many questions you want to tackle. Question bank currently holds {{count}} prompts.',
         difficultyCountLabel: '{{count}} Qs',
+        resetDataSubtitle: 'Clear stats and history on this device.',
+        signOutSubtitle: 'Return to login and remove local profile.',
         warmupTitle: 'Daily Warm-up',
         warmupSuccess: 'Great job! You nailed it.',
         warmupRetry:
@@ -169,10 +179,12 @@ export const resources = {
         actions: {
           back: 'Atrás',
           signIn: 'Inicia sesión con GitHub',
+          signOut: 'Cerrar sesión',
           continueGitHub: 'Continuar con GitHub',
           continueGuest: 'Continuar como invitado',
           startQuiz: 'Comienza el quiz de hoy',
           viewHistory: 'Ver historial',
+          resetData: 'Restablecer datos',
           refreshQuestion: 'Probar otra pregunta',
           retakeQuiz: 'Repetir quiz',
           reviewAnswers: 'Revisar respuestas',
@@ -201,6 +213,12 @@ export const resources = {
         clearHistoryTitle: 'Borrar historial de quizzes',
         clearHistoryBody:
           'Esto eliminará permanentemente todos los intentos guardados. ¿Deseas continuar?',
+        signOutTitle: '¿Cerrar sesión?',
+        signOutBody:
+          'Volverás a la pantalla de inicio de sesión y se borrarán los datos locales del quiz.',
+        resetDataTitle: '¿Restablecer tus datos?',
+        resetDataBody:
+          'Esto borrará el historial guardado y restablecerá tus estadísticas en este dispositivo.',
       },
       login: {
         heroTitle: 'Potencia tus habilidades de React',
@@ -235,6 +253,9 @@ export const resources = {
         difficultyDescription:
           'Elige cuántas preguntas quieres resolver. El banco actual tiene {{count}} preguntas.',
         difficultyCountLabel: '{{count}} preg.',
+        resetDataSubtitle: 'Borra estadísticas e historial en este dispositivo.',
+        signOutSubtitle:
+          'Regresa al inicio de sesión y elimina el perfil guardado localmente.',
         warmupTitle: 'Calentamiento diario',
         warmupSuccess: '¡Excelente trabajo! Lo lograste.',
         warmupRetry:
@@ -320,10 +341,12 @@ export const resources = {
         actions: {
           back: 'பின்னுக்கு',
           signIn: 'GitHub மூலம் உள்நுழை',
+          signOut: 'வெளியேறு',
           continueGitHub: 'GitHub மூலம் தொடரவும்',
           continueGuest: 'விருந்தினராக தொடரவும்',
           startQuiz: 'இன்றைய வினாடி வினாவைத் தொடங்குங்கள்',
           viewHistory: 'வரலாற்றைக் காண்க',
+          resetData: 'தரவை மீட்டமை',
           refreshQuestion: 'மற்றொரு கேள்வியை முயற்சி செய்',
           retakeQuiz: 'மீண்டும் வினாடி வினாவை செய்',
           reviewAnswers: 'பதில்களை பார்வையிடு',
@@ -352,6 +375,12 @@ export const resources = {
         clearHistoryTitle: 'வினாதாள் வரலாற்றை அழிக்கவும்',
         clearHistoryBody:
           'இது சேமிக்கப்பட்ட அனைத்து முயற்சிகளையும் நிரந்தரமாக நீக்கும். தொடர விரும்புகிறீர்களா?',
+        signOutTitle: 'வெளியேறவா?',
+        signOutBody:
+          'நீங்கள் உள்நுழைவு திரைக்கு திருப்பப்படுவீர்கள்; இந்த சாதனத்தில் உள்ள வினாதாள் தரவு அழிக்கப்படும்.',
+        resetDataTitle: 'தரவை மீட்டமைக்கவா?',
+        resetDataBody:
+          'இந்த சாதனத்தில் சேமித்துள்ள வரலாறும் முன்னேற்ற புள்ளிவிவரங்களும் மீட்டமைக்கப்படும்.',
       },
       login: {
         heroTitle: 'உங்கள் React திறன்களை மேம்படுத்துங்கள்',
@@ -386,6 +415,10 @@ export const resources = {
         difficultyDescription:
           'எத்தனை கேள்விகளை முயற்சி செய்ய விரும்புகிறீர்கள் என்பதைத் தேர்வு செய்யுங்கள். தற்போது {{count}} கேள்விகள் உள்ளன.',
         difficultyCountLabel: '{{count}} கேள்விகள்',
+        resetDataSubtitle:
+          'இந்த சாதனத்தில் உள்ள புள்ளிவிவரங்களையும் வரலாறையும் காலி செய்யவும்.',
+        signOutSubtitle:
+          'உள்நுழைவு திரைக்கு திரும்பி, இந்த சாதனத்தில் உள்ள சுயவிவரத்தை நீக்கவும்.',
         warmupTitle: 'தினசரி முன் பயிற்சி',
         warmupSuccess: 'அற்புதம்! நீங்கள் இதை முடித்துவிட்டீர்கள்.',
         warmupRetry:

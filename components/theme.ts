@@ -7,6 +7,7 @@ export const colors = {
   success: '#22C55E',
   warning: '#F97316',
   accent: '#FACC15',
+  danger: '#DC2626',
   border: '#CBD5F5',
   neutral: '#1E293B',
   textPrimary: '#0F172A',
@@ -42,6 +43,12 @@ export const typography = {
     fontWeight: '600' as const,
     fontSize: 20,
     lineHeight: 28,
+  },
+  subheading: {
+    fontFamily: PRIMARY_FONT,
+    fontWeight: '400' as const,
+    fontSize: 14,
+    lineHeight: 20,
   },
   body: {
     fontFamily: PRIMARY_FONT,

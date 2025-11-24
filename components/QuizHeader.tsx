@@ -19,6 +19,7 @@ export interface QuizHeaderProps extends ViewProps {
   totalQuestions: number;
   timeRemainingLabel?: string;
   onAvatarPress?: () => void;
+  showProgress?: boolean;
 }
 
 export const QuizHeader: React.FC<QuizHeaderProps> = ({
@@ -30,6 +31,7 @@ export const QuizHeader: React.FC<QuizHeaderProps> = ({
   totalQuestions,
   timeRemainingLabel,
   onAvatarPress,
+  showProgress = true,
   style,
   ...rest
 }) => {
@@ -59,14 +61,16 @@ export const QuizHeader: React.FC<QuizHeaderProps> = ({
         {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
       </View>
 
-      <View style={styles.status}>
-        <Text style={styles.statusPrimary}>
-          {currentQuestion}/{totalQuestions}
-        </Text>
-        {timeRemainingLabel ? (
-          <Text style={styles.statusSecondary}>{timeRemainingLabel}</Text>
-        ) : null}
-      </View>
+      {showProgress ? (
+        <View style={styles.status}>
+          <Text style={styles.statusPrimary}>
+            {currentQuestion}/{totalQuestions}
+          </Text>
+          {timeRemainingLabel ? (
+            <Text style={styles.statusSecondary}>{timeRemainingLabel}</Text>
+          ) : null}
+        </View>
+      ) : null}
     </View>
   );
 };
@@ -111,11 +115,12 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   title: {
-    ...typography.heading,
+    ...typography.body,
     color: colors.textPrimary,
+    fontWeight: '700'
   },
   subtitle: {
-    ...typography.caption,
+    ...typography.subheading,
     color: colors.textSecondary,
     textTransform: 'none',
   },
@@ -128,7 +133,7 @@ const styles = StyleSheet.create({
     color: colors.primary,
   },
   statusSecondary: {
-    ...typography.caption,
+    ...typography.subheading,
     color: colors.textSecondary,
     textTransform: 'none',
   },
