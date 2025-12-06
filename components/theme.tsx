@@ -2,6 +2,7 @@ import React, { createContext, useContext, useMemo } from 'react';
 import { Platform, StyleSheet, useColorScheme } from 'react-native';
 
 export type ThemeMode = 'light' | 'dark';
+export type ThemePreference = ThemeMode | 'system';
 
 type ColorTokens = {
   background: string;
@@ -156,15 +157,22 @@ export const darkTheme = createTheme('dark', darkColors);
 
 const ThemeContext = createContext<Theme>(lightTheme);
 
-export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
+type ThemeProviderProps = {
+  children: React.ReactNode;
+  mode?: ThemePreference;
+};
+
+export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   children,
+  mode = 'system',
 }) => {
   const colorScheme = useColorScheme();
-  const mode: ThemeMode = colorScheme === 'dark' ? 'dark' : 'light';
+  const systemMode: ThemeMode = colorScheme === 'dark' ? 'dark' : 'light';
+  const resolvedMode: ThemeMode = mode === 'system' ? systemMode : mode;
 
   const theme = useMemo(
-    () => (mode === 'dark' ? darkTheme : lightTheme),
-    [mode],
+    () => (resolvedMode === 'dark' ? darkTheme : lightTheme),
+    [resolvedMode],
   );
 
   return <ThemeContext.Provider value={theme}>{children}</ThemeContext.Provider>;

@@ -1,13 +1,20 @@
 import React, { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import {
   Alert,
+  Pressable,
   ScrollView,
   StatusBar,
   StyleSheet,
+  Text,
   View,
 } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { ThemeProvider, useTheme, makeStyles } from './components';
+import {
+  ThemeProvider,
+  useTheme,
+  makeStyles,
+  ThemePreference,
+} from './components';
 import { signInWithGitHub } from './auth/githubAuth';
 import { HomeScreen } from './screens/HomeScreen';
 import { LoginScreen } from './screens/LoginScreen';
@@ -35,10 +42,22 @@ import {
 import {
   loadLanguagePreference,
   saveLanguagePreference,
+  loadThemePreference,
+  saveThemePreference,
 } from './storage/settingsStorage';
+import { SettingsDrawer } from './components/SettingsDrawer';
+import { IconWheel } from './components/icons';
 
 type ActiveScreen = 'home' | 'quiz' | 'score' | 'result' | 'history' | 'historyDetail';
-function AppContent(): React.JSX.Element {
+type AppContentProps = {
+  themePreference: ThemePreference;
+  onSelectTheme: (theme: ThemePreference) => void;
+};
+
+function AppContent({
+  themePreference,
+  onSelectTheme,
+}: AppContentProps): React.JSX.Element {
   const { t, i18n } = useTranslation();
   const theme = useTheme();
   const styles = useStyles();
@@ -70,6 +89,9 @@ function AppContent(): React.JSX.Element {
   );
   const quizAnswers = useAppStore((state) => state.quizAnswers);
   const setQuizAnswers = useAppStore((state) => state.setQuizAnswers);
+  const iconSize = useAppStore((state) => state.iconSize);
+  const setIconSize = useAppStore((state) => state.setIconSize);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -123,6 +145,7 @@ function AppContent(): React.JSX.Element {
       void saveLanguagePreference(language);
     }
   }, [language, languageHydrated, i18n]);
+
 
   useEffect(() => {
     let mounted = true;
@@ -571,17 +594,68 @@ function AppContent(): React.JSX.Element {
       />
       <View style={styles.background}>
         <SafeAreaView style={styles.safeArea}>
+          <View style={styles.toolbar}>
+            <Pressable
+              accessibilityRole="button"
+              style={({ pressed }) => [
+                styles.settingsButton,
+                pressed && styles.settingsButtonPressed,
+              ]}
+              onPress={() => setSettingsOpen(true)}
+            >
+              <IconWheel size={18} color={theme.colors.textPrimary} />
+              <Text style={styles.settingsButtonText}>Settings</Text>
+            </Pressable>
+          </View>
           {renderScreen()}
         </SafeAreaView>
+        <SettingsDrawer
+          visible={settingsOpen}
+          onClose={() => setSettingsOpen(false)}
+          showDifficulty={activeScreen !== 'quiz'}
+          difficulty={difficulty}
+          onSelectDifficulty={setDifficulty}
+          iconSize={iconSize}
+          onChangeIconSize={setIconSize}
+          themePreference={themePreference}
+          onSelectTheme={onSelectTheme}
+        />
       </View>
     </SafeAreaProvider>
   );
 }
 
 function App(): React.JSX.Element {
+  const [themePreference, setThemePreference] = useState<ThemePreference>('system');
+  const [themeHydrated, setThemeHydrated] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      const storedTheme = await loadThemePreference();
+      if (mounted) {
+        setThemePreference(storedTheme);
+        setThemeHydrated(true);
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!themeHydrated) {
+      return;
+    }
+    void saveThemePreference(themePreference);
+  }, [themeHydrated, themePreference]);
+
   return (
-    <ThemeProvider>
-      <AppContent />
+    <ThemeProvider mode={themePreference}>
+      <AppContent
+        themePreference={themePreference}
+        onSelectTheme={setThemePreference}
+      />
     </ThemeProvider>
   );
 }
@@ -590,6 +664,38 @@ const useStyles = makeStyles((theme) =>
   StyleSheet.create({
     safeArea: {
       flex: 1,
+    },
+    toolbar: {
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
+      paddingHorizontal: theme.spacing.xl,
+      paddingTop: theme.spacing.xl / 2,
+      paddingBottom: theme.spacing.md,
+    },
+    settingsButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: theme.spacing.sm,
+      borderRadius: theme.radius.lg,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      backgroundColor: theme.colors.surface,
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.sm,
+      shadowColor: theme.colors.shadow,
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.08,
+      shadowRadius: 4,
+      elevation: 1,
+    },
+    settingsButtonPressed: {
+      opacity: 0.9,
+    },
+    settingsButtonText: {
+      ...theme.typography.caption,
+      color: theme.colors.textPrimary,
+      textTransform: 'uppercase',
+      letterSpacing: 0.6,
     },
     scrollView: {
       flex: 1,

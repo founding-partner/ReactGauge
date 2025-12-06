@@ -158,3 +158,26 @@ export const IconArrowRightOnRectangle = (props: IconProps) => (
 );
 
 export const IconShareArrow = IconShare;
+
+export const IconCog = (props: IconProps) => <IconWheel {...props} />;
+
+export const IconWheel = ({
+  size = 20,
+  color = defaultStroke,
+  ...rest
+}: IconProps) => (
+  <Svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke={color}
+    strokeWidth={1.5}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...rest}
+  >
+    <Circle cx="12" cy="12" r="6" />
+    <Path d="M12 2.25v3.5M12 18.25v3.5M2.25 12h3.5M18.25 12h3.5M5.47 5.47l2.47 2.47M16.06 16.06l2.47 2.47M18.53 5.47l-2.47 2.47M5.47 18.53l2.47-2.47" />
+  </Svg>
+);
