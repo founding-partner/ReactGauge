@@ -8,7 +8,7 @@ import {
   ViewProps,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { colors, radius, spacing, typography } from './theme';
+import { makeStyles } from './theme';
 
 export interface QuizHeaderProps extends ViewProps {
   title: string;
@@ -36,6 +36,7 @@ export const QuizHeader: React.FC<QuizHeaderProps> = ({
   ...rest
 }) => {
   const { t } = useTranslation();
+  const styles = useStyles();
   const fallbackInitials = t('common.userInitials');
 
   return (
@@ -75,68 +76,70 @@ export const QuizHeader: React.FC<QuizHeaderProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: spacing.lg,
-    paddingHorizontal: spacing.xl,
-    backgroundColor: colors.surface,
-    borderRadius: radius.md,
-    shadowColor: colors.background,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
-    elevation: 2,
-  },
-  avatarWrapper: {
-    paddingRight: spacing.lg,
-  },
-  avatarImage: {
-    width: 40,
-    height: 40,
-    borderRadius: radius.pill,
-  },
-  avatarFallback: {
-    width: 40,
-    height: 40,
-    borderRadius: radius.pill,
-    backgroundColor: colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  avatarInitials: {
-    ...typography.caption,
-    color: colors.textOnPrimary,
-  },
-  meta: {
-    flex: 1,
-    gap: spacing.xs,
-  },
-  title: {
-    ...typography.body,
-    color: colors.textPrimary,
-    fontWeight: '700'
-  },
-  subtitle: {
-    ...typography.subheading,
-    color: colors.textSecondary,
-    textTransform: 'none',
-  },
-  status: {
-    alignItems: 'flex-end',
-    gap: spacing.xs,
-  },
-  statusPrimary: {
-    ...typography.heading,
-    color: colors.primary,
-  },
-  statusSecondary: {
-    ...typography.subheading,
-    color: colors.textSecondary,
-    textTransform: 'none',
-  },
-});
+const useStyles = makeStyles((theme) =>
+  StyleSheet.create({
+    container: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingVertical: theme.spacing.lg,
+      paddingHorizontal: theme.spacing.xl,
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radius.md,
+      shadowColor: theme.colors.shadow,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 6,
+      elevation: 2,
+    },
+    avatarWrapper: {
+      paddingRight: theme.spacing.lg,
+    },
+    avatarImage: {
+      width: 40,
+      height: 40,
+      borderRadius: theme.radius.pill,
+    },
+    avatarFallback: {
+      width: 40,
+      height: 40,
+      borderRadius: theme.radius.pill,
+      backgroundColor: theme.colors.primary,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    avatarInitials: {
+      ...theme.typography.caption,
+      color: theme.colors.textOnPrimary,
+    },
+    meta: {
+      flex: 1,
+      gap: theme.spacing.xs,
+    },
+    title: {
+      ...theme.typography.body,
+      color: theme.colors.textPrimary,
+      fontWeight: '700',
+    },
+    subtitle: {
+      ...theme.typography.subheading,
+      color: theme.colors.textSecondary,
+      textTransform: 'none',
+    },
+    status: {
+      alignItems: 'flex-end',
+      gap: theme.spacing.xs,
+    },
+    statusPrimary: {
+      ...theme.typography.heading,
+      color: theme.colors.primary,
+    },
+    statusSecondary: {
+      ...theme.typography.subheading,
+      color: theme.colors.textSecondary,
+      textTransform: 'none',
+    },
+  }),
+);
 
 export default QuizHeader;

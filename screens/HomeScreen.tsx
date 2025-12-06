@@ -17,10 +17,8 @@ import {
   ProgressBar,
   QuestionCard,
   QuizHeader,
-  colors,
-  radius,
-  spacing,
-  typography,
+  makeStyles,
+  useTheme,
 } from '../components';
 import { Question } from '../types/quiz';
 import { useAppStore } from '../store/useAppStore';
@@ -79,6 +77,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   const options = useMemo(() => warmupQuestion.options, [warmupQuestion]);
   const iconSize = useAppStore((state) => state.iconSize);
   const { t } = useTranslation();
+  const theme = useTheme();
+  const styles = useStyles();
 
   useEffect(() => {
     setSelectedOption(null);
@@ -117,7 +117,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           >
             <View style={styles.buttonRow}>
               <View style={[styles.sessionIconWrapper, styles.resetIconBg]}>
-                <IconArrowPath size={iconSize} color={colors.primary} />
+                <IconArrowPath size={iconSize} color={theme.colors.primary} />
               </View>
               <View style={styles.sessionTextGroup}>
                 <Text style={styles.sessionButtonTitle}>
@@ -138,7 +138,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           >
             <View style={styles.buttonRow}>
               <View style={[styles.sessionIconWrapper, styles.signOutIconBg]}>
-                <IconArrowLeftOnRectangle size={iconSize} color={colors.danger} />
+                <IconArrowLeftOnRectangle size={iconSize} color={theme.colors.danger} />
               </View>
               <View style={styles.sessionTextGroup}>
                 <Text style={styles.sessionButtonTitle}>
@@ -201,7 +201,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             >
               <View style={styles.buttonRow}>
                 <View style={styles.buttonIconWrapper}>
-                  <IconShieldCheck size={iconSize} color={colors.surface} />
+                  <IconShieldCheck size={iconSize} color={theme.colors.textOnPrimary} />
                 </View>
                 <Text style={styles.guestSignInText}>
                   {t('common.actions.signIn')}
@@ -248,7 +248,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 {(() => {
                   const IconComponent = difficultyIconMap[option.value];
                   const iconColor =
-                    difficulty === option.value ? colors.textOnPrimary : colors.primary;
+                    difficulty === option.value
+                      ? theme.colors.textOnPrimary
+                      : theme.colors.primary;
                   return (
                     <View style={styles.buttonIconWrapper}>
                       <IconComponent size={iconSize} color={iconColor} />
@@ -288,7 +290,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           >
             <View style={styles.buttonRow}>
               <View style={styles.buttonIconWrapper}>
-                <IconPlayCircle size={iconSize} color={colors.textOnPrimary} />
+                <IconPlayCircle size={iconSize} color={theme.colors.textOnPrimary} />
               </View>
               <Text style={styles.ctaText}>{t('common.actions.startQuiz')}</Text>
             </View>
@@ -303,7 +305,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           >
             <View style={styles.buttonRow}>
               <View style={styles.buttonIconWrapper}>
-                <IconDocumentText size={iconSize} color={colors.primary} />
+                <IconDocumentText size={iconSize} color={theme.colors.primary} />
               </View>
               <Text style={styles.historyButtonText}>{t('common.actions.viewHistory')}</Text>
             </View>
@@ -330,7 +332,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             >
               <View style={styles.buttonRow}>
                 <View style={styles.buttonIconWrapper}>
-                  <IconArrowPath size={iconSize} color={colors.primary} />
+                  <IconArrowPath size={iconSize} color={theme.colors.primary} />
                 </View>
                 <Text style={styles.refreshButtonText}>{t('common.actions.refreshQuestion')}</Text>
               </View>
@@ -432,314 +434,320 @@ const difficultyIconMap = {
   hard: IconFire,
 } as const;
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    gap: spacing.xl,
-  },
-  sessionActions: {
-    flexDirection: 'row',
-    gap: spacing.md,
-  },
-  sessionButton: {
-    flex: 1,
-    backgroundColor: colors.surface,
-    borderRadius: radius.md,
-    padding: spacing.md,
-    borderWidth: 1,
-    borderColor: colors.border,
-    shadowColor: colors.background,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 4,
-    elevation: 1,
-  },
-  sessionButtonPressed: {
-    backgroundColor: 'rgba(148, 163, 184, 0.12)',
-  },
-  sessionIconWrapper: {
-    width: 40,
-    height: 40,
-    borderRadius: radius.lg,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: spacing.sm,
-  },
-  resetIconBg: {
-    backgroundColor: 'rgba(37, 99, 235, 0.08)',
-  },
-  signOutIconBg: {
-    backgroundColor: 'rgba(220, 38, 38, 0.1)',
-  },
-  sessionTextGroup: {
-    flexShrink: 1,
-    gap: spacing.xs / 2,
-  },
-  sessionButtonTitle: {
-    ...typography.body,
-    color: colors.textPrimary,
-    fontWeight: '700',
-  },
-  sessionButtonSubtitle: {
-    ...typography.subheading,
-    color: colors.textSecondary,
-  },
-  section: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.md,
-    padding: spacing.xl,
-    gap: spacing.md,
-    elevation: 2,
-    shadowColor: colors.background,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
-  },
-  languageSection: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.md,
-    padding: spacing.lg,
-    gap: spacing.sm,
-    elevation: 1,
-  },
-  languageLabel: {
-    ...typography.caption,
-    color: colors.textSecondary,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  languageRow: {
-    flexDirection: 'row',
-    gap: spacing.sm,
-  },
-  languageChip: {
-    flex: 1,
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    borderColor: colors.border,
-    paddingVertical: spacing.sm,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  languageChipActive: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
-  },
-  languageChipPressed: {
-    backgroundColor: 'rgba(37, 99, 235, 0.08)',
-  },
-  languageChipText: {
-    ...typography.caption,
-    color: colors.textPrimary,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-    fontWeight: '600',
-  },
-  languageChipTextActive: {
-    color: colors.textOnPrimary,
-  },
-  sectionHeading: {
-    ...typography.heading,
-    color: colors.textPrimary,
-  },
-  guestCard: {
-    backgroundColor: '#172554',
-    borderRadius: radius.md,
-    padding: spacing.xl,
-    gap: spacing.md,
-  },
-  guestTitle: {
-    ...typography.heading,
-    color: colors.surface,
-  },
-  guestBody: {
-    ...typography.body,
-    color: colors.surface,
-    opacity: 0.9,
-  },
-  guestSignInButton: {
-    marginTop: spacing.sm,
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    borderColor: colors.surface,
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.lg,
-    alignSelf: 'flex-start',
-  },
-  guestSignInText: {
-    ...typography.caption,
-    textTransform: 'uppercase',
-    color: colors.surface,
-  },
-  primaryActionColumn: {
-    marginTop: spacing.lg,
-    gap: spacing.md,
-  },
-  historyButton: {
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    borderColor: colors.primary,
-    backgroundColor: 'rgba(37, 99, 235, 0.08)',
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.lg,
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-  },
-  historyButtonPressed: {
-    backgroundColor: 'rgba(37, 99, 235, 0.16)',
-  },
-  historyButtonText: {
-    ...typography.caption,
-    textTransform: 'uppercase',
-    color: colors.primary,
-    letterSpacing: 0.6,
-    fontWeight: '600'
-  },
-  guestSignInButtonPressed: {
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-  },
-  buttonRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  buttonIconWrapper: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: spacing.xs,
-  },
-  difficultyCard: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.md,
-    padding: spacing.xl,
-    gap: spacing.md,
-  },
-  difficultySubtext: {
-    ...typography.body,
-    color: colors.textSecondary,
-  },
-  difficultyRow: {
-    flexDirection: 'row',
-    gap: spacing.md,
-  },
-  difficultyChip: {
-    flex: 1,
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    borderColor: colors.border,
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.lg,
-    alignItems: 'center',
-    gap: spacing.xs,
-  },
-  difficultyChipActive: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
-  },
-  difficultyChipPressed: {
-    backgroundColor: 'rgba(37, 99, 235, 0.12)',
-  },
-  difficultyContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  difficultyTextGroup: {
-    gap: spacing.xs,
-  },
-  difficultyChipText: {
-    ...typography.caption,
-    fontSize: 12,
-    letterSpacing: 0.2,
-    textTransform: 'uppercase',
-    color: colors.textPrimary,
-  },
-  difficultyChipTextActive: {
-    color: colors.textOnPrimary,
-  },
-  difficultyChipCount: {
-    ...typography.caption,
-    fontSize: 12,
-    color: colors.textSecondary,
-    textTransform: 'none',
-  },
-  progressBlock: {
-    gap: spacing.sm,
-  },
-  progressLabel: {
-    ...typography.caption,
-    color: colors.textSecondary,
-    textTransform: 'none',
-  },
-  progressRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  progressRowLabel: {
-    ...typography.body,
-    color: colors.textSecondary,
-  },
-  progressRowValue: {
-    ...typography.heading,
-    color: colors.primary,
-  },
-  option: {
-    marginBottom: spacing.md,
-  },
-  warmupFooter: {
-    gap: spacing.md,
-  },
-  refreshButton: {
-    alignSelf: 'flex-start',
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    borderColor: colors.primary,
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.lg,
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-  },
-  refreshButtonText: {
-    ...typography.caption,
-    textTransform: 'uppercase',
-    color: colors.primary
-  },
-  refreshButtonPressed: {
-    backgroundColor: 'rgba(37, 99, 235, 0.08)',
-  },
-  cta: {
-    backgroundColor: colors.primary,
-    borderRadius: radius.lg,
-    paddingVertical: spacing.lg,
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-  },
-  ctaText: {
-    ...typography.heading,
-    color: colors.textOnPrimary,
-  },
-  ctaPressed: {
-    backgroundColor: '#1d4ed8',
-  },
-  warmupPrompt: {
-    ...typography.body,
-    color: colors.textPrimary,
-    marginBottom: spacing.md,
-  },
-  warmupFeedback: {
-    ...typography.caption,
-    color: colors.textSecondary,
-    marginTop: spacing.md,
-  },
-  confettiLayer: {
-    ...StyleSheet.absoluteFillObject,
-    zIndex: 5,
-    pointerEvents: 'none',
-  },
-});
+const useStyles = makeStyles((theme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      gap: theme.spacing.xl,
+    },
+    sessionActions: {
+      flexDirection: 'row',
+      gap: theme.spacing.md,
+    },
+    sessionButton: {
+      flex: 1,
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radius.md,
+      padding: theme.spacing.md,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      shadowColor: theme.colors.shadow,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.08,
+      shadowRadius: 4,
+      elevation: 2,
+    },
+    sessionButtonPressed: {
+      backgroundColor: theme.colors.surfaceMuted,
+    },
+    sessionIconWrapper: {
+      width: 40,
+      height: 40,
+      borderRadius: theme.radius.lg,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginRight: theme.spacing.sm,
+    },
+    resetIconBg: {
+      backgroundColor: theme.colors.primaryMuted,
+    },
+    signOutIconBg: {
+      backgroundColor: theme.colors.dangerMuted,
+    },
+    sessionTextGroup: {
+      flexShrink: 1,
+      gap: theme.spacing.xs / 2,
+    },
+    sessionButtonTitle: {
+      ...theme.typography.body,
+      color: theme.colors.textPrimary,
+      fontWeight: '700',
+    },
+    sessionButtonSubtitle: {
+      ...theme.typography.subheading,
+      color: theme.colors.textSecondary,
+    },
+    section: {
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radius.md,
+      padding: theme.spacing.xl,
+      gap: theme.spacing.md,
+      elevation: 2,
+      shadowColor: theme.colors.shadow,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.08,
+      shadowRadius: 6,
+    },
+    languageSection: {
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radius.md,
+      padding: theme.spacing.lg,
+      gap: theme.spacing.sm,
+      elevation: 1,
+    },
+    languageLabel: {
+      ...theme.typography.caption,
+      color: theme.colors.textSecondary,
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
+    },
+    languageRow: {
+      flexDirection: 'row',
+      gap: theme.spacing.sm,
+    },
+    languageChip: {
+      flex: 1,
+      borderRadius: theme.radius.lg,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      paddingVertical: theme.spacing.sm,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    languageChipActive: {
+      backgroundColor: theme.colors.primary,
+      borderColor: theme.colors.primary,
+    },
+    languageChipPressed: {
+      backgroundColor: theme.colors.primaryMuted,
+    },
+    languageChipText: {
+      ...theme.typography.caption,
+      color: theme.colors.textPrimary,
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
+      fontWeight: '600',
+    },
+    languageChipTextActive: {
+      color: theme.colors.textOnPrimary,
+    },
+    sectionHeading: {
+      ...theme.typography.heading,
+      color: theme.colors.textPrimary,
+    },
+    guestCard: {
+      backgroundColor: theme.colors.primary,
+      borderRadius: theme.radius.md,
+      padding: theme.spacing.xl,
+      gap: theme.spacing.md,
+    },
+    guestTitle: {
+      ...theme.typography.heading,
+      color: theme.colors.textOnPrimary,
+    },
+    guestBody: {
+      ...theme.typography.body,
+      color: theme.colors.textOnPrimary,
+      opacity: 0.92,
+    },
+    guestSignInButton: {
+      marginTop: theme.spacing.sm,
+      borderRadius: theme.radius.lg,
+      borderWidth: 1,
+      borderColor: theme.colors.textOnPrimary,
+      paddingVertical: theme.spacing.md,
+      paddingHorizontal: theme.spacing.lg,
+      alignSelf: 'flex-start',
+    },
+    guestSignInText: {
+      ...theme.typography.caption,
+      textTransform: 'uppercase',
+      color: theme.colors.textOnPrimary,
+    },
+    primaryActionColumn: {
+      marginTop: theme.spacing.lg,
+      gap: theme.spacing.md,
+    },
+    historyButton: {
+      borderRadius: theme.radius.lg,
+      borderWidth: 1,
+      borderColor: theme.colors.primary,
+      backgroundColor: theme.colors.primaryMuted,
+      paddingVertical: theme.spacing.md,
+      paddingHorizontal: theme.spacing.lg,
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: '100%',
+    },
+    historyButtonPressed: {
+      opacity: 0.9,
+    },
+    historyButtonText: {
+      ...theme.typography.caption,
+      textTransform: 'uppercase',
+      color: theme.colors.primary,
+      letterSpacing: 0.6,
+      fontWeight: '600',
+    },
+    guestSignInButtonPressed: {
+      backgroundColor: theme.colors.primaryMuted,
+    },
+    buttonRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: theme.spacing.sm,
+    },
+    buttonIconWrapper: {
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: theme.spacing.xs,
+    },
+    difficultyCard: {
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radius.md,
+      padding: theme.spacing.xl,
+      gap: theme.spacing.md,
+    },
+    difficultySubtext: {
+      ...theme.typography.body,
+      color: theme.colors.textSecondary,
+    },
+    difficultyRow: {
+      flexDirection: 'row',
+      gap: theme.spacing.md,
+    },
+    difficultyChip: {
+      flex: 1,
+      borderRadius: theme.radius.lg,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      paddingVertical: theme.spacing.md,
+      paddingHorizontal: theme.spacing.lg,
+      alignItems: 'center',
+      gap: theme.spacing.xs,
+      backgroundColor: theme.colors.surfaceMuted,
+    },
+    difficultyChipActive: {
+      backgroundColor: theme.colors.primary,
+      borderColor: theme.colors.primary,
+    },
+    difficultyChipPressed: {
+      backgroundColor: theme.colors.primaryMuted,
+    },
+    difficultyContent: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: theme.spacing.sm,
+    },
+    difficultyTextGroup: {
+      gap: theme.spacing.xs,
+    },
+    difficultyChipText: {
+      ...theme.typography.caption,
+      fontSize: 12,
+      letterSpacing: 0.2,
+      textTransform: 'uppercase',
+      color: theme.colors.textPrimary,
+    },
+    difficultyChipTextActive: {
+      color: theme.colors.textOnPrimary,
+    },
+    difficultyChipCount: {
+      ...theme.typography.caption,
+      fontSize: 12,
+      color: theme.colors.textSecondary,
+      textTransform: 'none',
+    },
+    progressBlock: {
+      gap: theme.spacing.sm,
+    },
+    progressLabel: {
+      ...theme.typography.caption,
+      color: theme.colors.textSecondary,
+      textTransform: 'none',
+    },
+    progressRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    progressRowLabel: {
+      ...theme.typography.body,
+      color: theme.colors.textSecondary,
+      lineHeight: 18,
+    },
+    progressRowValue: {
+      ...theme.typography.heading,
+      color: theme.colors.primary,
+      lineHeight: 18,
+    },
+    option: {
+      marginBottom: theme.spacing.md,
+    },
+    warmupFooter: {
+      gap: theme.spacing.md,
+    },
+    refreshButton: {
+      alignSelf: 'flex-start',
+      borderRadius: theme.radius.lg,
+      borderWidth: 1,
+      borderColor: theme.colors.primary,
+      paddingVertical: theme.spacing.md,
+      paddingHorizontal: theme.spacing.lg,
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: '100%',
+      backgroundColor: theme.colors.primaryMuted,
+    },
+    refreshButtonText: {
+      ...theme.typography.caption,
+      textTransform: 'uppercase',
+      color: theme.colors.primary,
+    },
+    refreshButtonPressed: {
+      opacity: 0.9,
+    },
+    cta: {
+      backgroundColor: theme.colors.primary,
+      borderRadius: theme.radius.lg,
+      paddingVertical: theme.spacing.lg,
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: '100%',
+    },
+    ctaText: {
+      ...theme.typography.heading,
+      color: theme.colors.textOnPrimary,
+    },
+    ctaPressed: {
+      opacity: 0.9,
+    },
+    warmupPrompt: {
+      ...theme.typography.body,
+      color: theme.colors.textPrimary,
+      marginBottom: theme.spacing.md,
+    },
+    warmupFeedback: {
+      ...theme.typography.caption,
+      color: theme.colors.textSecondary,
+      marginTop: theme.spacing.md,
+    },
+    confettiLayer: {
+      ...StyleSheet.absoluteFillObject,
+      zIndex: 5,
+      pointerEvents: 'none',
+    },
+  }),
+);
 
 export default HomeScreen;

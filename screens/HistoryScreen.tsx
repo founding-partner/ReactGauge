@@ -9,7 +9,7 @@ import {
   ViewProps,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { colors, radius, spacing, typography } from '../components';
+import { makeStyles, useTheme } from '../components';
 import { QuizAttempt } from '../types/history';
 import { IconArrowLeft, IconArrowRight } from '../components/icons';
 import { Difficulty } from '../store/useAppStore';
@@ -30,6 +30,8 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
   ...rest
 }) => {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const styles = useStyles();
   const handleClear = () => {
     if (attempts.length === 0) {
       return;
@@ -52,7 +54,7 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
     <View style={[styles.container, style]} {...rest}>
       <View style={styles.header}>
         <Pressable style={styles.backButton} onPress={onClose}>
-          <IconArrowLeft size={20} color={colors.surface} />
+          <IconArrowLeft size={20} color={theme.colors.textPrimary} />
           <Text style={styles.backButtonText}>{t('common.actions.back')}</Text>
         </Pressable>
         <Text style={styles.title}>{t('history.title')}</Text>
@@ -108,7 +110,7 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
                   : item.userLogin}{' '}
                 · {t('history.streak', { count: item.streak })}
               </Text>
-              <IconArrowRight size={18} color={colors.textSecondary} />
+              <IconArrowRight size={18} color={theme.colors.textSecondary} />
             </View>
           </Pressable>
         )}
@@ -128,126 +130,130 @@ const difficultyLabelKeys: Record<
   hard: 'common.difficulties.hard',
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-    paddingHorizontal: spacing.xl,
-    paddingTop: spacing.xl,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: spacing.lg,
-  },
-  backButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
-  },
-  backButtonText: {
-    ...typography.body,
-    color: colors.surface,
-  },
-  title: {
-    ...typography.heading,
-    color: colors.textPrimary,
-  },
-  clearButton: {
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
-    backgroundColor: 'rgba(220, 38, 38, 0.12)',
-    borderRadius: radius.md,
-  },
-  clearButtonDisabled: {
-    opacity: 0.4,
-  },
-  clearButtonText: {
-    ...typography.caption,
-    color: '#dc2626',
-    textTransform: 'uppercase',
-    letterSpacing: 0.4,
-    fontWeight: '600',
-  },
-  listContent: {
-    paddingBottom: spacing.xxl * 2,
-    gap: spacing.md,
-  },
-  attemptCard: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.md,
-    padding: spacing.lg,
-    gap: spacing.sm,
-    shadowColor: colors.background,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
-    elevation: 2,
-  },
-  attemptCardPressed: {
-    backgroundColor: 'rgba(148, 163, 184, 0.16)',
-  },
-  attemptHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  attemptMeta: {
-    gap: spacing.xs,
-  },
-  attemptDifficulty: {
-    ...typography.caption,
-    textTransform: 'uppercase',
-    color: colors.primary,
-    letterSpacing: 0.6,
-    fontWeight: '600',
-  },
-  attemptTimestamp: {
-    ...typography.caption,
-    color: colors.textSecondary,
-  },
-  scorePill: {
-    backgroundColor: 'rgba(37, 99, 235, 0.12)',
-    borderRadius: radius.pill,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm,
-  },
-  scoreText: {
-    ...typography.body,
-    color: colors.primary,
-    fontWeight: '600',
-  },
-  attemptFooter: {
-    marginTop: spacing.sm,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  attemptDetail: {
-    ...typography.caption,
-    color: colors.textSecondary,
-  },
-  separator: {
-    height: spacing.sm,
-  },
-  emptyState: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: spacing.xl * 2,
-    gap: spacing.sm,
-  },
-  emptyTitle: {
-    ...typography.heading,
-    color: colors.textPrimary,
-  },
-  emptySubtitle: {
-    ...typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-  },
-});
+const useStyles = makeStyles((theme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+      paddingHorizontal: theme.spacing.xl,
+      paddingTop: theme.spacing.xl,
+    },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: theme.spacing.lg,
+    },
+    backButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: theme.spacing.xs,
+      paddingVertical: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.md,
+    },
+    backButtonText: {
+      ...theme.typography.body,
+      color: theme.colors.textPrimary,
+    },
+    title: {
+      ...theme.typography.heading,
+      color: theme.colors.textPrimary,
+    },
+    clearButton: {
+      paddingVertical: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.md,
+      backgroundColor: theme.colors.dangerMuted,
+      borderRadius: theme.radius.md,
+      borderWidth: 1,
+      borderColor: theme.colors.danger,
+    },
+    clearButtonDisabled: {
+      opacity: 0.4,
+    },
+    clearButtonText: {
+      ...theme.typography.caption,
+      color: theme.colors.danger,
+      textTransform: 'uppercase',
+      letterSpacing: 0.4,
+      fontWeight: '600',
+    },
+    listContent: {
+      paddingBottom: theme.spacing.xxl * 2,
+      gap: theme.spacing.md,
+    },
+    attemptCard: {
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radius.md,
+      padding: theme.spacing.lg,
+      gap: theme.spacing.sm,
+      shadowColor: theme.colors.shadow,
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.08,
+      shadowRadius: 6,
+      elevation: 2,
+    },
+    attemptCardPressed: {
+      backgroundColor: theme.colors.surfaceMuted,
+    },
+    attemptHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    attemptMeta: {
+      gap: theme.spacing.xs,
+    },
+    attemptDifficulty: {
+      ...theme.typography.caption,
+      textTransform: 'uppercase',
+      color: theme.colors.primary,
+      letterSpacing: 0.6,
+      fontWeight: '600',
+    },
+    attemptTimestamp: {
+      ...theme.typography.caption,
+      color: theme.colors.textSecondary,
+    },
+    scorePill: {
+      backgroundColor: theme.colors.primaryMuted,
+      borderRadius: theme.radius.pill,
+      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.sm,
+    },
+    scoreText: {
+      ...theme.typography.body,
+      color: theme.colors.primary,
+      fontWeight: '600',
+    },
+    attemptFooter: {
+      marginTop: theme.spacing.sm,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    attemptDetail: {
+      ...theme.typography.caption,
+      color: theme.colors.textSecondary,
+    },
+    separator: {
+      height: theme.spacing.sm,
+    },
+    emptyState: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingVertical: theme.spacing.xl * 2,
+      gap: theme.spacing.sm,
+    },
+    emptyTitle: {
+      ...theme.typography.heading,
+      color: theme.colors.textPrimary,
+    },
+    emptySubtitle: {
+      ...theme.typography.body,
+      color: theme.colors.textSecondary,
+      textAlign: 'center',
+    },
+  }),
+);
 
 export default HistoryScreen;

@@ -4,11 +4,10 @@ import {
   ScrollView,
   StatusBar,
   StyleSheet,
-  useColorScheme,
   View,
 } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { colors, spacing } from './components';
+import { ThemeProvider, useTheme, makeStyles } from './components';
 import { signInWithGitHub } from './auth/githubAuth';
 import { HomeScreen } from './screens/HomeScreen';
 import { LoginScreen } from './screens/LoginScreen';
@@ -39,9 +38,10 @@ import {
 } from './storage/settingsStorage';
 
 type ActiveScreen = 'home' | 'quiz' | 'score' | 'result' | 'history' | 'historyDetail';
-function App(): React.JSX.Element {
+function AppContent(): React.JSX.Element {
   const { t, i18n } = useTranslation();
-  const isDarkMode = useColorScheme() === 'dark';
+  const theme = useTheme();
+  const styles = useStyles();
   const [user, setUser] = useState<UserProfile | null>(null);
   const [authLoading, setAuthLoading] = useState(false);
   const [activeScreen, setActiveScreen] = useState<ActiveScreen>('home');
@@ -565,7 +565,7 @@ function App(): React.JSX.Element {
   return (
     <SafeAreaProvider>
       <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+        barStyle={theme.name === 'dark' ? 'light-content' : 'dark-content'}
         backgroundColor="transparent"
         translucent
       />
@@ -578,29 +578,39 @@ function App(): React.JSX.Element {
   );
 }
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  contentContainer: {
-    flexGrow: 1,
-    paddingHorizontal: spacing.xl,
-    paddingBottom: spacing.xxl,
-    gap: spacing.xl,
-  },
-  centerContent: {
-    justifyContent: 'center',
-  },
-  quizContent: {
-    paddingTop: spacing.xl,
-  },
-  background: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-});
+function App(): React.JSX.Element {
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
+  );
+}
+
+const useStyles = makeStyles((theme) =>
+  StyleSheet.create({
+    safeArea: {
+      flex: 1,
+    },
+    scrollView: {
+      flex: 1,
+    },
+    contentContainer: {
+      flexGrow: 1,
+      paddingHorizontal: theme.spacing.xl,
+      paddingBottom: theme.spacing.xxl,
+      gap: theme.spacing.xl,
+    },
+    centerContent: {
+      justifyContent: 'center',
+    },
+    quizContent: {
+      paddingTop: theme.spacing.xl,
+    },
+    background: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+    },
+  }),
+);
 
 export default App;

@@ -18,7 +18,7 @@ import {
   IconHome,
   IconShare,
 } from '../components/icons';
-import { ProgressBar, colors, radius, spacing, typography } from '../components';
+import { ProgressBar, makeStyles, useTheme } from '../components';
 import { AnswerRecord, Question } from '../types/quiz';
 import { useAppStore } from '../store/useAppStore';
 
@@ -45,6 +45,8 @@ export const ScoreScreen: React.FC<ScoreScreenProps> = ({
 }) => {
   const iconSize = useAppStore((state) => state.iconSize);
   const { t } = useTranslation();
+  const theme = useTheme();
+  const styles = useStyles();
   const { topicStats, totalCorrect, totalQuestions } = useMemo(
     () => deriveTopicStats(questions, answers),
     [questions, answers],
@@ -162,7 +164,7 @@ export const ScoreScreen: React.FC<ScoreScreenProps> = ({
         >
           <View style={styles.buttonContent}>
             <View style={styles.buttonIconWrapper}>
-              <IconArrowPath size={iconSize} color={colors.textOnPrimary} />
+              <IconArrowPath size={iconSize} color={theme.colors.textOnPrimary} />
             </View>
             <Text style={styles.primaryText}>{t('common.actions.retakeQuiz')}</Text>
           </View>
@@ -173,7 +175,7 @@ export const ScoreScreen: React.FC<ScoreScreenProps> = ({
         >
           <View style={styles.buttonContent}>
             <View style={styles.buttonIconWrapper}>
-              <IconDocumentText size={iconSize} color={colors.primary} />
+              <IconDocumentText size={iconSize} color={theme.colors.primary} />
             </View>
             <Text style={styles.secondaryText}>{t('common.actions.reviewAnswers')}</Text>
           </View>
@@ -184,7 +186,7 @@ export const ScoreScreen: React.FC<ScoreScreenProps> = ({
         >
           <View style={styles.buttonContent}>
             <View style={styles.buttonIconWrapper}>
-              <IconHome size={iconSize} color={colors.surface} />
+              <IconHome size={iconSize} color={theme.colors.textOnPrimary} />
             </View>
             <Text style={styles.tertiaryText}>{t('common.actions.backHome')}</Text>
           </View>
@@ -200,7 +202,7 @@ export const ScoreScreen: React.FC<ScoreScreenProps> = ({
         >
           <View style={styles.buttonContent}>
             <View style={styles.buttonIconWrapper}>
-              <IconShare size={iconSize} color={colors.surface} />
+              <IconShare size={iconSize} color={theme.colors.textOnPrimary} />
             </View>
             <Text style={styles.shareText}>
               {sharing ? t('common.actions.preparing') : t('common.actions.shareScorecard')}
@@ -236,181 +238,196 @@ function deriveTopicStats(questions: Question[], answers: AnswerRecord[]) {
   return { topicStats, totalQuestions, totalCorrect };
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  scrollContent: {
-    paddingBottom: spacing.xxl,
-    gap: spacing.xl,
-  },
-  viewShot: {
-    marginHorizontal: spacing.xl,
-    marginTop: spacing.xl,
-    borderRadius: radius.md,
-    overflow: 'hidden',
-    backgroundColor: 'transparent',
-  },
-  capturableContent: {
-    backgroundColor: colors.background,
-    paddingBottom: spacing.xl,
-  },
-  headerCard: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.md,
-    marginHorizontal: spacing.lg,
-    marginTop: spacing.lg,
-    padding: spacing.xl,
-    gap: spacing.md,
-    alignItems: 'center',
-  },
-  headerTitle: {
-    ...typography.display,
-    color: colors.textPrimary,
-  },
-  headerSubtitle: {
-    ...typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-  },
-  congratsWrapper: {
-    marginTop: spacing.lg,
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  congratsEmoji: {
-    fontSize: 32,
-  },
-  congratsText: {
-    ...typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-  },
-  congratsLogo: {
-    width: 120,
-    height: 120,
-    borderRadius: radius.md,
-  },
-  overallBadge: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
-    gap: spacing.xs,
-    backgroundColor: colors.primary,
-    paddingHorizontal: spacing.xl,
-    paddingVertical: spacing.md,
-    borderRadius: radius.pill,
-    marginTop: spacing.md,
-  },
-  overallScore: {
-    ...typography.display,
-    color: colors.textOnPrimary,
-  },
-  overallSuffix: {
-    ...typography.heading,
-    color: colors.textOnPrimary,
-  },
-  topicCard: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.md,
-    marginHorizontal: spacing.lg,
-    marginTop: spacing.xl,
-    padding: spacing.xl,
-    gap: spacing.lg,
-  },
-  topicHeading: {
-    ...typography.heading,
-    color: colors.textPrimary,
-  },
-  topicRow: {
-    gap: spacing.sm,
-  },
-  topicHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  topicTitle: {
-    ...typography.body,
-    color: colors.textPrimary,
-  },
-  topicCount: {
-    ...typography.caption,
-    color: colors.textSecondary,
-  },
-  actions: {
-    paddingHorizontal: spacing.xl,
-    paddingVertical: spacing.xl,
-    gap: spacing.md,
-  },
-  primaryButton: {
-    backgroundColor: colors.primary,
-    borderRadius: radius.lg,
-    paddingVertical: spacing.lg,
-    alignItems: 'center',
-  },
-  primaryPressed: {
-    backgroundColor: '#1d4ed8',
-  },
-  primaryText: {
-    ...typography.heading,
-    color: colors.textOnPrimary,
-  },
-  secondaryButton: {
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    borderColor: colors.primary,
-    paddingVertical: spacing.lg,
-    alignItems: 'center',
-  },
-  secondaryPressed: {
-    backgroundColor: 'rgba(37, 99, 235, 0.08)',
-  },
-  secondaryText: {
-    ...typography.heading,
-    color: colors.primary,
-  },
-  tertiaryButton: {
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    borderColor: colors.surface,
-    paddingVertical: spacing.lg,
-    alignItems: 'center',
-  },
-  tertiaryPressed: {
-    backgroundColor: 'rgba(241, 245, 249, 0.15)',
-  },
-  tertiaryText: {
-    ...typography.heading,
-    color: colors.surface,
-  },
-  shareButton: {
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    borderColor: colors.surface,
-    paddingVertical: spacing.lg,
-    alignItems: 'center',
-  },
-  sharePressed: {
-    backgroundColor: 'rgba(241, 245, 249, 0.15)',
-  },
-  shareText: {
-    ...typography.heading,
-    color: colors.surface,
-  },
-  shareDisabled: {
-    opacity: 0.6,
-  },
-  buttonContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  buttonIconWrapper: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: spacing.xs,
-  },
-});
+const useStyles = makeStyles((theme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+    },
+    scrollContent: {
+      paddingBottom: theme.spacing.xxl,
+      gap: theme.spacing.xl,
+    },
+    viewShot: {
+      marginHorizontal: theme.spacing.xl,
+      marginTop: theme.spacing.xl,
+      borderRadius: theme.radius.md,
+      overflow: 'hidden',
+      backgroundColor: 'transparent',
+    },
+    capturableContent: {
+      backgroundColor: theme.colors.background,
+      paddingBottom: theme.spacing.xl,
+    },
+    headerCard: {
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radius.md,
+      marginHorizontal: theme.spacing.lg,
+      marginTop: theme.spacing.lg,
+      padding: theme.spacing.xl,
+      gap: theme.spacing.md,
+      alignItems: 'center',
+      shadowColor: theme.colors.shadow,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.08,
+      shadowRadius: 6,
+      elevation: 2,
+    },
+    headerTitle: {
+      ...theme.typography.display,
+      color: theme.colors.textPrimary,
+    },
+    headerSubtitle: {
+      ...theme.typography.body,
+      color: theme.colors.textSecondary,
+      textAlign: 'center',
+    },
+    congratsWrapper: {
+      marginTop: theme.spacing.lg,
+      alignItems: 'center',
+      gap: theme.spacing.sm,
+    },
+    congratsEmoji: {
+      fontSize: 32,
+    },
+    congratsText: {
+      ...theme.typography.body,
+      color: theme.colors.textSecondary,
+      textAlign: 'center',
+    },
+    congratsLogo: {
+      width: 120,
+      height: 120,
+      borderRadius: theme.radius.md,
+    },
+    overallBadge: {
+      flexDirection: 'row',
+      alignItems: 'baseline',
+      gap: theme.spacing.xs,
+      backgroundColor: theme.colors.primary,
+      paddingHorizontal: theme.spacing.xl,
+      paddingVertical: theme.spacing.md,
+      borderRadius: theme.radius.pill,
+      marginTop: theme.spacing.md,
+    },
+    overallScore: {
+      ...theme.typography.display,
+      color: theme.colors.textOnPrimary,
+    },
+    overallSuffix: {
+      ...theme.typography.heading,
+      color: theme.colors.textOnPrimary,
+    },
+    topicCard: {
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radius.md,
+      marginHorizontal: theme.spacing.lg,
+      marginTop: theme.spacing.xl,
+      padding: theme.spacing.xl,
+      gap: theme.spacing.lg,
+      shadowColor: theme.colors.shadow,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.08,
+      shadowRadius: 6,
+      elevation: 2,
+    },
+    topicHeading: {
+      ...theme.typography.heading,
+      color: theme.colors.textPrimary,
+    },
+    topicRow: {
+      gap: theme.spacing.sm,
+    },
+    topicHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    topicTitle: {
+      ...theme.typography.body,
+      color: theme.colors.textPrimary,
+    },
+    topicCount: {
+      ...theme.typography.caption,
+      color: theme.colors.textSecondary,
+    },
+    actions: {
+      paddingHorizontal: theme.spacing.xl,
+      paddingVertical: theme.spacing.xl,
+      gap: theme.spacing.md,
+    },
+    primaryButton: {
+      backgroundColor: theme.colors.primary,
+      borderRadius: theme.radius.lg,
+      paddingVertical: theme.spacing.lg,
+      alignItems: 'center',
+    },
+    primaryPressed: {
+      opacity: 0.9,
+    },
+    primaryText: {
+      ...theme.typography.heading,
+      color: theme.colors.textOnPrimary,
+    },
+    secondaryButton: {
+      borderRadius: theme.radius.lg,
+      borderWidth: 1,
+      borderColor: theme.colors.primary,
+      paddingVertical: theme.spacing.lg,
+      alignItems: 'center',
+      backgroundColor: theme.colors.primaryMuted,
+    },
+    secondaryPressed: {
+      opacity: 0.9,
+    },
+    secondaryText: {
+      ...theme.typography.heading,
+      color: theme.colors.primary,
+    },
+    tertiaryButton: {
+      borderRadius: theme.radius.lg,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      paddingVertical: theme.spacing.lg,
+      alignItems: 'center',
+      backgroundColor: theme.colors.surface,
+    },
+    tertiaryPressed: {
+      opacity: 0.9,
+    },
+    tertiaryText: {
+      ...theme.typography.heading,
+      color: theme.colors.textPrimary,
+    },
+    shareButton: {
+      borderRadius: theme.radius.lg,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      paddingVertical: theme.spacing.lg,
+      alignItems: 'center',
+      backgroundColor: theme.colors.surface,
+    },
+    sharePressed: {
+      opacity: 0.9,
+    },
+    shareText: {
+      ...theme.typography.heading,
+      color: theme.colors.textPrimary,
+    },
+    shareDisabled: {
+      opacity: 0.6,
+    },
+    buttonContent: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: theme.spacing.sm,
+    },
+    buttonIconWrapper: {
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: theme.spacing.xs,
+    },
+  }),
+);
 
 export default ScoreScreen;

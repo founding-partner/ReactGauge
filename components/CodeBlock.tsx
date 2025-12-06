@@ -1,6 +1,6 @@
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View, ViewProps } from 'react-native';
-import { colors, radius, spacing, typography } from './theme';
+import { makeStyles, useTheme } from './theme';
 
 export interface CodeBlockProps extends ViewProps {
   code: string;
@@ -13,6 +13,9 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
   style,
   ...rest
 }) => {
+  const theme = useTheme();
+  const styles = useStyles();
+
   return (
     <View style={[styles.wrapper, style]} {...rest}>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -22,17 +25,19 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  wrapper: {
-    backgroundColor: colors.background,
-    borderRadius: radius.sm,
-    padding: spacing.lg,
-  },
-  codeText: {
-    ...typography.mono,
-    fontFamily: typography.mono.fontFamily,
-    color: colors.surface,
-  },
-});
+const useStyles = makeStyles((theme) =>
+  StyleSheet.create({
+    wrapper: {
+      backgroundColor: theme.colors.codeBackground,
+      borderRadius: theme.radius.sm,
+      padding: theme.spacing.lg,
+    },
+    codeText: {
+      ...theme.typography.mono,
+      fontFamily: theme.typography.mono.fontFamily,
+      color: theme.colors.codeText,
+    },
+  }),
+);
 
 export default CodeBlock;
