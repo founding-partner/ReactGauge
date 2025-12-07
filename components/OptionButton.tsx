@@ -9,7 +9,7 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import { colors, radius, spacing, typography } from './theme';
+import { Theme, makeStyles, useTheme } from './theme';
 import Svg, { Circle } from 'react-native-svg';
 import { IconCheckCircle } from './icons';
 import { useAppStore } from '../store/useAppStore';
@@ -44,7 +44,9 @@ export const OptionButton: React.FC<OptionButtonProps> = ({
   onPressOut,
   ...pressableProps
 }) => {
-  const statusColors = getStatusColors(selected, status);
+  const theme = useTheme();
+  const styles = useStyles();
+  const statusColors = getStatusColors(theme, selected, status);
   const scale = useRef(new Animated.Value(1)).current;
   const iconSize = useAppStore((state) => state.iconSize);
 
@@ -95,15 +97,22 @@ export const OptionButton: React.FC<OptionButtonProps> = ({
           <View style={styles.labelRow}>
             <View style={styles.iconWrapper}>
               {selected ? (
-                <IconCheckCircle size={iconSize} color={colors.textOnPrimary} />
+                <IconCheckCircle
+                  size={iconSize}
+                  color={theme.colors.textOnPrimary}
+                />
               ) : (
-                <DefaultBulletIcon color={colors.primary} size={iconSize} />
+                <DefaultBulletIcon color={theme.colors.primary} size={iconSize} />
               )}
             </View>
             <Text
               style={[
                 styles.label,
-                { color: selected ? colors.textOnPrimary : colors.textPrimary },
+                {
+                  color: selected
+                    ? theme.colors.textOnPrimary
+                    : theme.colors.textPrimary,
+                },
               ]}
             >
               {label}
@@ -114,7 +123,9 @@ export const OptionButton: React.FC<OptionButtonProps> = ({
               style={[
                 styles.description,
                 {
-                  color: selected ? colors.surface : colors.textSecondary,
+                  color: selected
+                    ? theme.colors.textOnPrimary
+                    : theme.colors.textSecondary,
                 },
               ]}
             >
@@ -127,72 +138,74 @@ export const OptionButton: React.FC<OptionButtonProps> = ({
   );
 };
 
-function getStatusColors(selected: boolean, status: FeedbackStatus) {
+function getStatusColors(theme: Theme, selected: boolean, status: FeedbackStatus) {
   if (status === 'correct') {
     return {
-      background: colors.success,
-      border: colors.success,
+      background: theme.colors.success,
+      border: theme.colors.success,
     };
   }
 
   if (status === 'incorrect') {
     return {
-      background: selected ? '#FEE2E2' : colors.surface,
-      border: '#EF4444',
+      background: selected ? theme.colors.dangerMuted : theme.colors.surface,
+      border: theme.colors.dangerStrong,
     };
   }
 
   if (selected) {
     return {
-      background: colors.primary,
-      border: colors.primary,
+      background: theme.colors.primary,
+      border: theme.colors.primary,
     };
   }
 
   return {
-    background: colors.surface,
-    border: colors.border,
+    background: theme.colors.surface,
+    border: theme.colors.border,
   };
 }
 
-const styles = StyleSheet.create({
-  wrapper: {
-    width: '100%',
-  },
-  button: {
-    borderWidth: 1,
-    borderRadius: radius.lg,
-    paddingVertical: spacing.lg,
-    paddingHorizontal: spacing.xl,
-    minHeight: 48,
-    justifyContent: 'center',
-  },
-  content: {
-    gap: spacing.sm,
-  },
-  labelRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  iconWrapper: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  icon: {
-    marginRight: 0,
-  },
-  label: {
-    ...typography.body,
-    fontWeight: '600',
-  },
-  description: {
-    ...typography.caption,
-    textTransform: 'none',
-  },
-  pressedBackground: {
-    backgroundColor: 'rgba(37, 99, 235, 0.08)',
-  },
-});
+const useStyles = makeStyles((theme) =>
+  StyleSheet.create({
+    wrapper: {
+      width: '100%',
+    },
+    button: {
+      borderWidth: 1,
+      borderRadius: theme.radius.lg,
+      paddingVertical: theme.spacing.lg,
+      paddingHorizontal: theme.spacing.xl,
+      minHeight: 48,
+      justifyContent: 'center',
+    },
+    content: {
+      gap: theme.spacing.sm,
+    },
+    labelRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: theme.spacing.sm,
+    },
+    iconWrapper: {
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    icon: {
+      marginRight: 0,
+    },
+    label: {
+      ...theme.typography.body,
+      fontWeight: '600',
+    },
+    description: {
+      ...theme.typography.caption,
+      textTransform: 'none',
+    },
+    pressedBackground: {
+      backgroundColor: theme.colors.primaryMuted,
+    },
+  }),
+);
 
 export default OptionButton;

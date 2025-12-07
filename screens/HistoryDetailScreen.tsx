@@ -7,9 +7,11 @@ import {
   ViewProps,
   Pressable,
 } from 'react-native';
-import { colors, radius, spacing, typography } from '../components';
+import { useTranslation } from 'react-i18next';
+import { makeStyles, useTheme } from '../components';
 import { QuizAttempt } from '../types/history';
 import { IconArrowLeft } from '../components/icons';
+import { Difficulty } from '../store/useAppStore';
 
 export interface HistoryDetailScreenProps extends ViewProps {
   attempt: QuizAttempt;
@@ -25,15 +27,54 @@ export const HistoryDetailScreen: React.FC<HistoryDetailScreenProps> = ({
   const answerLookup = useMemo(() => {
     return new Map(attempt.answers.map((answer) => [answer.questionId, answer]));
   }, [attempt.answers]);
+  const { t } = useTranslation();
+  const theme = useTheme();
+  const styles = useStyles();
+
+  const deriveOptionStatus = (isSelected: boolean, isCorrect: boolean) => {
+    if (isCorrect && isSelected) {
+      return {
+        container: styles.optionCorrect,
+        text: styles.optionTextCorrect,
+        label: 'historyDetail.badges.correct',
+        badge: styles.badgePositive,
+      };
+    }
+
+    if (isCorrect) {
+      return {
+        container: styles.optionHighlight,
+        text: styles.optionTextCorrect,
+        label: 'historyDetail.badges.answer',
+        badge: styles.badgeNeutral,
+      };
+    }
+
+    if (isSelected) {
+      return {
+        container: styles.optionIncorrect,
+        text: styles.optionTextIncorrect,
+        label: 'historyDetail.badges.yourPick',
+        badge: styles.badgeWarning,
+      };
+    }
+
+    return {
+      container: undefined,
+      text: undefined,
+      label: null,
+      badge: undefined,
+    };
+  };
 
   return (
     <View style={[styles.container, style]} {...rest}>
       <View style={styles.header}>
         <Pressable style={styles.backButton} onPress={onClose}>
-          <IconArrowLeft size={20} color={colors.surface} />
-          <Text style={styles.backButtonText}>Back</Text>
+          <IconArrowLeft size={20} color={theme.colors.textPrimary} />
+          <Text style={styles.backButtonText}>{t('common.actions.back')}</Text>
         </Pressable>
-        <Text style={styles.title}>Attempt Details</Text>
+        <Text style={styles.title}>{t('historyDetail.title')}</Text>
         <View style={styles.scorePill}>
           <Text style={styles.scoreText}>
             {attempt.score.correct}/{attempt.score.total}
@@ -42,14 +83,20 @@ export const HistoryDetailScreen: React.FC<HistoryDetailScreenProps> = ({
       </View>
 
       <View style={styles.metaRow}>
-        <Text style={styles.metaPrimary}>{formatDifficulty(attempt.difficulty)}</Text>
+        <Text style={styles.metaPrimary}>
+          {t(difficultyLabelKeys[attempt.difficulty])}
+        </Text>
         <Text style={styles.metaSecondary}>{new Date(attempt.timestamp).toLocaleString()}</Text>
       </View>
       <View style={styles.metaRow}>
         <Text style={styles.metaSecondary}>
-          {attempt.userMode === 'guest' ? 'Guest attempt' : `Signed in as ${attempt.userLogin}`}
+          {attempt.userMode === 'guest'
+            ? t('historyDetail.guestAttempt')
+            : t('historyDetail.signedInAs', { user: attempt.userLogin })}
         </Text>
-        <Text style={styles.metaSecondary}>Streak {attempt.streak}</Text>
+        <Text style={styles.metaSecondary}>
+          {t('historyDetail.streak', { count: attempt.streak })}
+        </Text>
       </View>
 
       <ScrollView
@@ -82,14 +129,16 @@ export const HistoryDetailScreen: React.FC<HistoryDetailScreenProps> = ({
                     >
                       <Text style={[styles.optionText, status.text]}>{option}</Text>
                       {status.label ? (
-                        <Text style={[styles.optionBadge, status.badge]}>{status.label}</Text>
+                        <Text style={[styles.optionBadge, status.badge]}>
+                          {t(status.label)}
+                        </Text>
                       ) : null}
                     </View>
                   );
                 })}
               </View>
               <View style={styles.answerSummary}>
-                <Text style={styles.answerLabel}>Your answer</Text>
+                <Text style={styles.answerLabel}>{t('historyDetail.labels.yourAnswer')}</Text>
                 <Text
                   style={[
                     styles.answerValue,
@@ -102,14 +151,14 @@ export const HistoryDetailScreen: React.FC<HistoryDetailScreenProps> = ({
                 </Text>
               </View>
               <View style={styles.answerSummary}>
-                <Text style={styles.answerLabel}>Correct answer</Text>
+                <Text style={styles.answerLabel}>{t('historyDetail.labels.correctAnswer')}</Text>
                 <Text style={[styles.answerValue, styles.answerValueCorrect]}>
                   {question.options[question.answerIndex]}
                 </Text>
               </View>
               {question.explanation ? (
                 <View style={styles.explanationBox}>
-                  <Text style={styles.answerLabel}>Explanation</Text>
+                  <Text style={styles.answerLabel}>{t('historyDetail.labels.explanation')}</Text>
                   <Text style={styles.explanationText}>{question.explanation}</Text>
                 </View>
               ) : null}
@@ -121,217 +170,191 @@ export const HistoryDetailScreen: React.FC<HistoryDetailScreenProps> = ({
   );
 };
 
-function formatDifficulty(value: string) {
-  return value.charAt(0).toUpperCase() + value.slice(1);
-}
+const useStyles = makeStyles((theme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+      paddingTop: theme.spacing.xl,
+    },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: theme.spacing.xl,
+      marginBottom: theme.spacing.md,
+    },
+    backButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: theme.spacing.xs,
+      paddingVertical: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.md,
+    },
+    backButtonText: {
+      ...theme.typography.body,
+      color: theme.colors.textPrimary,
+    },
+    title: {
+      ...theme.typography.heading,
+      color: theme.colors.textPrimary,
+    },
+    scorePill: {
+      backgroundColor: theme.colors.primaryMuted,
+      borderRadius: theme.radius.pill,
+      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.sm,
+    },
+    scoreText: {
+      ...theme.typography.body,
+      color: theme.colors.primary,
+      fontWeight: '600',
+    },
+    metaRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingHorizontal: theme.spacing.xl,
+    },
+    metaPrimary: {
+      ...theme.typography.caption,
+      color: theme.colors.primary,
+      textTransform: 'uppercase',
+      letterSpacing: 0.6,
+      fontWeight: '600',
+    },
+    metaSecondary: {
+      ...theme.typography.caption,
+      color: theme.colors.textSecondary,
+    },
+    scroll: {
+      flex: 1,
+      marginTop: theme.spacing.lg,
+    },
+    content: {
+      paddingHorizontal: theme.spacing.xl,
+      paddingBottom: theme.spacing.xxl * 2,
+      gap: theme.spacing.xl,
+    },
+    card: {
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radius.md,
+      padding: theme.spacing.xl,
+      gap: theme.spacing.md,
+      shadowColor: theme.colors.shadow,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.08,
+      shadowRadius: 6,
+      elevation: 2,
+    },
+    cardTitle: {
+      ...theme.typography.heading,
+      color: theme.colors.textPrimary,
+    },
+    cardDescription: {
+      ...theme.typography.body,
+      color: theme.colors.textSecondary,
+    },
+    codeBlock: {
+      backgroundColor: theme.colors.codeBackground,
+      padding: theme.spacing.md,
+      borderRadius: theme.radius.sm,
+    },
+    codeText: {
+      ...theme.typography.mono,
+      fontFamily: theme.typography.mono.fontFamily,
+      fontSize: 12,
+      color: theme.colors.codeText,
+    },
+    optionsList: {
+      gap: theme.spacing.sm,
+    },
+    optionRow: {
+      borderRadius: theme.radius.md,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      paddingVertical: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.md,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    optionText: {
+      ...theme.typography.body,
+      color: theme.colors.textPrimary,
+    },
+    optionBadge: {
+      ...theme.typography.caption,
+      textTransform: 'uppercase',
+      letterSpacing: 0.4,
+      fontWeight: '600',
+    },
+    optionCorrect: {
+      borderColor: theme.colors.success,
+      backgroundColor: theme.colors.successMuted,
+    },
+    optionHighlight: {
+      borderColor: theme.colors.primary,
+      backgroundColor: theme.colors.primaryMuted,
+    },
+    optionIncorrect: {
+      borderColor: theme.colors.dangerStrong,
+      backgroundColor: theme.colors.dangerMuted,
+    },
+    optionTextCorrect: {
+      color: theme.colors.success,
+    },
+    optionTextIncorrect: {
+      color: theme.colors.dangerStrong,
+    },
+    badgePositive: {
+      color: theme.colors.success,
+    },
+    badgeNeutral: {
+      color: theme.colors.primary,
+    },
+    badgeWarning: {
+      color: theme.colors.dangerStrong,
+    },
+    answerSummary: {
+      gap: theme.spacing.xs,
+    },
+    answerLabel: {
+      ...theme.typography.caption,
+      color: theme.colors.textSecondary,
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
+    },
+    answerValue: {
+      ...theme.typography.body,
+      fontWeight: '600',
+      color: theme.colors.textPrimary,
+    },
+    answerValueCorrect: {
+      color: theme.colors.success,
+    },
+    answerValueIncorrect: {
+      color: theme.colors.dangerStrong,
+    },
+    explanationBox: {
+      gap: theme.spacing.xs,
+    },
+    explanationText: {
+      ...theme.typography.body,
+      color: theme.colors.textSecondary,
+    },
+  }),
+);
 
-function deriveOptionStatus(isSelected: boolean, isCorrect: boolean) {
-  if (isCorrect && isSelected) {
-    return {
-      container: styles.optionCorrect,
-      text: styles.optionTextCorrect,
-      label: 'Correct',
-      badge: styles.badgePositive,
-    };
-  }
-
-  if (isCorrect) {
-    return {
-      container: styles.optionHighlight,
-      text: styles.optionTextCorrect,
-      label: 'Answer',
-      badge: styles.badgeNeutral,
-    };
-  }
-
-  if (isSelected) {
-    return {
-      container: styles.optionIncorrect,
-      text: styles.optionTextIncorrect,
-      label: 'Your pick',
-      badge: styles.badgeWarning,
-    };
-  }
-
-  return {
-    container: undefined,
-    text: undefined,
-    label: null,
-    badge: undefined,
-  };
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-    paddingTop: spacing.xl,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: spacing.xl,
-    marginBottom: spacing.md,
-  },
-  backButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
-  },
-  backButtonText: {
-    ...typography.body,
-    color: colors.surface,
-  },
-  title: {
-    ...typography.heading,
-    color: colors.textPrimary,
-  },
-  scorePill: {
-    backgroundColor: 'rgba(37, 99, 235, 0.12)',
-    borderRadius: radius.pill,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm,
-  },
-  scoreText: {
-    ...typography.body,
-    color: colors.primary,
-    fontWeight: '600',
-  },
-  metaRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: spacing.xl,
-  },
-  metaPrimary: {
-    ...typography.caption,
-    color: colors.primary,
-    textTransform: 'uppercase',
-    letterSpacing: 0.6,
-    fontWeight: '600',
-  },
-  metaSecondary: {
-    ...typography.caption,
-    color: colors.textSecondary,
-  },
-  scroll: {
-    flex: 1,
-    marginTop: spacing.lg,
-  },
-  content: {
-    paddingHorizontal: spacing.xl,
-    paddingBottom: spacing.xxl * 2,
-    gap: spacing.xl,
-  },
-  card: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.md,
-    padding: spacing.xl,
-    gap: spacing.md,
-    shadowColor: colors.background,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
-    elevation: 2,
-  },
-  cardTitle: {
-    ...typography.heading,
-    color: colors.textPrimary,
-  },
-  cardDescription: {
-    ...typography.body,
-    color: colors.textSecondary,
-  },
-  codeBlock: {
-    backgroundColor: '#0f172a',
-    padding: spacing.md,
-    borderRadius: radius.sm,
-  },
-  codeText: {
-    fontFamily: 'Menlo',
-    fontSize: 12,
-    color: '#e2e8f0',
-  },
-  optionsList: {
-    gap: spacing.sm,
-  },
-  optionRow: {
-    borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: colors.border,
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  optionText: {
-    ...typography.body,
-    color: colors.textPrimary,
-  },
-  optionBadge: {
-    ...typography.caption,
-    textTransform: 'uppercase',
-    letterSpacing: 0.4,
-    fontWeight: '600',
-  },
-  optionCorrect: {
-    borderColor: colors.success,
-    backgroundColor: 'rgba(34,197,94,0.1)',
-  },
-  optionHighlight: {
-    borderColor: colors.primary,
-    backgroundColor: 'rgba(37,99,235,0.08)',
-  },
-  optionIncorrect: {
-    borderColor: '#ef4444',
-    backgroundColor: 'rgba(239,68,68,0.08)',
-  },
-  optionTextCorrect: {
-    color: colors.success,
-  },
-  optionTextIncorrect: {
-    color: '#ef4444',
-  },
-  badgePositive: {
-    color: colors.success,
-  },
-  badgeNeutral: {
-    color: colors.primary,
-  },
-  badgeWarning: {
-    color: '#ef4444',
-  },
-  answerSummary: {
-    gap: spacing.xs,
-  },
-  answerLabel: {
-    ...typography.caption,
-    color: colors.textSecondary,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  answerValue: {
-    ...typography.body,
-    fontWeight: '600',
-    color: colors.textPrimary,
-  },
-  answerValueCorrect: {
-    color: colors.success,
-  },
-  answerValueIncorrect: {
-    color: '#ef4444',
-  },
-  explanationBox: {
-    gap: spacing.xs,
-  },
-  explanationText: {
-    ...typography.body,
-    color: colors.textSecondary,
-  },
-});
+const difficultyLabelKeys: Record<
+  Difficulty,
+  | 'common.difficulties.easy'
+  | 'common.difficulties.medium'
+  | 'common.difficulties.hard'
+> = {
+  easy: 'common.difficulties.easy',
+  medium: 'common.difficulties.medium',
+  hard: 'common.difficulties.hard',
+};
 
 export default HistoryDetailScreen;

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { CodeBlock, colors, radius, spacing, typography } from '../components';
+import { useTranslation } from 'react-i18next';
+import { CodeBlock, makeStyles, useTheme } from '../components';
 import { AnswerRecord, Question } from '../types/quiz';
 
 export interface ResultScreenProps {
@@ -23,6 +24,9 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
   const totalQuestions = questions.length;
   const correctCount = answers.filter((answer) => answer.isCorrect).length;
   const percentage = Math.round((correctCount / totalQuestions) * 100);
+  const { t } = useTranslation();
+  const theme = useTheme();
+  const styles = useStyles();
 
   return (
     <ScrollView
@@ -31,9 +35,9 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
       showsVerticalScrollIndicator={false}
     >
       <View style={styles.headerCard}>
-        <Text style={styles.title}>Quiz Complete</Text>
+        <Text style={styles.title}>{t('result.title')}</Text>
         <Text style={styles.subtitle}>
-          You answered {correctCount} out of {totalQuestions} questions correctly.
+          {t('result.subtitle', { correct: correctCount, total: totalQuestions })}
         </Text>
         <View style={styles.scorePill}>
           <Text style={styles.scorePillValue}>{percentage}</Text>
@@ -43,30 +47,33 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
 
       <View style={styles.actions}>
         <Pressable style={styles.primaryButton} onPress={onRetry}>
-          <Text style={styles.primaryButtonText}>Retake Quiz</Text>
+          <Text style={styles.primaryButtonText}>
+            {t('common.actions.retakeQuiz')}
+          </Text>
         </Pressable>
         <Pressable style={styles.secondaryButton} onPress={onClose}>
-          <Text style={styles.secondaryButtonText}>Back to Home</Text>
+          <Text style={styles.secondaryButtonText}>
+            {t('common.actions.backHome')}
+          </Text>
         </Pressable>
       </View>
 
       {isGuest ? (
         <View style={styles.guestNotice}>
-          <Text style={styles.guestHeading}>Guest mode reminder</Text>
-          <Text style={styles.guestBody}>
-            Results aren&apos;t stored while in guest mode. Sign in to keep your
-            streaks, sync across devices, and unlock detailed progress analytics.
-          </Text>
+          <Text style={styles.guestHeading}>{t('result.guestTitle')}</Text>
+          <Text style={styles.guestBody}>{t('result.guestBody')}</Text>
           {onRequestSignIn ? (
             <Pressable style={styles.guestButton} onPress={onRequestSignIn}>
-              <Text style={styles.guestButtonText}>Sign in with GitHub</Text>
+              <Text style={styles.guestButtonText}>
+                {t('common.actions.signIn')}
+              </Text>
             </Pressable>
           ) : null}
         </View>
       ) : null}
 
       <View style={styles.reviewCard}>
-        <Text style={styles.reviewTitle}>Review answers</Text>
+        <Text style={styles.reviewTitle}>{t('result.reviewTitle')}</Text>
         {questions.map((question) => {
           const answer = answers.find(
             (entry) => entry.questionId === question.id,
@@ -89,27 +96,31 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
               <View
                 style={[
                   styles.badge,
-                  { backgroundColor: isCorrect ? colors.success : '#EF4444' },
+                  {
+                    backgroundColor: isCorrect
+                      ? theme.colors.success
+                      : theme.colors.dangerStrong,
+                  },
                 ]}
               >
                 <Text style={styles.badgeText}>
-                  {isCorrect ? 'Correct' : 'Incorrect'}
+                  {isCorrect ? t('result.badgeCorrect') : t('result.badgeIncorrect')}
                 </Text>
               </View>
 
-              <Text style={styles.label}>Your answer:</Text>
+              <Text style={styles.label}>{t('result.yourAnswer')}</Text>
               <Text style={styles.answerText}>{selectedOption}</Text>
 
               {!isCorrect ? (
                 <>
-                  <Text style={styles.label}>Correct answer:</Text>
+                  <Text style={styles.label}>{t('result.correctAnswer')}</Text>
                   <Text style={styles.correctAnswerText}>{correctOption}</Text>
                 </>
               ) : null}
 
               {question.explanation ? (
                 <>
-                  <Text style={styles.label}>Explanation:</Text>
+                  <Text style={styles.label}>{t('result.explanation')}</Text>
                   <Text style={styles.explanation}>
                     {question.explanation}
                   </Text>
@@ -123,155 +134,168 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  contentContainer: {
-    paddingHorizontal: spacing.xl,
-    paddingBottom: spacing.xxl,
-    gap: spacing.xl,
-  },
-  headerCard: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.md,
-    padding: spacing.xl,
-    gap: spacing.md,
-    alignItems: 'center',
-  },
-  title: {
-    ...typography.display,
-    color: colors.textPrimary,
-  },
-  subtitle: {
-    ...typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-  },
-  scorePill: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
-    backgroundColor: colors.primary,
-    paddingHorizontal: spacing.xl,
-    paddingVertical: spacing.md,
-    borderRadius: radius.pill,
-    marginTop: spacing.md,
-  },
-  scorePillValue: {
-    ...typography.display,
-    color: colors.textOnPrimary,
-  },
-  scorePillSuffix: {
-    ...typography.heading,
-    color: colors.textOnPrimary,
-    marginLeft: spacing.xs,
-  },
-  actions: {
-    flexDirection: 'row',
-    gap: spacing.md,
-  },
-  primaryButton: {
-    flex: 1,
-    backgroundColor: colors.primary,
-    borderRadius: radius.lg,
-    paddingVertical: spacing.lg,
-    alignItems: 'center',
-  },
-  primaryButtonText: {
-    ...typography.heading,
-    color: colors.textOnPrimary,
-  },
-  secondaryButton: {
-    flex: 1,
-    borderRadius: radius.lg,
-    paddingVertical: spacing.lg,
-    alignItems: 'center',
-    backgroundColor: 'rgba(15, 23, 42, 0.2)',
-  },
-  secondaryButtonText: {
-    ...typography.heading,
-    color: colors.surface,
-  },
-  guestNotice: {
-    backgroundColor: '#172554',
-    borderRadius: radius.md,
-    padding: spacing.xl,
-    gap: spacing.md,
-  },
-  guestHeading: {
-    ...typography.heading,
-    color: colors.surface,
-  },
-  guestBody: {
-    ...typography.body,
-    color: colors.surface,
-    opacity: 0.9,
-  },
-  guestButton: {
-    alignSelf: 'flex-start',
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    borderColor: colors.surface,
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.lg,
-  },
-  guestButtonText: {
-    ...typography.caption,
-    color: colors.surface,
-    textTransform: 'uppercase',
-  },
-  reviewCard: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.md,
-    padding: spacing.xl,
-    gap: spacing.xl,
-  },
-  reviewTitle: {
-    ...typography.heading,
-    color: colors.textPrimary,
-  },
-  reviewRow: {
-    gap: spacing.sm,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#CBD5F5',
-    paddingBottom: spacing.lg,
-  },
-  questionPrompt: {
-    ...typography.body,
-    color: colors.textPrimary,
-  },
-  reviewCode: {
-    marginTop: spacing.sm,
-  },
-  badge: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs,
-    borderRadius: radius.pill,
-  },
-  badgeText: {
-    ...typography.caption,
-    color: colors.textOnPrimary,
-    textTransform: 'uppercase',
-  },
-  label: {
-    ...typography.caption,
-    color: colors.textSecondary,
-    textTransform: 'uppercase',
-  },
-  answerText: {
-    ...typography.body,
-    color: colors.textPrimary,
-  },
-  correctAnswerText: {
-    ...typography.body,
-    color: colors.success,
-    fontWeight: '600',
-  },
-  explanation: {
-    ...typography.body,
-    color: colors.textSecondary,
-  },
-});
+const useStyles = makeStyles((theme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+    },
+    contentContainer: {
+      paddingHorizontal: theme.spacing.xl,
+      paddingBottom: theme.spacing.xxl,
+      gap: theme.spacing.xl,
+    },
+    headerCard: {
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radius.md,
+      padding: theme.spacing.xl,
+      gap: theme.spacing.md,
+      alignItems: 'center',
+      shadowColor: theme.colors.shadow,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.08,
+      shadowRadius: 6,
+      elevation: 2,
+    },
+    title: {
+      ...theme.typography.display,
+      color: theme.colors.textPrimary,
+    },
+    subtitle: {
+      ...theme.typography.body,
+      color: theme.colors.textSecondary,
+      textAlign: 'center',
+    },
+    scorePill: {
+      flexDirection: 'row',
+      alignItems: 'baseline',
+      backgroundColor: theme.colors.primary,
+      paddingHorizontal: theme.spacing.xl,
+      paddingVertical: theme.spacing.md,
+      borderRadius: theme.radius.pill,
+      marginTop: theme.spacing.md,
+    },
+    scorePillValue: {
+      ...theme.typography.display,
+      color: theme.colors.textOnPrimary,
+    },
+    scorePillSuffix: {
+      ...theme.typography.heading,
+      color: theme.colors.textOnPrimary,
+      marginLeft: theme.spacing.xs,
+    },
+    actions: {
+      flexDirection: 'row',
+      gap: theme.spacing.md,
+    },
+    primaryButton: {
+      flex: 1,
+      backgroundColor: theme.colors.primary,
+      borderRadius: theme.radius.lg,
+      paddingVertical: theme.spacing.lg,
+      alignItems: 'center',
+    },
+    primaryButtonText: {
+      ...theme.typography.heading,
+      color: theme.colors.textOnPrimary,
+    },
+    secondaryButton: {
+      flex: 1,
+      borderRadius: theme.radius.lg,
+      paddingVertical: theme.spacing.lg,
+      alignItems: 'center',
+      backgroundColor: theme.colors.surfaceMuted,
+    },
+    secondaryButtonText: {
+      ...theme.typography.heading,
+      color: theme.colors.textPrimary,
+    },
+    guestNotice: {
+      backgroundColor: theme.colors.primary,
+      borderRadius: theme.radius.md,
+      padding: theme.spacing.xl,
+      gap: theme.spacing.md,
+    },
+    guestHeading: {
+      ...theme.typography.heading,
+      color: theme.colors.textOnPrimary,
+    },
+    guestBody: {
+      ...theme.typography.body,
+      color: theme.colors.textOnPrimary,
+      opacity: 0.92,
+    },
+    guestButton: {
+      alignSelf: 'flex-start',
+      borderRadius: theme.radius.lg,
+      borderWidth: 1,
+      borderColor: theme.colors.textOnPrimary,
+      paddingVertical: theme.spacing.md,
+      paddingHorizontal: theme.spacing.lg,
+    },
+    guestButtonText: {
+      ...theme.typography.caption,
+      color: theme.colors.textOnPrimary,
+      textTransform: 'uppercase',
+    },
+    reviewCard: {
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radius.md,
+      padding: theme.spacing.xl,
+      gap: theme.spacing.xl,
+      shadowColor: theme.colors.shadow,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.08,
+      shadowRadius: 6,
+      elevation: 2,
+    },
+    reviewTitle: {
+      ...theme.typography.heading,
+      color: theme.colors.textPrimary,
+    },
+    reviewRow: {
+      gap: theme.spacing.sm,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: theme.colors.border,
+      paddingBottom: theme.spacing.lg,
+    },
+    questionPrompt: {
+      ...theme.typography.body,
+      color: theme.colors.textPrimary,
+    },
+    reviewCode: {
+      marginTop: theme.spacing.sm,
+    },
+    badge: {
+      alignSelf: 'flex-start',
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.xs,
+      borderRadius: theme.radius.pill,
+    },
+    badgeText: {
+      ...theme.typography.caption,
+      color: theme.colors.textOnPrimary,
+      textTransform: 'uppercase',
+    },
+    label: {
+      ...theme.typography.caption,
+      color: theme.colors.textSecondary,
+      textTransform: 'uppercase',
+    },
+    answerText: {
+      ...theme.typography.body,
+      color: theme.colors.textPrimary,
+    },
+    correctAnswerText: {
+      ...theme.typography.body,
+      color: theme.colors.success,
+      fontWeight: '600',
+    },
+    explanation: {
+      ...theme.typography.body,
+      color: theme.colors.textSecondary,
+    },
+  }),
+);
 
 export default ResultScreen;

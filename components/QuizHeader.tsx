@@ -7,7 +7,8 @@ import {
   View,
   ViewProps,
 } from 'react-native';
-import { colors, radius, spacing, typography } from './theme';
+import { useTranslation } from 'react-i18next';
+import { makeStyles } from './theme';
 
 export interface QuizHeaderProps extends ViewProps {
   title: string;
@@ -18,6 +19,7 @@ export interface QuizHeaderProps extends ViewProps {
   totalQuestions: number;
   timeRemainingLabel?: string;
   onAvatarPress?: () => void;
+  showProgress?: boolean;
 }
 
 export const QuizHeader: React.FC<QuizHeaderProps> = ({
@@ -29,14 +31,19 @@ export const QuizHeader: React.FC<QuizHeaderProps> = ({
   totalQuestions,
   timeRemainingLabel,
   onAvatarPress,
+  showProgress = true,
   style,
   ...rest
 }) => {
+  const { t } = useTranslation();
+  const styles = useStyles();
+  const fallbackInitials = t('common.userInitials');
+
   return (
     <View style={[styles.container, style]} {...rest}>
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel="User profile"
+        accessibilityLabel={t('common.userProfile')}
         onPress={onAvatarPress}
         disabled={!onAvatarPress}
         style={styles.avatarWrapper}
@@ -45,7 +52,7 @@ export const QuizHeader: React.FC<QuizHeaderProps> = ({
           <Image source={{ uri: avatarUri }} style={styles.avatarImage} />
         ) : (
           <View style={styles.avatarFallback}>
-            <Text style={styles.avatarInitials}>{initials ?? 'YOU'}</Text>
+            <Text style={styles.avatarInitials}>{initials ?? fallbackInitials}</Text>
           </View>
         )}
       </Pressable>
@@ -55,79 +62,84 @@ export const QuizHeader: React.FC<QuizHeaderProps> = ({
         {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
       </View>
 
-      <View style={styles.status}>
-        <Text style={styles.statusPrimary}>
-          {currentQuestion}/{totalQuestions}
-        </Text>
-        {timeRemainingLabel ? (
-          <Text style={styles.statusSecondary}>{timeRemainingLabel}</Text>
-        ) : null}
-      </View>
+      {showProgress ? (
+        <View style={styles.status}>
+          <Text style={styles.statusPrimary}>
+            {currentQuestion}/{totalQuestions}
+          </Text>
+          {timeRemainingLabel ? (
+            <Text style={styles.statusSecondary}>{timeRemainingLabel}</Text>
+          ) : null}
+        </View>
+      ) : null}
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: spacing.lg,
-    paddingHorizontal: spacing.xl,
-    backgroundColor: colors.surface,
-    borderRadius: radius.md,
-    shadowColor: colors.background,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
-    elevation: 2,
-  },
-  avatarWrapper: {
-    paddingRight: spacing.lg,
-  },
-  avatarImage: {
-    width: 40,
-    height: 40,
-    borderRadius: radius.pill,
-  },
-  avatarFallback: {
-    width: 40,
-    height: 40,
-    borderRadius: radius.pill,
-    backgroundColor: colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  avatarInitials: {
-    ...typography.caption,
-    color: colors.textOnPrimary,
-  },
-  meta: {
-    flex: 1,
-    gap: spacing.xs,
-  },
-  title: {
-    ...typography.heading,
-    color: colors.textPrimary,
-  },
-  subtitle: {
-    ...typography.caption,
-    color: colors.textSecondary,
-    textTransform: 'none',
-  },
-  status: {
-    alignItems: 'flex-end',
-    gap: spacing.xs,
-  },
-  statusPrimary: {
-    ...typography.heading,
-    color: colors.primary,
-  },
-  statusSecondary: {
-    ...typography.caption,
-    color: colors.textSecondary,
-    textTransform: 'none',
-  },
-});
+const useStyles = makeStyles((theme) =>
+  StyleSheet.create({
+    container: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingVertical: theme.spacing.lg,
+      paddingHorizontal: theme.spacing.xl,
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radius.md,
+      shadowColor: theme.colors.shadow,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 6,
+      elevation: 2,
+    },
+    avatarWrapper: {
+      paddingRight: theme.spacing.lg,
+    },
+    avatarImage: {
+      width: 40,
+      height: 40,
+      borderRadius: theme.radius.pill,
+    },
+    avatarFallback: {
+      width: 40,
+      height: 40,
+      borderRadius: theme.radius.pill,
+      backgroundColor: theme.colors.primary,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    avatarInitials: {
+      ...theme.typography.caption,
+      color: theme.colors.textOnPrimary,
+    },
+    meta: {
+      flex: 1,
+      gap: theme.spacing.xs,
+    },
+    title: {
+      ...theme.typography.body,
+      color: theme.colors.textPrimary,
+      fontWeight: '700',
+    },
+    subtitle: {
+      ...theme.typography.subheading,
+      color: theme.colors.textSecondary,
+      textTransform: 'none',
+    },
+    status: {
+      alignItems: 'flex-end',
+      gap: theme.spacing.xs,
+    },
+    statusPrimary: {
+      ...theme.typography.heading,
+      color: theme.colors.primary,
+    },
+    statusSecondary: {
+      ...theme.typography.subheading,
+      color: theme.colors.textSecondary,
+      textTransform: 'none',
+    },
+  }),
+);
 
 export default QuizHeader;

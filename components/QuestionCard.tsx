@@ -7,7 +7,7 @@ import {
   ViewStyle,
   StyleProp,
 } from 'react-native';
-import { colors, radius, spacing, typography } from './theme';
+import { makeStyles } from './theme';
 import { CodeBlock } from './CodeBlock';
 
 interface QuestionCardProps extends ViewProps {
@@ -29,6 +29,8 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
   children,
   ...viewProps
 }) => {
+  const styles = useStyles();
+
   return (
     <View
       style={[styles.card, containerStyle, style]}
@@ -49,39 +51,41 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.md,
-    padding: spacing.xl,
-    gap: spacing.lg,
-    position: 'relative',
-    shadowColor: colors.background,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
-    elevation: 2,
-  },
-  header: {
-    gap: spacing.sm,
-  },
-  title: {
-    ...typography.heading,
-    color: colors.textPrimary,
-  },
-  description: {
-    ...typography.body,
-    color: colors.textSecondary,
-  },
-  codeBlock: {},
-  body: {
-    gap: spacing.md,
-  },
-  footer: {
-    paddingTop: spacing.lg,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: '#CBD5F5',
-  },
-});
+const useStyles = makeStyles((theme) =>
+  StyleSheet.create({
+    card: {
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radius.md,
+      padding: theme.spacing.xl,
+      gap: theme.spacing.lg,
+      position: 'relative',
+      shadowColor: theme.colors.shadow,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.12,
+      shadowRadius: 6,
+      elevation: 2,
+    },
+    header: {
+      gap: theme.spacing.sm,
+    },
+    title: {
+      ...theme.typography.heading,
+      color: theme.colors.textPrimary,
+    },
+    description: {
+      ...theme.typography.body,
+      color: theme.colors.textSecondary,
+    },
+    codeBlock: {},
+    body: {
+      gap: theme.spacing.md,
+    },
+    footer: {
+      paddingTop: theme.spacing.lg,
+      borderTopWidth: StyleSheet.hairlineWidth,
+      borderTopColor: theme.colors.border,
+    },
+  }),
+);
 
 export default QuestionCard;

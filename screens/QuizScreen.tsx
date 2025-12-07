@@ -10,6 +10,7 @@ import {
   ViewProps,
   Easing,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import ConfettiCannon from 'react-native-confetti-cannon';
 import {
   IconArrowLeft,
@@ -23,10 +24,8 @@ import {
   ProgressBar,
   QuestionCard,
   QuizHeader,
-  colors,
-  radius,
-  spacing,
-  typography,
+  makeStyles,
+  useTheme,
 } from '../components';
 import { AnswerRecord, Question } from '../types/quiz';
 import { useAppStore } from '../store/useAppStore';
@@ -63,20 +62,21 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
   const insets = useSafeAreaInsets();
   const [explanationVisible, setExplanationVisible] = useState(false);
   const explanationAnim = useRef(new Animated.Value(0)).current;
+  const { t } = useTranslation();
+  const theme = useTheme();
+  const styles = useStyles();
 
   const currentQuestion = questions[currentIndex];
   const totalQuestions = questions.length;
 
-  if (questions.length === 0) {
-    return (
-      <View style={[styles.root, style, styles.emptyState]} {...rest}>
-        <Text style={styles.emptyTitle}>No questions available</Text>
-        <Text style={styles.emptySubtitle}>
-          Add questions to the bank or choose a different difficulty to begin.
-        </Text>
-      </View>
-    );
-  }
+  // if (questions.length === 0) {
+  //   return (
+  //     <View style={[styles.root, style, styles.emptyState]} {...rest}>
+  //       <Text style={styles.emptyTitle}>{t('quiz.emptyTitle')}</Text>
+  //       <Text style={styles.emptySubtitle}>{t('quiz.emptySubtitle')}</Text>
+  //     </View>
+  //   );
+  // }
 
   const progress = (currentIndex + (submitted ? 1 : 0)) / totalQuestions;
 
@@ -210,13 +210,14 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
         : '—';
     const correctLabel =
       currentQuestion.options[currentQuestion.answerIndex] ?? '—';
+    const emphasisColor = isCorrect ? theme.colors.success : theme.colors.dangerStrong;
 
     return (
       <Animated.View
         style={[
           styles.explanationDrawer,
           {
-            borderLeftColor: isCorrect ? colors.success : '#EF4444',
+            borderLeftColor: emphasisColor,
             opacity: explanationAnim,
             transform: [
               {
@@ -228,19 +229,19 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
             ],
           },
         ]}
-      >
-        <Text
-          style={[
-            styles.explanationHeading,
-            { color: isCorrect ? colors.success : '#EF4444' },
-          ]}
         >
-          {isCorrect ? 'Correct!' : 'Let’s review'}
-        </Text>
+          <Text
+            style={[
+              styles.explanationHeading,
+              { color: emphasisColor },
+            ]}
+          >
+            {isCorrect ? t('quiz.explanationCorrect') : t('quiz.explanationReview')}
+          </Text>
         <Text style={styles.explanationQuestion}>{currentQuestion.prompt}</Text>
         <View style={styles.explanationAnswers}>
           <View style={styles.answerRow}>
-            <Text style={styles.answerLabel}>Your answer</Text>
+            <Text style={styles.answerLabel}>{t('quiz.yourAnswer')}</Text>
             <Text
               style={[
                 styles.answerValue,
@@ -253,7 +254,7 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
             </Text>
           </View>
           <View style={styles.answerRow}>
-            <Text style={styles.answerLabel}>Correct answer</Text>
+            <Text style={styles.answerLabel}>{t('quiz.correctAnswer')}</Text>
             <Text
               style={[styles.answerValue, styles.answerValueCorrect]}
             >
@@ -266,7 +267,7 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
           style={styles.dismissButton}
           onPress={handleDismissExplanation}
         >
-          <Text style={styles.dismissButtonText}>Okay</Text>
+          <Text style={styles.dismissButtonText}>{t('quiz.dismiss')}</Text>
         </Pressable>
       </Animated.View>
     );
@@ -291,7 +292,7 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
           pointerEvents="auto"
           style={[
             styles.explanationOverlay,
-            { paddingTop: insets.top + spacing.xl },
+            { paddingTop: insets.top + theme.spacing.xl },
           ]}
         >
           <Pressable
@@ -306,20 +307,27 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
         contentContainerStyle={[
           styles.container,
           {
-            paddingBottom: spacing.xxl * 3 + spacing.xl,
+            paddingBottom: theme.spacing.xxl * 3 + theme.spacing.xl,
           },
         ]}
         showsVerticalScrollIndicator={false}
         {...rest}
       >
         <QuizHeader
-          title="React Mastery Quiz"
-          subtitle={`Question ${currentIndex + 1} of ${totalQuestions}`}
+          title={t('quiz.title')}
+          subtitle={t('quiz.subtitle', {
+            current: currentIndex + 1,
+            total: totalQuestions,
+          })}
           avatarUri={avatarUrl}
           initials={getInitials(username)}
           currentQuestion={currentIndex + 1}
           totalQuestions={totalQuestions}
-          timeRemainingLabel={isGuest ? 'Guest mode' : `${streakDays} day streak`}
+          timeRemainingLabel={
+            isGuest
+              ? t('common.guestMode')
+              : t('common.streakDays', { count: Math.max(streakDays, 0) })
+          }
         />
 
         <ProgressBar progress={progress} milestones={milestones} />
@@ -362,12 +370,17 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
           >
             <View style={styles.buttonRow}>
               {currentIndex === 0 ? (
-                <IconArrowLeftOnRectangle size={iconSize} color={colors.primary} />
+                <IconArrowLeftOnRectangle
+                  size={iconSize}
+                  color={theme.colors.primary}
+                />
               ) : (
-                <IconArrowLeft size={iconSize} color={colors.primary} />
+                <IconArrowLeft size={iconSize} color={theme.colors.primary} />
               )}
               <Text style={styles.secondaryButtonText}>
-                {currentIndex === 0 ? 'Exit' : 'Previous'}
+                {currentIndex === 0
+                  ? t('common.actions.exit')
+                  : t('common.actions.previous')}
               </Text>
             </View>
           </Pressable>
@@ -382,15 +395,22 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
             <View style={styles.buttonRow}>
               {submitted ? (
                 isLastQuestion ? (
-                  <IconTrophy size={iconSize} color={colors.textOnPrimary} />
+                  <IconTrophy size={iconSize} color={theme.colors.textOnPrimary} />
                 ) : (
-                  <IconArrowRight size={iconSize} color={colors.textOnPrimary} />
+                  <IconArrowRight
+                    size={iconSize}
+                    color={theme.colors.textOnPrimary}
+                  />
                 )
               ) : (
-                <IconCheck size={iconSize} color={colors.textOnPrimary} />
+                <IconCheck size={iconSize} color={theme.colors.textOnPrimary} />
               )}
               <Text style={styles.primaryButtonText}>
-                {submitted ? (isLastQuestion ? 'Finish' : 'Next') : 'Submit'}
+                {submitted
+                  ? isLastQuestion
+                    ? t('common.actions.finish')
+                    : t('common.actions.next')
+                  : t('common.actions.submit')}
               </Text>
             </View>
           </Pressable>
@@ -434,177 +454,182 @@ function getInitials(source: string) {
   return source.slice(0, 2).toUpperCase();
 }
 
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
-  scroll: {
-    flex: 1,
-  },
-  container: {
-    flex: 1,
-    gap: spacing.xl,
-  },
-  bottomOverlay: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    gap: spacing.md,
-    // paddingHorizontal: spacing.xl,
-  },
-  explanationOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    zIndex: 30,
-    paddingHorizontal: spacing.xl,
-  },
-  overlayBackdrop: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(15, 23, 42, 0.55)',
-  },
-  dock: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.lg,
-    backgroundColor: colors.surface,
-    borderRadius: radius.lg,
-    padding: spacing.md,
-    shadowColor: colors.background,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
-  },
-  confettiLayer: {
-    ...StyleSheet.absoluteFillObject,
-    zIndex: 20,
-    elevation: 20,
-  },
-  emptyState: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: spacing.xl,
-    gap: spacing.md,
-  },
-  emptyTitle: {
-    ...typography.heading,
-    color: colors.textPrimary,
-  },
-  emptySubtitle: {
-    ...typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-  },
-  option: {
-    marginBottom: spacing.md,
-  },
-  buttonRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  buttonIcon: {
-    marginRight: spacing.xs,
-  },
-  primaryButton: {
-    flex: 1,
-    backgroundColor: colors.primary,
-    borderRadius: radius.lg,
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.lg,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  primaryButtonText: {
-    ...typography.heading,
-    color: colors.textOnPrimary,
-  },
-  secondaryButton: {
-    flex: 1,
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.lg,
-    borderRadius: radius.lg,
-    backgroundColor: 'rgba(15, 23, 42, 0.08)',
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.border,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  secondaryButtonText: {
-    ...typography.body,
-    color: colors.textPrimary,
-  },
-  disabledButton: {
-    opacity: 0.4,
-  },
-  explanationDrawer: {
-    width: '100%',
-    maxWidth: 560,
-    backgroundColor: colors.surface,
-    borderRadius: radius.lg,
-    padding: spacing.xl,
-    gap: spacing.md,
-    borderLeftWidth: 4,
-    borderLeftColor: 'transparent',
-    shadowColor: colors.background,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.12,
-    shadowRadius: 12,
-    elevation: 4,
-  },
-  explanationHeading: {
-    ...typography.heading,
-  },
-  explanationQuestion: {
-    ...typography.body,
-    color: colors.textPrimary,
-    fontWeight: '600',
-    marginTop: spacing.xs,
-  },
-  explanationAnswers: {
-    marginTop: spacing.md,
-    gap: spacing.sm,
-  },
-  answerRow: {
-    gap: spacing.xs,
-  },
-  answerLabel: {
-    ...typography.caption,
-    color: colors.textSecondary,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  answerValue: {
-    ...typography.body,
-    fontWeight: '600',
-    color: colors.textPrimary,
-  },
-  answerValueCorrect: {
-    color: colors.success,
-  },
-  answerValueIncorrect: {
-    color: '#EF4444',
-  },
-  explanationBody: {
-    ...typography.body,
-    color: colors.textSecondary,
-    marginTop: spacing.md,
-  },
-  dismissButton: {
-    alignSelf: 'flex-end',
-    marginTop: spacing.lg,
-    backgroundColor: colors.primary,
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.lg,
-    borderRadius: radius.md,
-  },
-  dismissButtonText: {
-    ...typography.body,
-    color: colors.textOnPrimary,
-    fontWeight: '600',
-  },
-});
+const useStyles = makeStyles((theme) =>
+  StyleSheet.create({
+    root: {
+      flex: 1,
+    },
+    scroll: {
+      flex: 1,
+    },
+    container: {
+      flex: 1,
+      gap: theme.spacing.xl,
+    },
+    bottomOverlay: {
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      bottom: 0,
+      gap: theme.spacing.md,
+    },
+    explanationOverlay: {
+      ...StyleSheet.absoluteFillObject,
+      justifyContent: 'flex-start',
+      alignItems: 'center',
+      zIndex: 30,
+      paddingHorizontal: theme.spacing.xl,
+    },
+    overlayBackdrop: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor:
+        theme.name === 'dark'
+          ? 'rgba(0, 0, 0, 0.55)'
+          : 'rgba(15, 23, 42, 0.55)',
+    },
+    dock: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: theme.spacing.lg,
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radius.lg,
+      padding: theme.spacing.md,
+      shadowColor: theme.colors.shadow,
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.1,
+      shadowRadius: 8,
+      elevation: 3,
+    },
+    confettiLayer: {
+      ...StyleSheet.absoluteFillObject,
+      zIndex: 20,
+      elevation: 20,
+    },
+    emptyState: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingHorizontal: theme.spacing.xl,
+      gap: theme.spacing.md,
+    },
+    emptyTitle: {
+      ...theme.typography.heading,
+      color: theme.colors.textPrimary,
+    },
+    emptySubtitle: {
+      ...theme.typography.body,
+      color: theme.colors.textSecondary,
+      textAlign: 'center',
+    },
+    option: {
+      marginBottom: theme.spacing.md,
+    },
+    buttonRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: theme.spacing.sm,
+    },
+    buttonIcon: {
+      marginRight: theme.spacing.xs,
+    },
+    primaryButton: {
+      flex: 1,
+      backgroundColor: theme.colors.primary,
+      borderRadius: theme.radius.lg,
+      paddingVertical: theme.spacing.md,
+      paddingHorizontal: theme.spacing.lg,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    primaryButtonText: {
+      ...theme.typography.heading,
+      color: theme.colors.textOnPrimary,
+    },
+    secondaryButton: {
+      flex: 1,
+      paddingVertical: theme.spacing.md,
+      paddingHorizontal: theme.spacing.lg,
+      borderRadius: theme.radius.lg,
+      backgroundColor: theme.colors.surfaceMuted,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: theme.colors.border,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    secondaryButtonText: {
+      ...theme.typography.body,
+      color: theme.colors.textPrimary,
+    },
+    disabledButton: {
+      opacity: 0.4,
+    },
+    explanationDrawer: {
+      width: '100%',
+      maxWidth: 560,
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radius.lg,
+      padding: theme.spacing.xl,
+      gap: theme.spacing.md,
+      borderLeftWidth: 4,
+      borderLeftColor: 'transparent',
+      shadowColor: theme.colors.shadow,
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.12,
+      shadowRadius: 12,
+      elevation: 4,
+    },
+    explanationHeading: {
+      ...theme.typography.heading,
+      color: theme.colors.textPrimary,
+    },
+    explanationQuestion: {
+      ...theme.typography.body,
+      color: theme.colors.textPrimary,
+      fontWeight: '600',
+      marginTop: theme.spacing.xs,
+    },
+    explanationAnswers: {
+      marginTop: theme.spacing.md,
+      gap: theme.spacing.sm,
+    },
+    answerRow: {
+      gap: theme.spacing.xs,
+    },
+    answerLabel: {
+      ...theme.typography.caption,
+      color: theme.colors.textSecondary,
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
+    },
+    answerValue: {
+      ...theme.typography.body,
+      fontWeight: '600',
+      color: theme.colors.textPrimary,
+    },
+    answerValueCorrect: {
+      color: theme.colors.success,
+    },
+    answerValueIncorrect: {
+      color: theme.colors.dangerStrong,
+    },
+    explanationBody: {
+      ...theme.typography.body,
+      color: theme.colors.textSecondary,
+      marginTop: theme.spacing.md,
+    },
+    dismissButton: {
+      alignSelf: 'flex-end',
+      marginTop: theme.spacing.lg,
+      backgroundColor: theme.colors.primary,
+      paddingVertical: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.lg,
+      borderRadius: theme.radius.md,
+    },
+    dismissButtonText: {
+      ...theme.typography.body,
+      color: theme.colors.textOnPrimary,
+      fontWeight: '600',
+    },
+  }),
+);
 
 export default QuizScreen;

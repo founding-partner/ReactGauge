@@ -12,4 +12,19 @@ export type { QuizHeaderProps } from './QuizHeader';
 export { CodeBlock } from './CodeBlock';
 export type { CodeBlockProps } from './CodeBlock';
 
-export { colors, spacing, typography, radius } from './theme';
+export { SettingsDrawer } from './SettingsDrawer';
+
+export {
+  ThemeProvider,
+  useTheme,
+  useThemedStyles,
+  makeStyles,
+  colors,
+  spacing,
+  typography,
+  radius,
+  lightTheme,
+  darkTheme,
+  ThemeMode,
+  ThemePreference,
+} from './theme';

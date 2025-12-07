@@ -1,14 +1,20 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import {
   Alert,
+  Pressable,
   ScrollView,
   StatusBar,
   StyleSheet,
-  useColorScheme,
+  Text,
   View,
 } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { colors, spacing } from './components';
+import {
+  ThemeProvider,
+  useTheme,
+  makeStyles,
+  ThemePreference,
+} from './components';
 import { signInWithGitHub } from './auth/githubAuth';
 import { HomeScreen } from './screens/HomeScreen';
 import { LoginScreen } from './screens/LoginScreen';
@@ -18,6 +24,8 @@ import { ScoreScreen } from './screens/ScoreScreen';
 import { HistoryScreen } from './screens/HistoryScreen';
 import { HistoryDetailScreen } from './screens/HistoryDetailScreen';
 import { AnswerRecord, Question } from './types/quiz';
+import './localization/i18n';
+import { useTranslation } from 'react-i18next';
 import {
   LOCAL_QUESTIONS,
   REMOTE_QUESTIONS_URL,
@@ -31,20 +39,41 @@ import {
   clearHistory as clearHistoryStorage,
   loadHistory,
 } from './storage/historyStorage';
+import {
+  loadLanguagePreference,
+  saveLanguagePreference,
+  loadThemePreference,
+  saveThemePreference,
+} from './storage/settingsStorage';
+import { SettingsDrawer } from './components/SettingsDrawer';
+import { IconWheel } from './components/icons';
 
 type ActiveScreen = 'home' | 'quiz' | 'score' | 'result' | 'history' | 'historyDetail';
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+type AppContentProps = {
+  themePreference: ThemePreference;
+  onSelectTheme: (theme: ThemePreference) => void;
+};
+
+function AppContent({
+  themePreference,
+  onSelectTheme,
+}: AppContentProps): React.JSX.Element {
+  const { t, i18n } = useTranslation();
+  const theme = useTheme();
+  const styles = useStyles();
   const [user, setUser] = useState<UserProfile | null>(null);
   const [authLoading, setAuthLoading] = useState(false);
   const [activeScreen, setActiveScreen] = useState<ActiveScreen>('home');
   const [profileHydrated, setProfileHydrated] = useState(false);
+  const [languageHydrated, setLanguageHydrated] = useState(false);
   const [historyAttempts, setHistoryAttempts] = useState<QuizAttemptHistory>([]);
   const [selectedAttempt, setSelectedAttempt] = useState<QuizAttempt | null>(null);
   const setQuestions = useAppStore((state) => state.setQuestions);
   const allQuestions = useAppStore((state) => state.allQuestions);
   const difficulty = useAppStore((state) => state.difficulty);
   const setDifficulty = useAppStore((state) => state.setDifficulty);
+  const language = useAppStore((state) => state.language);
+  const setLanguageCode = useAppStore((state) => state.setLanguage);
   const dailyWarmupQuestion = useAppStore((state) => state.dailyWarmupQuestion);
   const refreshWarmupQuestion = useAppStore(
     (state) => state.refreshWarmupQuestion,
@@ -60,6 +89,9 @@ function App(): React.JSX.Element {
   );
   const quizAnswers = useAppStore((state) => state.quizAnswers);
   const setQuizAnswers = useAppStore((state) => state.setQuizAnswers);
+  const iconSize = useAppStore((state) => state.iconSize);
+  const setIconSize = useAppStore((state) => state.setIconSize);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -78,11 +110,42 @@ function App(): React.JSX.Element {
   }, []);
 
   useEffect(() => {
+    let mounted = true;
+    (async () => {
+      const storedLanguage = await loadLanguagePreference();
+      if (mounted && storedLanguage) {
+        setLanguageCode(storedLanguage);
+      }
+      if (mounted) {
+        setLanguageHydrated(true);
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, [setLanguageCode]);
+
+  useEffect(() => {
     if (!profileHydrated) {
       return;
     }
     void saveUserProfile(user);
   }, [user, profileHydrated]);
+
+  useEffect(() => {
+    if (!language) {
+      return;
+    }
+    i18n
+      .changeLanguage(language)
+      .catch((error) =>
+        console.warn('[ReactGauge] Unable to switch language', error),
+      );
+    if (languageHydrated) {
+      void saveLanguagePreference(language);
+    }
+  }, [language, languageHydrated, i18n]);
+
 
   useEffect(() => {
     let mounted = true;
@@ -176,8 +239,8 @@ function App(): React.JSX.Element {
       setActiveScreen('home');
     } catch (error) {
       const message =
-        error instanceof Error ? error.message : 'Something went wrong.';
-      Alert.alert('GitHub Login Failed', message);
+        error instanceof Error ? error.message : t('alerts.genericError');
+      Alert.alert(t('alerts.githubLoginFailedTitle'), message);
     } finally {
       setAuthLoading(false);
     }
@@ -202,8 +265,8 @@ function App(): React.JSX.Element {
     const selected = pickQuestionsForDifficulty(difficulty);
     if (selected.length === 0) {
       Alert.alert(
-        'No Questions Available',
-        'Add more questions to the question bank to start a quiz for this difficulty.',
+        t('alerts.noQuestionsTitle'),
+        t('alerts.noQuestionsBody'),
       );
       return;
     }
@@ -278,6 +341,89 @@ function App(): React.JSX.Element {
     const selected = pickQuestionsForDifficulty(difficulty);
     setActiveQuestions(selected);
     setActiveScreen('quiz');
+  };
+
+  const resetLocalQuizState = useCallback(() => {
+    setActiveScreen('home');
+    setActiveQuestions([]);
+    setCompletedQuestions([]);
+    setQuizAnswers([]);
+    setSelectedAttempt(null);
+  }, [
+    setActiveQuestions,
+    setActiveScreen,
+    setCompletedQuestions,
+    setQuizAnswers,
+    setSelectedAttempt,
+  ]);
+
+  const performSignOut = useCallback(async () => {
+    resetLocalQuizState();
+    setHistoryAttempts([]);
+    setUser(null);
+    await saveUserProfile(null);
+    await clearHistoryStorage();
+    refreshWarmupQuestion();
+  }, [
+    refreshWarmupQuestion,
+    resetLocalQuizState,
+    setHistoryAttempts,
+    setUser,
+  ]);
+
+  const handleSignOut = () => {
+    Alert.alert(t('alerts.signOutTitle'), t('alerts.signOutBody'), [
+      { text: t('common.actions.cancel'), style: 'cancel' },
+      {
+        text: t('common.actions.signOut'),
+        style: 'destructive',
+        onPress: () => {
+          void performSignOut();
+        },
+      },
+    ]);
+  };
+
+  const performResetData = useCallback(async () => {
+    resetLocalQuizState();
+    setHistoryAttempts([]);
+    await clearHistoryStorage();
+    setUser((prev) => {
+      if (!prev) {
+        return prev;
+      }
+      const resetProfile: UserProfile = {
+        ...prev,
+        answered: 0,
+        correct: 0,
+        streak: 0,
+        completion: 0,
+      };
+      if (profileHydrated) {
+        void saveUserProfile(resetProfile);
+      }
+      return resetProfile;
+    });
+    refreshWarmupQuestion();
+  }, [
+    profileHydrated,
+    refreshWarmupQuestion,
+    resetLocalQuizState,
+    setHistoryAttempts,
+    setUser,
+  ]);
+
+  const handleResetData = () => {
+    Alert.alert(t('alerts.resetDataTitle'), t('alerts.resetDataBody'), [
+      { text: t('common.actions.cancel'), style: 'cancel' },
+      {
+        text: t('common.actions.resetData'),
+        style: 'destructive',
+        onPress: () => {
+          void performResetData();
+        },
+      },
+    ]);
   };
 
   const handleCloseResults = () => {
@@ -408,6 +554,10 @@ function App(): React.JSX.Element {
         streakDays={user.streak}
         completionRatio={user.completion}
         onOpenHistory={handleOpenHistory}
+        onSignOut={handleSignOut}
+        onResetData={handleResetData}
+        language={language}
+        onChangeLanguage={setLanguageCode}
       />
     ) : (
       <QuizScreen
@@ -438,42 +588,135 @@ function App(): React.JSX.Element {
   return (
     <SafeAreaProvider>
       <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+        barStyle={theme.name === 'dark' ? 'light-content' : 'dark-content'}
         backgroundColor="transparent"
         translucent
       />
       <View style={styles.background}>
         <SafeAreaView style={styles.safeArea}>
+          <View style={styles.toolbar}>
+            <Pressable
+              accessibilityRole="button"
+              style={({ pressed }) => [
+                styles.settingsButton,
+                pressed && styles.settingsButtonPressed,
+              ]}
+              onPress={() => setSettingsOpen(true)}
+            >
+              <IconWheel size={18} color={theme.colors.textPrimary} />
+              <Text style={styles.settingsButtonText}>Settings</Text>
+            </Pressable>
+          </View>
           {renderScreen()}
         </SafeAreaView>
+        <SettingsDrawer
+          visible={settingsOpen}
+          onClose={() => setSettingsOpen(false)}
+          showDifficulty={activeScreen !== 'quiz'}
+          difficulty={difficulty}
+          onSelectDifficulty={setDifficulty}
+          iconSize={iconSize}
+          onChangeIconSize={setIconSize}
+          themePreference={themePreference}
+          onSelectTheme={onSelectTheme}
+        />
       </View>
     </SafeAreaProvider>
   );
 }
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  contentContainer: {
-    flexGrow: 1,
-    paddingHorizontal: spacing.xl,
-    paddingBottom: spacing.xxl,
-    gap: spacing.xl,
-  },
-  centerContent: {
-    justifyContent: 'center',
-  },
-  quizContent: {
-    paddingTop: spacing.xl,
-  },
-  background: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-});
+function App(): React.JSX.Element {
+  const [themePreference, setThemePreference] = useState<ThemePreference>('system');
+  const [themeHydrated, setThemeHydrated] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      const storedTheme = await loadThemePreference();
+      if (mounted) {
+        setThemePreference(storedTheme);
+        setThemeHydrated(true);
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!themeHydrated) {
+      return;
+    }
+    void saveThemePreference(themePreference);
+  }, [themeHydrated, themePreference]);
+
+  return (
+    <ThemeProvider mode={themePreference}>
+      <AppContent
+        themePreference={themePreference}
+        onSelectTheme={setThemePreference}
+      />
+    </ThemeProvider>
+  );
+}
+
+const useStyles = makeStyles((theme) =>
+  StyleSheet.create({
+    safeArea: {
+      flex: 1,
+    },
+    toolbar: {
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
+      paddingHorizontal: theme.spacing.xl,
+      paddingTop: theme.spacing.xl / 2,
+      paddingBottom: theme.spacing.md,
+    },
+    settingsButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: theme.spacing.sm,
+      borderRadius: theme.radius.lg,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      backgroundColor: theme.colors.surface,
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.sm,
+      shadowColor: theme.colors.shadow,
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.08,
+      shadowRadius: 4,
+      elevation: 1,
+    },
+    settingsButtonPressed: {
+      opacity: 0.9,
+    },
+    settingsButtonText: {
+      ...theme.typography.caption,
+      color: theme.colors.textPrimary,
+      textTransform: 'uppercase',
+      letterSpacing: 0.6,
+    },
+    scrollView: {
+      flex: 1,
+    },
+    contentContainer: {
+      flexGrow: 1,
+      paddingHorizontal: theme.spacing.xl,
+      paddingBottom: theme.spacing.xxl,
+      gap: theme.spacing.xl,
+    },
+    centerContent: {
+      justifyContent: 'center',
+    },
+    quizContent: {
+      paddingTop: theme.spacing.xl,
+    },
+    background: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+    },
+  }),
+);
 
 export default App;
