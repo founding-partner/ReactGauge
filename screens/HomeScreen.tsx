@@ -371,6 +371,8 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.lg,
     alignSelf: 'flex-start',
+    alignItems: 'center',
+    width: '100%'
   },
   guestSignInText: {
     ...typography.caption,
