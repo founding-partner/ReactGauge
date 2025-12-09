@@ -2,7 +2,11 @@ import React from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { CodeBlock, makeStyles, useTheme } from '../components';
+import {
+  IconShieldCheck,
+} from '../components/icons';
 import { AnswerRecord, Question } from '../types/quiz';
+import { useAppStore } from '../store/useAppStore';
 
 export interface ResultScreenProps {
   answers: AnswerRecord[];
@@ -24,6 +28,7 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
   const totalQuestions = questions.length;
   const correctCount = answers.filter((answer) => answer.isCorrect).length;
   const percentage = Math.round((correctCount / totalQuestions) * 100);
+  const iconSize = useAppStore((state) => state.iconSize);
   const { t } = useTranslation();
   const theme = useTheme();
   const styles = useStyles();
@@ -64,9 +69,14 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
           <Text style={styles.guestBody}>{t('result.guestBody')}</Text>
           {onRequestSignIn ? (
             <Pressable style={styles.guestButton} onPress={onRequestSignIn}>
-              <Text style={styles.guestButtonText}>
-                {t('common.actions.signIn')}
-              </Text>
+              <View style={styles.buttonRow}>
+                <View style={styles.buttonIconWrapper}>
+                  <IconShieldCheck size={iconSize} color={theme.colors.textOnPrimary} />
+                </View>
+                <Text style={styles.guestButtonText}>
+                  {t('common.actions.signIn')}
+                </Text>
+              </View>
             </Pressable>
           ) : null}
         </View>
@@ -226,17 +236,29 @@ const useStyles = makeStyles((theme) =>
       opacity: 0.92,
     },
     guestButton: {
-      alignSelf: 'flex-start',
       borderRadius: theme.radius.lg,
       borderWidth: 1,
       borderColor: theme.colors.textOnPrimary,
       paddingVertical: theme.spacing.md,
       paddingHorizontal: theme.spacing.lg,
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: '100%',
     },
     guestButtonText: {
       ...theme.typography.caption,
       color: theme.colors.textOnPrimary,
       textTransform: 'uppercase',
+    },
+    buttonRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: theme.spacing.sm,
+    },
+    buttonIconWrapper: {
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: theme.spacing.xs,
     },
     reviewCard: {
       backgroundColor: theme.colors.surface,
