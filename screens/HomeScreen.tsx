@@ -296,7 +296,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             </View>
           </Pressable>
 
-          <Pressable
+          {!isGuest && <Pressable
             style={({ pressed }) => [
               styles.historyButton,
               pressed && styles.historyButtonPressed,
@@ -309,7 +309,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               </View>
               <Text style={styles.historyButtonText}>{t('common.actions.viewHistory')}</Text>
             </View>
-          </Pressable>
+          </Pressable>}
         </View>
       </View>
 
