@@ -404,7 +404,7 @@ const ProgressRow = ({
   value: number;
 }) => {
   const styles = useStyles();
-  
+
   return (
     <View style={styles.progressRow}>
       <Text style={styles.progressRowLabel}>{label}</Text>
@@ -569,7 +569,9 @@ const useStyles = makeStyles((theme) =>
       borderColor: theme.colors.textOnPrimary,
       paddingVertical: theme.spacing.md,
       paddingHorizontal: theme.spacing.lg,
-      alignSelf: 'flex-start',
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: '100%',
     },
     guestSignInText: {
       ...theme.typography.caption,
