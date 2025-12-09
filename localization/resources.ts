@@ -83,7 +83,7 @@ export const resources = {
           'Tune your React instincts with fresh questions each session.',
         guestCardTitle: 'Guest mode enabled',
         guestCardBody:
-          'Your progress will reset when you leave. Sign in with GitHub to save results, earn streaks, and sync across devices.',
+          'Your progress will reset when you leave. Sign in with GitHub to save results and earn streaks.',
         progressTitle: 'Progress Overview',
         progressAnswered: 'Questions answered',
         progressCorrect: 'Correct answers',
@@ -118,7 +118,7 @@ export const resources = {
           'You answered {{correct}} out of {{total}} questions correctly.',
         guestTitle: 'Guest mode reminder',
         guestBody:
-          'Results aren’t stored while in guest mode. Sign in to keep your streaks, sync across devices, and unlock detailed progress analytics.',
+          'Results aren’t stored while in guest mode. Sign in to keep your streaks and unlock detailed progress analytics.',
         reviewTitle: 'Review answers',
         badgeCorrect: 'Correct',
         badgeIncorrect: 'Incorrect',
