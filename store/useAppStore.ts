@@ -32,7 +32,7 @@ type AppStore = {
 };
 
 const DEFAULT_ICON_SIZE = 24;
-const QUESTION_COUNT_BY_DIFFICULTY: Record<Difficulty, number> = {
+export const QUESTION_COUNT_BY_DIFFICULTY: Record<Difficulty, number> = {
   easy: 10,
   medium: 25,
   hard: 50,

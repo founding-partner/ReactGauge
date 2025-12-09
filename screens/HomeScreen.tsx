@@ -21,7 +21,7 @@ import {
   useTheme,
 } from '../components';
 import { Question } from '../types/quiz';
-import { useAppStore } from '../store/useAppStore';
+import { QUESTION_COUNT_BY_DIFFICULTY, useAppStore, type Difficulty } from '../store/useAppStore';
 import { SupportedLanguageCode, supportedLanguages } from '../localization/i18n';
 
 export interface HomeScreenProps extends ViewProps {
@@ -413,28 +413,24 @@ const ProgressRow = ({
   );
 };
 
-const difficultyOptions = [
-  { value: 'easy' as const, count: 10 },
-  { value: 'medium' as const, count: 25 },
-  { value: 'hard' as const, count: 50 },
-];
+const difficultyOptions = (
+  Object.entries(QUESTION_COUNT_BY_DIFFICULTY) as [Difficulty, number][]
+).map(([value, count]) => ({ value, count }));
 
 const difficultyTranslationKeys: Record<
-  (typeof difficultyOptions)[number]['value'],
-  | 'common.difficulties.easy'
-  | 'common.difficulties.medium'
-  | 'common.difficulties.hard'
+  Difficulty,
+  'common.difficulties.easy' | 'common.difficulties.medium' | 'common.difficulties.hard'
 > = {
   easy: 'common.difficulties.easy',
   medium: 'common.difficulties.medium',
   hard: 'common.difficulties.hard',
 };
 
-const difficultyIconMap = {
+const difficultyIconMap: Record<Difficulty, typeof IconSparkles> = {
   easy: IconSparkles,
   medium: IconRocketLaunch,
   hard: IconFire,
-} as const;
+};
 
 const useStyles = makeStyles((theme) =>
   StyleSheet.create({
@@ -669,6 +665,7 @@ const useStyles = makeStyles((theme) =>
     difficultyChipCount: {
       ...theme.typography.caption,
       fontSize: 12,
+      textAlign: 'center',
       color: theme.colors.textSecondary,
       textTransform: 'none',
     },
