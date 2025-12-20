@@ -8,10 +8,16 @@ import {
   Text,
   View,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { Difficulty } from '../store/useAppStore';
 import { OptionButton } from './OptionButton';
 import { Theme, ThemePreference, makeStyles, useTheme } from './theme';
-import { IconArrowLeft, IconWheel } from './icons';
+import {
+  IconArrowLeft,
+  IconArrowLeftOnRectangle,
+  IconArrowPath,
+  IconWheel,
+} from './icons';
 
 const { width } = Dimensions.get('window');
 const DRAWER_WIDTH = Math.min(width * 0.82, 360);
@@ -29,6 +35,9 @@ export type SettingsDrawerProps = {
   themePreference: ThemePreference;
   onSelectTheme: (theme: ThemePreference) => void;
   showDifficulty?: boolean;
+  canManageSession?: boolean;
+  onResetData?: () => void;
+  onSignOut?: () => void;
 };
 
 export const SettingsDrawer: React.FC<SettingsDrawerProps> = ({
@@ -41,9 +50,13 @@ export const SettingsDrawer: React.FC<SettingsDrawerProps> = ({
   themePreference,
   onSelectTheme,
   showDifficulty = true,
+  canManageSession = false,
+  onResetData,
+  onSignOut,
 }) => {
   const theme = useTheme();
   const styles = useStyles();
+  const { t } = useTranslation();
   const translateX = useRef(new Animated.Value(1)).current;
   const [rendered, setRendered] = useState(visible);
   useEffect(() => {
@@ -77,6 +90,9 @@ export const SettingsDrawer: React.FC<SettingsDrawerProps> = ({
     const next = Math.min(Math.max(clampedIcon + delta, ICON_MIN), ICON_MAX);
     onChangeIconSize(next);
   };
+
+  const showSessionActions =
+    canManageSession && Boolean(onResetData || onSignOut);
 
   return (
     <View style={styles.overlay} pointerEvents="box-none">
@@ -192,6 +208,62 @@ export const SettingsDrawer: React.FC<SettingsDrawerProps> = ({
               </Pressable>
             </View>
           </View>
+
+          {showSessionActions ? (
+            <View style={styles.section}>
+              <Text style={styles.sectionLabel}>{t('common.userProfile')}</Text>
+              {onResetData ? (
+                <Pressable
+                  accessibilityRole="button"
+                  style={({ pressed }) => [
+                    styles.actionButton,
+                    pressed && styles.actionButtonPressed,
+                  ]}
+                  onPress={onResetData}
+                >
+                  <View style={styles.actionRow}>
+                    <View style={[styles.actionIcon, styles.resetIconBg]}>
+                      <IconArrowPath size={clampedIcon} color={theme.colors.primary} />
+                    </View>
+                    <View style={styles.actionTextGroup}>
+                      <Text style={styles.actionTitle}>
+                        {t('common.actions.resetData')}
+                      </Text>
+                      <Text style={styles.actionSubtitle}>
+                        {t('home.resetDataSubtitle')}
+                      </Text>
+                    </View>
+                  </View>
+                </Pressable>
+              ) : null}
+
+              {onSignOut ? (
+                <Pressable
+                  accessibilityRole="button"
+                  style={({ pressed }) => [
+                    styles.actionButton,
+                    styles.signOutButton,
+                    pressed && styles.signOutButtonPressed,
+                  ]}
+                  onPress={onSignOut}
+                >
+                  <View style={styles.actionRow}>
+                    <View style={[styles.actionIcon, styles.signOutIconBg]}>
+                      <IconArrowLeftOnRectangle size={clampedIcon} color={theme.colors.danger} />
+                    </View>
+                    <View style={styles.actionTextGroup}>
+                      <Text style={[styles.actionTitle, styles.signOutTitle]}>
+                        {t('common.actions.signOut')}
+                      </Text>
+                      <Text style={styles.actionSubtitle}>
+                        {t('home.signOutSubtitle')}
+                      </Text>
+                    </View>
+                  </View>
+                </Pressable>
+              ) : null}
+            </View>
+          ) : null}
         </ScrollView>
       </Animated.View>
     </View>
@@ -217,7 +289,7 @@ const useStyles = makeStyles((theme: Theme) =>
       width: DRAWER_WIDTH,
       height: '100%',
       backgroundColor: theme.colors.surface,
-      paddingTop: theme.spacing.xl,
+      paddingTop: theme.spacing.xxl,
       paddingHorizontal: theme.spacing.lg,
       paddingBottom: theme.spacing.xxl,
       borderTopLeftRadius: theme.radius.lg,
@@ -309,6 +381,62 @@ const useStyles = makeStyles((theme: Theme) =>
     iconSizeValue: {
       ...theme.typography.heading,
       color: theme.colors.textPrimary,
+    },
+    actionButton: {
+      borderRadius: theme.radius.lg,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      backgroundColor: theme.colors.surfaceMuted,
+      paddingVertical: theme.spacing.md,
+      paddingHorizontal: theme.spacing.md,
+      shadowColor: theme.colors.shadow,
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.08,
+      shadowRadius: 3,
+    },
+    actionButtonPressed: {
+      backgroundColor: theme.colors.primaryMuted,
+    },
+    signOutButton: {
+      backgroundColor: theme.colors.dangerMuted,
+      borderColor: theme.colors.dangerStrong,
+    },
+    signOutButtonPressed: {
+      opacity: 0.92,
+    },
+    actionRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: theme.spacing.md,
+    },
+    actionIcon: {
+      width: 44,
+      height: 44,
+      borderRadius: theme.radius.lg,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    resetIconBg: {
+      backgroundColor: theme.colors.primaryMuted,
+    },
+    signOutIconBg: {
+      backgroundColor: theme.colors.dangerMuted,
+    },
+    actionTextGroup: {
+      flex: 1,
+      gap: theme.spacing.xs / 2,
+    },
+    actionTitle: {
+      ...theme.typography.body,
+      color: theme.colors.textPrimary,
+      fontWeight: '700',
+    },
+    actionSubtitle: {
+      ...theme.typography.subheading,
+      color: theme.colors.textSecondary,
+    },
+    signOutTitle: {
+      color: theme.colors.danger,
     },
   }),
 );

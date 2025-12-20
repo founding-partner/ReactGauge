@@ -5,7 +5,6 @@ import ConfettiCannon from 'react-native-confetti-cannon';
 import {
   IconArrowPath,
   IconFire,
-  IconArrowLeftOnRectangle,
   IconPlayCircle,
   IconRocketLaunch,
   IconShieldCheck,
@@ -41,8 +40,6 @@ export interface HomeScreenProps extends ViewProps {
   streakDays: number;
   completionRatio: number;
   onOpenHistory: () => void;
-  onSignOut: () => void;
-  onResetData: () => void;
   language: SupportedLanguageCode;
   onChangeLanguage: (language: SupportedLanguageCode) => void;
 }
@@ -64,8 +61,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   streakDays,
   completionRatio,
   onOpenHistory,
-  onSignOut,
-  onResetData,
   language,
   onChangeLanguage,
   style,
@@ -106,52 +101,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         timeRemainingLabel={streakLabel}
         showProgress={false}
       />
-      {!isGuest && (
-        <View style={styles.sessionActions}>
-          <Pressable
-            style={({ pressed }) => [
-              styles.sessionButton,
-              pressed && styles.sessionButtonPressed,
-            ]}
-            onPress={onResetData}
-          >
-            <View style={styles.buttonRow}>
-              <View style={[styles.sessionIconWrapper, styles.resetIconBg]}>
-                <IconArrowPath size={iconSize} color={theme.colors.primary} />
-              </View>
-              <View style={styles.sessionTextGroup}>
-                <Text style={styles.sessionButtonTitle}>
-                  {t('common.actions.resetData')}
-                </Text>
-                <Text style={styles.sessionButtonSubtitle}>
-                  {t('home.resetDataSubtitle')}
-                </Text>
-              </View>
-            </View>
-          </Pressable>
-          <Pressable
-            style={({ pressed }) => [
-              styles.sessionButton,
-              pressed && styles.sessionButtonPressed,
-            ]}
-            onPress={onSignOut}
-          >
-            <View style={styles.buttonRow}>
-              <View style={[styles.sessionIconWrapper, styles.signOutIconBg]}>
-                <IconArrowLeftOnRectangle size={iconSize} color={theme.colors.danger} />
-              </View>
-              <View style={styles.sessionTextGroup}>
-                <Text style={styles.sessionButtonTitle}>
-                  {t('common.actions.signOut')}
-                </Text>
-                <Text style={styles.sessionButtonSubtitle}>
-                  {t('home.signOutSubtitle')}
-                </Text>
-              </View>
-            </View>
-          </Pressable>
-        </View>
-      )}
       {/* <View style={styles.languageSection}>
         <Text style={styles.languageLabel}>{t('home.languageLabel')}</Text>
         <View style={styles.languageRow}>
@@ -437,53 +386,6 @@ const useStyles = makeStyles((theme) =>
     container: {
       flex: 1,
       gap: theme.spacing.xl,
-    },
-    sessionActions: {
-      flexDirection: 'row',
-      gap: theme.spacing.md,
-    },
-    sessionButton: {
-      flex: 1,
-      backgroundColor: theme.colors.surface,
-      borderRadius: theme.radius.md,
-      padding: theme.spacing.md,
-      borderWidth: 1,
-      borderColor: theme.colors.border,
-      shadowColor: theme.colors.shadow,
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.08,
-      shadowRadius: 4,
-      elevation: 2,
-    },
-    sessionButtonPressed: {
-      backgroundColor: theme.colors.surfaceMuted,
-    },
-    sessionIconWrapper: {
-      width: 40,
-      height: 40,
-      borderRadius: theme.radius.lg,
-      alignItems: 'center',
-      justifyContent: 'center',
-      marginRight: theme.spacing.sm,
-    },
-    resetIconBg: {
-      backgroundColor: theme.colors.primaryMuted,
-    },
-    signOutIconBg: {
-      backgroundColor: theme.colors.dangerMuted,
-    },
-    sessionTextGroup: {
-      flexShrink: 1,
-      gap: theme.spacing.xs / 2,
-    },
-    sessionButtonTitle: {
-      ...theme.typography.body,
-      color: theme.colors.textPrimary,
-      fontWeight: '700',
-    },
-    sessionButtonSubtitle: {
-      ...theme.typography.subheading,
-      color: theme.colors.textSecondary,
     },
     section: {
       backgroundColor: theme.colors.surface,

@@ -92,6 +92,7 @@ function AppContent({
   const iconSize = useAppStore((state) => state.iconSize);
   const setIconSize = useAppStore((state) => state.setIconSize);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const isQuizScreen = activeScreen === 'quiz';
 
   useEffect(() => {
     let mounted = true;
@@ -159,6 +160,12 @@ function AppContent({
       mounted = false;
     };
   }, []);
+
+  useEffect(() => {
+    if (isQuizScreen && settingsOpen) {
+      setSettingsOpen(false);
+    }
+  }, [isQuizScreen, settingsOpen]);
 
   const warmupQuestion = useMemo(
     () => dailyWarmupQuestion ?? allQuestions[0],
@@ -554,8 +561,6 @@ function AppContent({
         streakDays={user.streak}
         completionRatio={user.completion}
         onOpenHistory={handleOpenHistory}
-        onSignOut={handleSignOut}
-        onResetData={handleResetData}
         language={language}
         onChangeLanguage={setLanguageCode}
       />
@@ -585,6 +590,8 @@ function AppContent({
     );
   };
 
+  const canManageSession = Boolean(user && user.mode !== 'guest');
+
   return (
     <SafeAreaProvider>
       <StatusBar
@@ -594,23 +601,25 @@ function AppContent({
       />
       <View style={styles.background}>
         <SafeAreaView style={styles.safeArea}>
-          <View style={styles.toolbar}>
-            <Pressable
-              accessibilityRole="button"
-              style={({ pressed }) => [
-                styles.settingsButton,
-                pressed && styles.settingsButtonPressed,
-              ]}
-              onPress={() => setSettingsOpen(true)}
-            >
-              <IconWheel size={18} color={theme.colors.textPrimary} />
-              <Text style={styles.settingsButtonText}>Settings</Text>
-            </Pressable>
-          </View>
+          {!isQuizScreen ? (
+            <View style={styles.toolbar}>
+              <Pressable
+                accessibilityRole="button"
+                style={({ pressed }) => [
+                  styles.settingsButton,
+                  pressed && styles.settingsButtonPressed,
+                ]}
+                onPress={() => setSettingsOpen(true)}
+              >
+                <IconWheel size={18} color={theme.colors.textPrimary} />
+                <Text style={styles.settingsButtonText}>Settings</Text>
+              </Pressable>
+            </View>
+          ) : null}
           {renderScreen()}
         </SafeAreaView>
         <SettingsDrawer
-          visible={settingsOpen}
+          visible={settingsOpen && !isQuizScreen}
           onClose={() => setSettingsOpen(false)}
           showDifficulty={activeScreen !== 'quiz'}
           difficulty={difficulty}
@@ -619,6 +628,9 @@ function AppContent({
           onChangeIconSize={setIconSize}
           themePreference={themePreference}
           onSelectTheme={onSelectTheme}
+          canManageSession={canManageSession}
+          onResetData={canManageSession ? handleResetData : undefined}
+          onSignOut={canManageSession ? handleSignOut : undefined}
         />
       </View>
     </SafeAreaProvider>
