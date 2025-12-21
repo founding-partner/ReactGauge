@@ -39,6 +39,12 @@ export const resources = {
           clear: 'Clear',
           cancel: 'Cancel',
         },
+        tabs: {
+          home: 'Home',
+          warmup: 'Warm-up',
+          history: 'History',
+          settings: 'Settings',
+        },
       },
       alerts: {
         githubLoginFailedTitle: 'GitHub Login Failed',
@@ -199,6 +205,12 @@ export const resources = {
           ok: 'Aceptar',
           clear: 'Borrar',
           cancel: 'Cancelar',
+        },
+        tabs: {
+          home: 'Inicio',
+          warmup: 'Calentamiento',
+          history: 'Historial',
+          settings: 'Ajustes',
         },
       },
       alerts: {
@@ -361,6 +373,12 @@ export const resources = {
           ok: 'சரி',
           clear: 'அழி',
           cancel: 'ரத்து',
+        },
+        tabs: {
+          home: 'முகப்பு',
+          warmup: 'முன் பயிற்சி',
+          history: 'வரலாறு',
+          settings: 'அமைப்புகள்',
         },
       },
       alerts: {

@@ -12,13 +12,6 @@ import {
 import { useTranslation } from 'react-i18next';
 import ConfettiCannon from 'react-native-confetti-cannon';
 import {
-  IconArrowLeft,
-  IconArrowLeftOnRectangle,
-  IconArrowRight,
-  IconCheck,
-  IconTrophy,
-} from '../components/icons';
-import {
   Button,
   OptionButton,
   ProgressBar,
@@ -28,8 +21,7 @@ import {
   useTheme,
 } from '../components';
 import { AnswerRecord, Question } from '../types/quiz';
-import { useAppStore } from '../store/useAppStore';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { QuizToolbarHandlers, QuizToolbarState } from '../types/quizToolbar';
 
 export interface QuizScreenProps extends ViewProps {
   questions: Question[];
@@ -39,6 +31,10 @@ export interface QuizScreenProps extends ViewProps {
   isGuest?: boolean;
   onExit: () => void;
   onComplete: (answers: AnswerRecord[]) => void;
+  onToolbarUpdate?: (
+    state: QuizToolbarState,
+    handlers: QuizToolbarHandlers,
+  ) => void;
 }
 
 export const QuizScreen: React.FC<QuizScreenProps> = ({
@@ -49,6 +45,7 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
   isGuest = false,
   onExit,
   onComplete,
+  onToolbarUpdate,
   style,
   ...rest
 }) => {
@@ -58,8 +55,6 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
   const [submitted, setSubmitted] = useState(false);
   const [answers, setAnswers] = useState<AnswerRecord[]>([]);
   const [confettiBurst, setConfettiBurst] = useState(0);
-  const iconSize = useAppStore((state) => state.iconSize);
-  const insets = useSafeAreaInsets();
   const [explanationVisible, setExplanationVisible] = useState(false);
   const explanationAnim = useRef(new Animated.Value(0)).current;
   const { t } = useTranslation();
@@ -135,9 +130,13 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
     }
   };
 
+  const handleExit = () => {
+    setExplanationVisible(false);
+    onExit();
+  };
+
   const handleNext = () => {
     if (!submitted) {
-      handleSubmit();
       return;
     }
 
@@ -150,14 +149,13 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
     const nextIndex = Math.min(currentIndex + 1, totalQuestions - 1);
     setCurrentIndex(nextIndex);
     setSelectedOption(null);
-    setSubmitted(false);
+    setSubmitted(Boolean(answers.some((a) => a.questionId === questions[nextIndex].id)));
     setExplanationVisible(false);
   };
 
   const handlePrevious = () => {
     setExplanationVisible(false);
     if (currentIndex === 0) {
-      onExit();
       return;
     }
 
@@ -195,8 +193,43 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
     setExplanationVisible(false);
   };
 
-  const isPrimaryDisabled =
-    (selectedOption == null && !submitted) || showExplanation;
+  const showExit = !showExplanation;
+  const showPrevious = currentIndex > 0 && !showExplanation;
+  const showSubmit = selectedOption != null && !submitted && !showExplanation;
+  const showNext = submitted && !showExplanation;
+
+  useEffect(() => {
+    if (!onToolbarUpdate) {
+      return;
+    }
+
+    onToolbarUpdate(
+      {
+        showExit,
+        showPrevious,
+        showSubmit,
+        showNext,
+        isLastQuestion,
+      },
+      {
+        onExit: handleExit,
+        onPrevious: handlePrevious,
+        onSubmit: handleSubmit,
+        onNext: handleNext,
+      },
+    );
+  }, [
+    handleExit,
+    handleNext,
+    handlePrevious,
+    handleSubmit,
+    isLastQuestion,
+    onToolbarUpdate,
+    showExit,
+    showNext,
+    showPrevious,
+    showSubmit,
+  ]);
 
   const renderExplanation = () => {
     if (!showExplanation || !currentAnswer) {
@@ -295,7 +328,7 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
           pointerEvents="auto"
           style={[
             styles.explanationOverlay,
-            { paddingTop: insets.top + theme.spacing.xl },
+            { paddingTop: theme.spacing.xl },
           ]}
         >
           <Button
@@ -312,7 +345,7 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
         contentContainerStyle={[
           styles.container,
           {
-            paddingBottom: theme.spacing.xxl * 3 + theme.spacing.xl,
+            paddingBottom: theme.spacing.xxl,
           },
         ]}
         showsVerticalScrollIndicator={false}
@@ -360,67 +393,6 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
           ))}
         </QuestionCard>
       </ScrollView>
-      <View
-        style={[styles.bottomOverlay, { bottom: insets.bottom }]}
-        pointerEvents="box-none"
-      >
-        <View style={styles.dock}>
-          <Button
-            variant="muted"
-            size="md"
-            style={styles.dockButton}
-            onPress={handlePrevious}
-            disabled={showExplanation}
-            disabledOpacity={0.4}
-          >
-            <View style={styles.buttonRow}>
-              {currentIndex === 0 ? (
-                <IconArrowLeftOnRectangle
-                  size={iconSize}
-                  color={theme.colors.primary}
-                />
-              ) : (
-                <IconArrowLeft size={iconSize} color={theme.colors.primary} />
-              )}
-              <Text style={styles.secondaryButtonText}>
-                {currentIndex === 0
-                  ? t('common.actions.exit')
-                  : t('common.actions.previous')}
-              </Text>
-            </View>
-          </Button>
-          <Button
-            variant="primary"
-            size="md"
-            style={styles.dockButton}
-            onPress={handleNext}
-            disabled={isPrimaryDisabled}
-            disabledOpacity={0.4}
-          >
-            <View style={styles.buttonRow}>
-              {submitted ? (
-                isLastQuestion ? (
-                  <IconTrophy size={iconSize} color={theme.colors.textOnPrimary} />
-                ) : (
-                  <IconArrowRight
-                    size={iconSize}
-                    color={theme.colors.textOnPrimary}
-                  />
-                )
-              ) : (
-                <IconCheck size={iconSize} color={theme.colors.textOnPrimary} />
-              )}
-              <Text style={styles.primaryButtonText}>
-                {submitted
-                  ? isLastQuestion
-                    ? t('common.actions.finish')
-                    : t('common.actions.next')
-                  : t('common.actions.submit')}
-              </Text>
-            </View>
-          </Button>
-        </View>
-      </View>
     </View>
   );
 };
@@ -471,13 +443,6 @@ const useStyles = makeStyles((theme) =>
       flex: 1,
       gap: theme.spacing.xl,
     },
-    bottomOverlay: {
-      position: 'absolute',
-      left: 0,
-      right: 0,
-      bottom: 0,
-      gap: theme.spacing.md,
-    },
     explanationOverlay: {
       ...StyleSheet.absoluteFillObject,
       justifyContent: 'flex-start',
@@ -491,19 +456,6 @@ const useStyles = makeStyles((theme) =>
         theme.name === 'dark'
           ? 'rgba(0, 0, 0, 0.55)'
           : 'rgba(15, 23, 42, 0.55)',
-    },
-    dock: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: theme.spacing.lg,
-      backgroundColor: theme.colors.surface,
-      borderRadius: theme.radius.lg,
-      padding: theme.spacing.md,
-      shadowColor: theme.colors.shadow,
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.1,
-      shadowRadius: 8,
-      elevation: 3,
     },
     confettiLayer: {
       ...StyleSheet.absoluteFillObject,
@@ -527,25 +479,6 @@ const useStyles = makeStyles((theme) =>
     },
     option: {
       marginBottom: theme.spacing.md,
-    },
-    buttonRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: theme.spacing.sm,
-    },
-    buttonIcon: {
-      marginRight: theme.spacing.xs,
-    },
-    dockButton: {
-      flex: 1,
-    },
-    primaryButtonText: {
-      ...theme.typography.heading,
-      color: theme.colors.textOnPrimary,
-    },
-    secondaryButtonText: {
-      ...theme.typography.body,
-      color: theme.colors.textPrimary,
     },
     explanationDrawer: {
       width: '100%',

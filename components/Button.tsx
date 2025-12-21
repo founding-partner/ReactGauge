@@ -21,6 +21,7 @@ export type ButtonVariant =
   | 'ghost'
   | 'elevated'
   | 'card'
+  | 'tab'
   | 'chip'
   | 'chipFilled';
 
@@ -306,6 +307,18 @@ const resolveVariantStyles = (
         borderRadius: theme.radius.md,
       },
       pressedStyle: { backgroundColor: theme.colors.surfaceMuted },
+    };
+  }
+
+  if (variant === 'tab') {
+    return {
+      baseStyle: {
+        ...centerAlign,
+        backgroundColor: selected ? theme.colors.primaryMuted : 'transparent',
+        borderWidth: 0,
+        borderRadius: theme.radius.lg,
+      },
+      pressedStyle: { backgroundColor: theme.colors.primaryMuted },
     };
   }
 

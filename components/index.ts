@@ -1,11 +1,17 @@
 export { Button } from './Button';
 export type { ButtonProps, ButtonSize, ButtonVariant } from './Button';
 
+export { BottomTabBar } from './BottomTabBar';
+export type { BottomTabBarProps, TabKey } from './BottomTabBar';
+
 export { OptionButton } from './OptionButton';
 export type { OptionButtonProps } from './OptionButton';
 
 export { ProgressBar } from './ProgressBar';
 export type { ProgressBarProps } from './ProgressBar';
+
+export { QuizToolbar } from './QuizToolbar';
+export type { QuizToolbarProps } from './QuizToolbar';
 
 export { QuestionCard } from './QuestionCard';
 
