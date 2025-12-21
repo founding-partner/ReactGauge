@@ -2,14 +2,13 @@ import React from 'react';
 import {
   Alert,
   FlatList,
-  Pressable,
   StyleSheet,
   Text,
   View,
   ViewProps,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { makeStyles, useTheme } from '../components';
+import { Button, makeStyles, useTheme } from '../components';
 import { QuizAttempt } from '../types/history';
 import { IconArrowLeft, IconArrowRight } from '../components/icons';
 import { Difficulty } from '../store/useAppStore';
@@ -53,18 +52,21 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
   return (
     <View style={[styles.container, style]} {...rest}>
       <View style={styles.header}>
-        <Pressable style={styles.backButton} onPress={onClose}>
+        <Button variant="ghost" size="sm" style={styles.backButton} onPress={onClose}>
           <IconArrowLeft size={20} color={theme.colors.textPrimary} />
           <Text style={styles.backButtonText}>{t('common.actions.back')}</Text>
-        </Pressable>
+        </Button>
         <Text style={styles.title}>{t('history.title')}</Text>
-        <Pressable
-          style={[styles.clearButton, attempts.length === 0 && styles.clearButtonDisabled]}
+        <Button
+          variant="danger"
+          size="sm"
+          radius="md"
+          disabledOpacity={0.4}
           onPress={handleClear}
           disabled={attempts.length === 0}
         >
           <Text style={styles.clearButtonText}>{t('common.actions.clear')}</Text>
-        </Pressable>
+        </Button>
       </View>
 
       <FlatList
@@ -81,11 +83,10 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
           </View>
         )}
         renderItem={({ item }) => (
-          <Pressable
-            style={({ pressed }) => [
-              styles.attemptCard,
-              pressed && styles.attemptCardPressed,
-            ]}
+          <Button
+            variant="card"
+            size="lg"
+            style={styles.attemptCard}
             onPress={() => onSelectAttempt(item)}
           >
             <View style={styles.attemptHeader}>
@@ -112,7 +113,7 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
               </Text>
               <IconArrowRight size={18} color={theme.colors.textSecondary} />
             </View>
-          </Pressable>
+          </Button>
         )}
       />
     </View>
@@ -148,8 +149,6 @@ const useStyles = makeStyles((theme) =>
       flexDirection: 'row',
       alignItems: 'center',
       gap: theme.spacing.xs,
-      paddingVertical: theme.spacing.sm,
-      paddingHorizontal: theme.spacing.md,
     },
     backButtonText: {
       ...theme.typography.body,
@@ -158,17 +157,6 @@ const useStyles = makeStyles((theme) =>
     title: {
       ...theme.typography.heading,
       color: theme.colors.textPrimary,
-    },
-    clearButton: {
-      paddingVertical: theme.spacing.sm,
-      paddingHorizontal: theme.spacing.md,
-      backgroundColor: theme.colors.dangerMuted,
-      borderRadius: theme.radius.md,
-      borderWidth: 1,
-      borderColor: theme.colors.danger,
-    },
-    clearButtonDisabled: {
-      opacity: 0.4,
     },
     clearButtonText: {
       ...theme.typography.caption,
@@ -182,18 +170,7 @@ const useStyles = makeStyles((theme) =>
       gap: theme.spacing.md,
     },
     attemptCard: {
-      backgroundColor: theme.colors.surface,
-      borderRadius: theme.radius.md,
-      padding: theme.spacing.lg,
       gap: theme.spacing.sm,
-      shadowColor: theme.colors.shadow,
-      shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: 0.08,
-      shadowRadius: 6,
-      elevation: 2,
-    },
-    attemptCardPressed: {
-      backgroundColor: theme.colors.surfaceMuted,
     },
     attemptHeader: {
       flexDirection: 'row',

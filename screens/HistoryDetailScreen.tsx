@@ -5,10 +5,9 @@ import {
   Text,
   View,
   ViewProps,
-  Pressable,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { makeStyles, useTheme } from '../components';
+import { Button, makeStyles, useTheme } from '../components';
 import { QuizAttempt } from '../types/history';
 import { IconArrowLeft } from '../components/icons';
 import { Difficulty } from '../store/useAppStore';
@@ -70,10 +69,10 @@ export const HistoryDetailScreen: React.FC<HistoryDetailScreenProps> = ({
   return (
     <View style={[styles.container, style]} {...rest}>
       <View style={styles.header}>
-        <Pressable style={styles.backButton} onPress={onClose}>
+        <Button variant="ghost" size="sm" style={styles.backButton} onPress={onClose}>
           <IconArrowLeft size={20} color={theme.colors.textPrimary} />
           <Text style={styles.backButtonText}>{t('common.actions.back')}</Text>
-        </Pressable>
+        </Button>
         <Text style={styles.title}>{t('historyDetail.title')}</Text>
         <View style={styles.scorePill}>
           <Text style={styles.scoreText}>
@@ -188,8 +187,6 @@ const useStyles = makeStyles((theme) =>
       flexDirection: 'row',
       alignItems: 'center',
       gap: theme.spacing.xs,
-      paddingVertical: theme.spacing.sm,
-      paddingHorizontal: theme.spacing.md,
     },
     backButtonText: {
       ...theme.typography.body,

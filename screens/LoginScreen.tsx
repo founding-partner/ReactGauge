@@ -2,7 +2,6 @@ import React from 'react';
 import {
   ActivityIndicator,
   Image,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -10,7 +9,7 @@ import {
   ViewProps,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { makeStyles, useTheme } from '../components';
+import { Button, makeStyles, useTheme } from '../components';
 import { IconLockClosed, IconBeaker } from '../components/icons';
 import { useAppStore } from '../store/useAppStore';
 
@@ -51,16 +50,14 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
       </View>
 
       <View style={styles.actions}>
-        <Pressable
-          accessibilityRole="button"
+        <Button
           accessibilityState={{ busy: loading, disabled: loading }}
-          style={({ pressed }) => [
-            styles.signInButton,
-            pressed && !loading ? styles.signInButtonPressed : null,
-            loading ? styles.signInButtonDisabled : null,
-          ]}
+          variant="surface"
+          size="lg"
+          fullWidth
           onPress={onSignIn}
           disabled={loading}
+          disabledOpacity={0.7}
         >
           {loading ? (
             <ActivityIndicator color={theme.colors.primary} />
@@ -74,16 +71,15 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                 </Text>
               </View>
           )}
-        </Pressable>
+        </Button>
 
-        <Pressable
-          accessibilityRole="button"
-          style={({ pressed }) => [
-            styles.guestButton,
-            pressed ? styles.guestButtonPressed : null,
-          ]}
+        <Button
+          variant="muted"
+          size="lg"
+          fullWidth
           onPress={onContinueAsGuest}
           disabled={loading}
+          disabledOpacity={0.7}
         >
           <View style={styles.buttonRow}>
             <View style={styles.buttonIconWrapper}>
@@ -93,7 +89,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
               {t('common.actions.continueGuest')}
             </Text>
           </View>
-        </Pressable>
+        </Button>
       </View>
 
       <View style={styles.callouts}>
@@ -181,40 +177,13 @@ const useStyles = makeStyles((theme) =>
       alignItems: 'center',
       marginRight: theme.spacing.xs,
     },
-    signInButton: {
-      backgroundColor: theme.colors.surface,
-      borderColor: theme.colors.border,
-      borderWidth: 1,
-      borderRadius: theme.radius.lg,
-      paddingVertical: theme.spacing.lg,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
     signInText: {
       ...theme.typography.heading,
       color: theme.colors.textPrimary,
     },
-    signInButtonPressed: {
-      opacity: 0.9,
-    },
-    signInButtonDisabled: {
-      opacity: 0.7,
-    },
-    guestButton: {
-      borderColor: theme.colors.border,
-      backgroundColor: theme.colors.surfaceMuted,
-      borderWidth: 1,
-      borderRadius: theme.radius.lg,
-      paddingVertical: theme.spacing.lg,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
     guestButtonText: {
       ...theme.typography.heading,
       color: theme.colors.textPrimary,
-    },
-    guestButtonPressed: {
-      opacity: 0.9,
     },
     disclaimer: {
       ...theme.typography.caption,

@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import {
   Animated,
   Dimensions,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -10,6 +9,7 @@ import {
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Difficulty } from '../store/useAppStore';
+import { Button } from './Button';
 import { OptionButton } from './OptionButton';
 import { Theme, ThemePreference, makeStyles, useTheme } from './theme';
 import {
@@ -96,7 +96,7 @@ export const SettingsDrawer: React.FC<SettingsDrawerProps> = ({
 
   return (
     <View style={styles.overlay} pointerEvents="box-none">
-      <Pressable style={styles.backdrop} onPress={onClose} />
+      <Button style={styles.backdrop} onPress={onClose} />
       <Animated.View
         style={[
           styles.drawer,
@@ -117,18 +117,18 @@ export const SettingsDrawer: React.FC<SettingsDrawerProps> = ({
             <IconWheel size={18} color={theme.colors.textPrimary} />
             <Text style={styles.headerTitle}>Settings</Text>
           </View>
-          <Pressable
-            style={({ pressed }) => [
-              styles.closeButton,
-              pressed && styles.closeButtonPressed,
-            ]}
+          <Button
+            variant="secondary"
+            size="xs"
+            radius="md"
+            pressedOpacity={0.85}
+            style={styles.closeButton}
             onPress={onClose}
-            accessibilityRole="button"
             accessibilityLabel="Close settings"
           >
             <IconArrowLeft size={16} color={theme.colors.textPrimary} />
             <Text style={styles.closeButtonText}>Back</Text>
-          </Pressable>
+          </Button>
         </View>
 
         <ScrollView
@@ -185,27 +185,25 @@ export const SettingsDrawer: React.FC<SettingsDrawerProps> = ({
             <Text style={styles.sectionLabel}>Icon Size</Text>
             <Text style={styles.sectionHelper}>Adjust hero icon size across the app.</Text>
             <View style={styles.iconSizeRow}>
-              <Pressable
-                style={({ pressed }) => [
-                  styles.iconSizeButton,
-                  pressed && styles.iconSizeButtonPressed,
-                ]}
+              <Button
+                variant="muted"
+                size="none"
+                style={styles.iconSizeButton}
                 onPress={() => handleAdjustIcon(-ICON_STEP)}
                 accessibilityLabel="Reduce icon size"
               >
                 <Text style={styles.iconSizeButtonText}>−</Text>
-              </Pressable>
+              </Button>
               <Text style={styles.iconSizeValue}>{clampedIcon}px</Text>
-              <Pressable
-                style={({ pressed }) => [
-                  styles.iconSizeButton,
-                  pressed && styles.iconSizeButtonPressed,
-                ]}
+              <Button
+                variant="muted"
+                size="none"
+                style={styles.iconSizeButton}
                 onPress={() => handleAdjustIcon(ICON_STEP)}
                 accessibilityLabel="Increase icon size"
               >
                 <Text style={styles.iconSizeButtonText}>+</Text>
-              </Pressable>
+              </Button>
             </View>
           </View>
 
@@ -213,12 +211,10 @@ export const SettingsDrawer: React.FC<SettingsDrawerProps> = ({
             <View style={styles.section}>
               <Text style={styles.sectionLabel}>{t('common.userProfile')}</Text>
               {onResetData ? (
-                <Pressable
-                  accessibilityRole="button"
-                  style={({ pressed }) => [
-                    styles.actionButton,
-                    pressed && styles.actionButtonPressed,
-                  ]}
+                <Button
+                  variant="muted"
+                  size="md"
+                  style={styles.actionButton}
                   onPress={onResetData}
                 >
                   <View style={styles.actionRow}>
@@ -234,17 +230,14 @@ export const SettingsDrawer: React.FC<SettingsDrawerProps> = ({
                       </Text>
                     </View>
                   </View>
-                </Pressable>
+                </Button>
               ) : null}
 
               {onSignOut ? (
-                <Pressable
-                  accessibilityRole="button"
-                  style={({ pressed }) => [
-                    styles.actionButton,
-                    styles.signOutButton,
-                    pressed && styles.signOutButtonPressed,
-                  ]}
+                <Button
+                  variant="danger"
+                  size="md"
+                  style={styles.actionButton}
                   onPress={onSignOut}
                 >
                   <View style={styles.actionRow}>
@@ -260,7 +253,7 @@ export const SettingsDrawer: React.FC<SettingsDrawerProps> = ({
                       </Text>
                     </View>
                   </View>
-                </Pressable>
+                </Button>
               ) : null}
             </View>
           ) : null}
@@ -319,13 +312,6 @@ const useStyles = makeStyles((theme: Theme) =>
       flexDirection: 'row',
       alignItems: 'center',
       gap: theme.spacing.xs,
-      paddingVertical: theme.spacing.xs,
-      paddingHorizontal: theme.spacing.sm,
-      borderRadius: theme.radius.md,
-      backgroundColor: theme.colors.surfaceMuted,
-    },
-    closeButtonPressed: {
-      opacity: 0.85,
     },
     closeButtonText: {
       ...theme.typography.caption,
@@ -364,15 +350,6 @@ const useStyles = makeStyles((theme: Theme) =>
     iconSizeButton: {
       width: 44,
       height: 44,
-      borderRadius: theme.radius.lg,
-      borderWidth: 1,
-      borderColor: theme.colors.border,
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: theme.colors.surfaceMuted,
-    },
-    iconSizeButtonPressed: {
-      backgroundColor: theme.colors.primaryMuted,
     },
     iconSizeButtonText: {
       ...theme.typography.heading,
@@ -383,26 +360,12 @@ const useStyles = makeStyles((theme: Theme) =>
       color: theme.colors.textPrimary,
     },
     actionButton: {
-      borderRadius: theme.radius.lg,
-      borderWidth: 1,
-      borderColor: theme.colors.border,
-      backgroundColor: theme.colors.surfaceMuted,
-      paddingVertical: theme.spacing.md,
-      paddingHorizontal: theme.spacing.md,
       shadowColor: theme.colors.shadow,
       shadowOffset: { width: 0, height: 1 },
       shadowOpacity: 0.08,
       shadowRadius: 3,
-    },
-    actionButtonPressed: {
-      backgroundColor: theme.colors.primaryMuted,
-    },
-    signOutButton: {
-      backgroundColor: theme.colors.dangerMuted,
-      borderColor: theme.colors.dangerStrong,
-    },
-    signOutButtonPressed: {
-      opacity: 0.92,
+      alignItems: 'stretch',
+      justifyContent: 'flex-start',
     },
     actionRow: {
       flexDirection: 'row',

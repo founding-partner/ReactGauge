@@ -2,7 +2,6 @@ import React, { useMemo, useRef, useState } from 'react';
 import {
   Alert,
   Platform,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -18,7 +17,7 @@ import {
   IconHome,
   IconShare,
 } from '../components/icons';
-import { ProgressBar, makeStyles, useTheme } from '../components';
+import { Button, ProgressBar, makeStyles, useTheme } from '../components';
 import { AnswerRecord, Question } from '../types/quiz';
 import { useAppStore } from '../store/useAppStore';
 
@@ -158,8 +157,9 @@ export const ScoreScreen: React.FC<ScoreScreenProps> = ({
       </ViewShot>
 
       <View style={styles.actions}>
-        <Pressable
-          style={({ pressed }) => [styles.primaryButton, pressed && styles.primaryPressed]}
+        <Button
+          variant="primary"
+          size="lg"
           onPress={onRetakeQuiz}
         >
           <View style={styles.buttonContent}>
@@ -168,9 +168,10 @@ export const ScoreScreen: React.FC<ScoreScreenProps> = ({
             </View>
             <Text style={styles.primaryText}>{t('common.actions.retakeQuiz')}</Text>
           </View>
-        </Pressable>
-        <Pressable
-          style={({ pressed }) => [styles.secondaryButton, pressed && styles.secondaryPressed]}
+        </Button>
+        <Button
+          variant="outline"
+          size="lg"
           onPress={onReviewAnswers}
         >
           <View style={styles.buttonContent}>
@@ -179,9 +180,10 @@ export const ScoreScreen: React.FC<ScoreScreenProps> = ({
             </View>
             <Text style={styles.secondaryText}>{t('common.actions.reviewAnswers')}</Text>
           </View>
-        </Pressable>
-        <Pressable
-          style={({ pressed }) => [styles.tertiaryButton, pressed && styles.tertiaryPressed]}
+        </Button>
+        <Button
+          variant="surface"
+          size="lg"
           onPress={onGoHome}
         >
           <View style={styles.buttonContent}>
@@ -190,15 +192,13 @@ export const ScoreScreen: React.FC<ScoreScreenProps> = ({
             </View>
             <Text style={styles.tertiaryText}>{t('common.actions.backHome')}</Text>
           </View>
-        </Pressable>
-        <Pressable
-          style={({ pressed }) => [
-            styles.shareButton,
-            pressed && styles.sharePressed,
-            sharing && styles.shareDisabled,
-          ]}
+        </Button>
+        <Button
+          variant="surface"
+          size="lg"
           onPress={handleShare}
           disabled={sharing}
+          disabledOpacity={0.6}
         >
           <View style={styles.buttonContent}>
             <View style={styles.buttonIconWrapper}>
@@ -208,7 +208,7 @@ export const ScoreScreen: React.FC<ScoreScreenProps> = ({
               {sharing ? t('common.actions.preparing') : t('common.actions.shareScorecard')}
             </Text>
           </View>
-        </Pressable>
+        </Button>
       </View>
     </ScrollView>
   );
@@ -356,66 +356,21 @@ const useStyles = makeStyles((theme) =>
       paddingVertical: theme.spacing.xl,
       gap: theme.spacing.md,
     },
-    primaryButton: {
-      backgroundColor: theme.colors.primary,
-      borderRadius: theme.radius.lg,
-      paddingVertical: theme.spacing.lg,
-      alignItems: 'center',
-    },
-    primaryPressed: {
-      opacity: 0.9,
-    },
     primaryText: {
       ...theme.typography.heading,
       color: theme.colors.textOnPrimary,
-    },
-    secondaryButton: {
-      borderRadius: theme.radius.lg,
-      borderWidth: 1,
-      borderColor: theme.colors.primary,
-      paddingVertical: theme.spacing.lg,
-      alignItems: 'center',
-      backgroundColor: theme.colors.primaryMuted,
-    },
-    secondaryPressed: {
-      opacity: 0.9,
     },
     secondaryText: {
       ...theme.typography.heading,
       color: theme.colors.primary,
     },
-    tertiaryButton: {
-      borderRadius: theme.radius.lg,
-      borderWidth: 1,
-      borderColor: theme.colors.border,
-      paddingVertical: theme.spacing.lg,
-      alignItems: 'center',
-      backgroundColor: theme.colors.surface,
-    },
-    tertiaryPressed: {
-      opacity: 0.9,
-    },
     tertiaryText: {
       ...theme.typography.heading,
       color: theme.colors.textPrimary,
     },
-    shareButton: {
-      borderRadius: theme.radius.lg,
-      borderWidth: 1,
-      borderColor: theme.colors.border,
-      paddingVertical: theme.spacing.lg,
-      alignItems: 'center',
-      backgroundColor: theme.colors.surface,
-    },
-    sharePressed: {
-      opacity: 0.9,
-    },
     shareText: {
       ...theme.typography.heading,
       color: theme.colors.textPrimary,
-    },
-    shareDisabled: {
-      opacity: 0.6,
     },
     buttonContent: {
       flexDirection: 'row',

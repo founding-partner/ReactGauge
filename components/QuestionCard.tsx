@@ -34,7 +34,6 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
   return (
     <View
       style={[styles.card, containerStyle, style]}
-      accessibilityRole="summary"
       {...viewProps}
     >
       <View style={styles.header}>

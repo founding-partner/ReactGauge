@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Pressable, StyleSheet, Text, View, ViewProps } from 'react-native';
+import { StyleSheet, Text, View, ViewProps } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import ConfettiCannon from 'react-native-confetti-cannon';
 import {
@@ -12,6 +12,7 @@ import {
   IconDocumentText,
 } from '../components/icons';
 import {
+  Button,
   OptionButton,
   ProgressBar,
   QuestionCard,
@@ -107,15 +108,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           {supportedLanguages.map((entry) => {
             const isActive = entry.code === language;
             return (
-              <Pressable
+              <Button
                 key={entry.code}
-                accessibilityRole="button"
                 accessibilityState={{ selected: isActive }}
-                style={({ pressed }) => [
-                  styles.languageChip,
-                  isActive && styles.languageChipActive,
-                  pressed && styles.languageChipPressed,
-                ]}
+                variant="chip"
+                size="sm"
+                selected={isActive}
+                style={styles.languageChip}
                 onPress={() => {
                   if (!isActive) {
                     onChangeLanguage(entry.code);
@@ -130,7 +129,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 >
                   {entry.label}
                 </Text>
-              </Pressable>
+              </Button>
             );
           })}
         </View>
@@ -141,11 +140,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           <Text style={styles.guestTitle}>{t('home.guestCardTitle')}</Text>
           <Text style={styles.guestBody}>{t('home.guestCardBody')}</Text>
           {onRequestSignIn ? (
-            <Pressable
-              style={({ pressed }) => [
-                styles.guestSignInButton,
-                pressed && styles.guestSignInButtonPressed,
-              ]}
+            <Button
+              variant="outlineInverse"
+              size="md"
+              fullWidth
+              style={styles.guestSignInButton}
               onPress={onRequestSignIn}
             >
               <View style={styles.buttonRow}>
@@ -156,7 +155,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   {t('common.actions.signIn')}
                 </Text>
               </View>
-            </Pressable>
+            </Button>
           ) : null}
         </View>
       ) : (
@@ -181,15 +180,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         </Text>
         <View style={styles.difficultyRow}>
           {difficultyOptions.map((option) => (
-            <Pressable
+            <Button
               key={option.value}
-              accessibilityRole="button"
               accessibilityState={{ selected: difficulty === option.value }}
-              style={({ pressed }) => [
-                styles.difficultyChip,
-                difficulty === option.value && styles.difficultyChipActive,
-                pressed && styles.difficultyChipPressed,
-              ]}
+              variant="chipFilled"
+              size="md"
+              selected={difficulty === option.value}
+              style={styles.difficultyChip}
               onPress={() => onSelectDifficulty(option.value)}
             >
               <View style={styles.difficultyContent}>
@@ -225,16 +222,15 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   </Text>
                 </View>
               </View>
-            </Pressable>
+            </Button>
           ))}
         </View>
 
         <View style={styles.primaryActionColumn}>
-          <Pressable
-            style={({ pressed }) => [
-              styles.cta,
-              pressed && styles.ctaPressed,
-            ]}
+          <Button
+            variant="primary"
+            size="lg"
+            fullWidth
             onPress={onStartQuiz}
           >
             <View style={styles.buttonRow}>
@@ -243,13 +239,12 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               </View>
               <Text style={styles.ctaText}>{t('common.actions.startQuiz')}</Text>
             </View>
-          </Pressable>
+          </Button>
 
-          {!isGuest && <Pressable
-            style={({ pressed }) => [
-              styles.historyButton,
-              pressed && styles.historyButtonPressed,
-            ]}
+          {!isGuest && <Button
+            variant="outline"
+            size="md"
+            fullWidth
             onPress={onOpenHistory}
           >
             <View style={styles.buttonRow}>
@@ -258,7 +253,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               </View>
               <Text style={styles.historyButtonText}>{t('common.actions.viewHistory')}</Text>
             </View>
-          </Pressable>}
+          </Button>}
         </View>
       </View>
 
@@ -268,11 +263,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         codeSnippet={warmupQuestion.code}
         footer={
           <View style={styles.warmupFooter}>
-            <Pressable
-              style={({ pressed }) => [
-                styles.refreshButton,
-                pressed && styles.refreshButtonPressed,
-              ]}
+            <Button
+              variant="outline"
+              size="md"
+              fullWidth
               onPress={() => {
                 setSelectedOption(null);
                 setShowConfetti(false);
@@ -285,7 +279,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 </View>
                 <Text style={styles.refreshButtonText}>{t('common.actions.refreshQuestion')}</Text>
               </View>
-            </Pressable>
+            </Button>
           </View>
         }
       >
@@ -417,19 +411,6 @@ const useStyles = makeStyles((theme) =>
     },
     languageChip: {
       flex: 1,
-      borderRadius: theme.radius.lg,
-      borderWidth: 1,
-      borderColor: theme.colors.border,
-      paddingVertical: theme.spacing.sm,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    languageChipActive: {
-      backgroundColor: theme.colors.primary,
-      borderColor: theme.colors.primary,
-    },
-    languageChipPressed: {
-      backgroundColor: theme.colors.primaryMuted,
     },
     languageChipText: {
       ...theme.typography.caption,
@@ -462,14 +443,6 @@ const useStyles = makeStyles((theme) =>
     },
     guestSignInButton: {
       marginTop: theme.spacing.sm,
-      borderRadius: theme.radius.lg,
-      borderWidth: 1,
-      borderColor: theme.colors.textOnPrimary,
-      paddingVertical: theme.spacing.md,
-      paddingHorizontal: theme.spacing.lg,
-      alignItems: 'center',
-      justifyContent: 'center',
-      width: '100%',
     },
     guestSignInText: {
       ...theme.typography.caption,
@@ -480,29 +453,12 @@ const useStyles = makeStyles((theme) =>
       marginTop: theme.spacing.lg,
       gap: theme.spacing.md,
     },
-    historyButton: {
-      borderRadius: theme.radius.lg,
-      borderWidth: 1,
-      borderColor: theme.colors.primary,
-      backgroundColor: theme.colors.primaryMuted,
-      paddingVertical: theme.spacing.md,
-      paddingHorizontal: theme.spacing.lg,
-      alignItems: 'center',
-      justifyContent: 'center',
-      width: '100%',
-    },
-    historyButtonPressed: {
-      opacity: 0.9,
-    },
     historyButtonText: {
       ...theme.typography.caption,
       textTransform: 'uppercase',
       color: theme.colors.primary,
       letterSpacing: 0.6,
       fontWeight: '600',
-    },
-    guestSignInButtonPressed: {
-      backgroundColor: theme.colors.primaryMuted,
     },
     buttonRow: {
       flexDirection: 'row',
@@ -530,21 +486,6 @@ const useStyles = makeStyles((theme) =>
     },
     difficultyChip: {
       flex: 1,
-      borderRadius: theme.radius.lg,
-      borderWidth: 1,
-      borderColor: theme.colors.border,
-      paddingVertical: theme.spacing.md,
-      paddingHorizontal: theme.spacing.lg,
-      alignItems: 'center',
-      gap: theme.spacing.xs,
-      backgroundColor: theme.colors.surfaceMuted,
-    },
-    difficultyChipActive: {
-      backgroundColor: theme.colors.primary,
-      borderColor: theme.colors.primary,
-    },
-    difficultyChipPressed: {
-      backgroundColor: theme.colors.primaryMuted,
     },
     difficultyContent: {
       flexDirection: 'row',
@@ -600,40 +541,14 @@ const useStyles = makeStyles((theme) =>
     warmupFooter: {
       gap: theme.spacing.md,
     },
-    refreshButton: {
-      alignSelf: 'flex-start',
-      borderRadius: theme.radius.lg,
-      borderWidth: 1,
-      borderColor: theme.colors.primary,
-      paddingVertical: theme.spacing.md,
-      paddingHorizontal: theme.spacing.lg,
-      alignItems: 'center',
-      justifyContent: 'center',
-      width: '100%',
-      backgroundColor: theme.colors.primaryMuted,
-    },
     refreshButtonText: {
       ...theme.typography.caption,
       textTransform: 'uppercase',
       color: theme.colors.primary,
     },
-    refreshButtonPressed: {
-      opacity: 0.9,
-    },
-    cta: {
-      backgroundColor: theme.colors.primary,
-      borderRadius: theme.radius.lg,
-      paddingVertical: theme.spacing.lg,
-      alignItems: 'center',
-      justifyContent: 'center',
-      width: '100%',
-    },
     ctaText: {
       ...theme.typography.heading,
       color: theme.colors.textOnPrimary,
-    },
-    ctaPressed: {
-      opacity: 0.9,
     },
     warmupPrompt: {
       ...theme.typography.body,

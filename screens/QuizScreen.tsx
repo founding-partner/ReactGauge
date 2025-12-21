@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Animated,
   Dimensions,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -20,6 +19,7 @@ import {
   IconTrophy,
 } from '../components/icons';
 import {
+  Button,
   OptionButton,
   ProgressBar,
   QuestionCard,
@@ -263,12 +263,15 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
           </View>
         </View>
         <Text style={styles.explanationBody}>{currentQuestion.explanation}</Text>
-        <Pressable
+        <Button
+          variant="primary"
+          size="sm"
+          radius="md"
           style={styles.dismissButton}
           onPress={handleDismissExplanation}
         >
           <Text style={styles.dismissButtonText}>{t('quiz.dismiss')}</Text>
-        </Pressable>
+        </Button>
       </Animated.View>
     );
   };
@@ -295,7 +298,9 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
             { paddingTop: insets.top + theme.spacing.xl },
           ]}
         >
-          <Pressable
+          <Button
+            variant="unstyled"
+            size="none"
             style={styles.overlayBackdrop}
             onPress={handleDismissExplanation}
           />
@@ -360,13 +365,13 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
         pointerEvents="box-none"
       >
         <View style={styles.dock}>
-          <Pressable
-            style={[
-              styles.secondaryButton,
-              showExplanation ? styles.disabledButton : null,
-            ]}
+          <Button
+            variant="muted"
+            size="md"
+            style={styles.dockButton}
             onPress={handlePrevious}
             disabled={showExplanation}
+            disabledOpacity={0.4}
           >
             <View style={styles.buttonRow}>
               {currentIndex === 0 ? (
@@ -383,14 +388,14 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
                   : t('common.actions.previous')}
               </Text>
             </View>
-          </Pressable>
-          <Pressable
-            style={[
-              styles.primaryButton,
-              isPrimaryDisabled ? styles.disabledButton : null,
-            ]}
+          </Button>
+          <Button
+            variant="primary"
+            size="md"
+            style={styles.dockButton}
             onPress={handleNext}
             disabled={isPrimaryDisabled}
+            disabledOpacity={0.4}
           >
             <View style={styles.buttonRow}>
               {submitted ? (
@@ -413,7 +418,7 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
                   : t('common.actions.submit')}
               </Text>
             </View>
-          </Pressable>
+          </Button>
         </View>
       </View>
     </View>
@@ -531,36 +536,16 @@ const useStyles = makeStyles((theme) =>
     buttonIcon: {
       marginRight: theme.spacing.xs,
     },
-    primaryButton: {
+    dockButton: {
       flex: 1,
-      backgroundColor: theme.colors.primary,
-      borderRadius: theme.radius.lg,
-      paddingVertical: theme.spacing.md,
-      paddingHorizontal: theme.spacing.lg,
-      alignItems: 'center',
-      justifyContent: 'center',
     },
     primaryButtonText: {
       ...theme.typography.heading,
       color: theme.colors.textOnPrimary,
     },
-    secondaryButton: {
-      flex: 1,
-      paddingVertical: theme.spacing.md,
-      paddingHorizontal: theme.spacing.lg,
-      borderRadius: theme.radius.lg,
-      backgroundColor: theme.colors.surfaceMuted,
-      borderWidth: StyleSheet.hairlineWidth,
-      borderColor: theme.colors.border,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
     secondaryButtonText: {
       ...theme.typography.body,
       color: theme.colors.textPrimary,
-    },
-    disabledButton: {
-      opacity: 0.4,
     },
     explanationDrawer: {
       width: '100%',
@@ -619,10 +604,6 @@ const useStyles = makeStyles((theme) =>
     dismissButton: {
       alignSelf: 'flex-end',
       marginTop: theme.spacing.lg,
-      backgroundColor: theme.colors.primary,
-      paddingVertical: theme.spacing.sm,
-      paddingHorizontal: theme.spacing.lg,
-      borderRadius: theme.radius.md,
     },
     dismissButtonText: {
       ...theme.typography.body,

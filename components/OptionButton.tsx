@@ -1,8 +1,6 @@
 import React, { useRef } from 'react';
 import {
   Animated,
-  Pressable,
-  PressableProps,
   StyleProp,
   StyleSheet,
   Text,
@@ -13,6 +11,7 @@ import { Theme, makeStyles, useTheme } from './theme';
 import Svg, { Circle } from 'react-native-svg';
 import { IconCheckCircle } from './icons';
 import { useAppStore } from '../store/useAppStore';
+import { Button, type ButtonProps } from './Button';
 
 type FeedbackStatus = 'default' | 'correct' | 'incorrect';
 
@@ -25,7 +24,7 @@ const DefaultBulletIcon: React.FC<{ color: string; size: number }> = ({
   </Svg>
 );
 
-export interface OptionButtonProps extends Omit<PressableProps, 'style'> {
+export interface OptionButtonProps extends Omit<ButtonProps, 'style'> {
   label: string;
   description?: string;
   selected?: boolean;
@@ -73,21 +72,20 @@ export const OptionButton: React.FC<OptionButtonProps> = ({
     <Animated.View
       style={[styles.wrapper, containerStyle, { transform: [{ scale }] }]}
     >
-      <Pressable
-        accessibilityRole="button"
+      <Button
         accessibilityState={{
           selected: selected || undefined,
           disabled: disabled ?? undefined,
         }}
         disabled={disabled}
-        style={({ pressed }) => [
+        pressedStyle={styles.pressedBackground}
+        style={[
           styles.button,
           {
             backgroundColor: statusColors.background,
             borderColor: statusColors.border,
             opacity: disabled ? 0.6 : 1,
           },
-          pressed && !disabled ? styles.pressedBackground : null,
         ]}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
@@ -133,7 +131,7 @@ export const OptionButton: React.FC<OptionButtonProps> = ({
             </Text>
           ) : null}
         </View>
-      </Pressable>
+      </Button>
     </Animated.View>
   );
 };

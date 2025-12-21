@@ -1,3 +1,6 @@
+export { Button } from './Button';
+export type { ButtonProps, ButtonSize, ButtonVariant } from './Button';
+
 export { OptionButton } from './OptionButton';
 export type { OptionButtonProps } from './OptionButton';
 
@@ -24,7 +27,7 @@ export {
   typography,
   radius,
   lightTheme,
-  darkTheme,
-  ThemeMode,
-  ThemePreference,
+  darkTheme
 } from './theme';
+
+export type { ThemeMode, ThemePreference } from './theme';

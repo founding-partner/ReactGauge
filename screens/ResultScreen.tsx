@@ -1,7 +1,7 @@
 import React from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { CodeBlock, makeStyles, useTheme } from '../components';
+import { Button, CodeBlock, makeStyles, useTheme } from '../components';
 import {
   IconShieldCheck,
 } from '../components/icons';
@@ -51,16 +51,26 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
       </View>
 
       <View style={styles.actions}>
-        <Pressable style={styles.primaryButton} onPress={onRetry}>
+        <Button
+          variant="primary"
+          size="lg"
+          style={styles.actionButton}
+          onPress={onRetry}
+        >
           <Text style={styles.primaryButtonText}>
             {t('common.actions.retakeQuiz')}
           </Text>
-        </Pressable>
-        <Pressable style={styles.secondaryButton} onPress={onClose}>
+        </Button>
+        <Button
+          variant="secondary"
+          size="lg"
+          style={styles.actionButton}
+          onPress={onClose}
+        >
           <Text style={styles.secondaryButtonText}>
             {t('common.actions.backHome')}
           </Text>
-        </Pressable>
+        </Button>
       </View>
 
       {isGuest ? (
@@ -68,7 +78,12 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
           <Text style={styles.guestHeading}>{t('result.guestTitle')}</Text>
           <Text style={styles.guestBody}>{t('result.guestBody')}</Text>
           {onRequestSignIn ? (
-            <Pressable style={styles.guestButton} onPress={onRequestSignIn}>
+            <Button
+              variant="outlineInverse"
+              size="md"
+              fullWidth
+              onPress={onRequestSignIn}
+            >
               <View style={styles.buttonRow}>
                 <View style={styles.buttonIconWrapper}>
                   <IconShieldCheck size={iconSize} color={theme.colors.textOnPrimary} />
@@ -77,7 +92,7 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
                   {t('common.actions.signIn')}
                 </Text>
               </View>
-            </Pressable>
+            </Button>
           ) : null}
         </View>
       ) : null}
@@ -198,23 +213,12 @@ const useStyles = makeStyles((theme) =>
       flexDirection: 'row',
       gap: theme.spacing.md,
     },
-    primaryButton: {
+    actionButton: {
       flex: 1,
-      backgroundColor: theme.colors.primary,
-      borderRadius: theme.radius.lg,
-      paddingVertical: theme.spacing.lg,
-      alignItems: 'center',
     },
     primaryButtonText: {
       ...theme.typography.heading,
       color: theme.colors.textOnPrimary,
-    },
-    secondaryButton: {
-      flex: 1,
-      borderRadius: theme.radius.lg,
-      paddingVertical: theme.spacing.lg,
-      alignItems: 'center',
-      backgroundColor: theme.colors.surfaceMuted,
     },
     secondaryButtonText: {
       ...theme.typography.heading,
@@ -234,16 +238,6 @@ const useStyles = makeStyles((theme) =>
       ...theme.typography.body,
       color: theme.colors.textOnPrimary,
       opacity: 0.92,
-    },
-    guestButton: {
-      borderRadius: theme.radius.lg,
-      borderWidth: 1,
-      borderColor: theme.colors.textOnPrimary,
-      paddingVertical: theme.spacing.md,
-      paddingHorizontal: theme.spacing.lg,
-      alignItems: 'center',
-      justifyContent: 'center',
-      width: '100%',
     },
     guestButtonText: {
       ...theme.typography.caption,

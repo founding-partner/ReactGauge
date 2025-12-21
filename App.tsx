@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import {
   Alert,
-  Pressable,
   ScrollView,
   StatusBar,
   StyleSheet,
@@ -14,6 +13,7 @@ import {
   useTheme,
   makeStyles,
   ThemePreference,
+  Button,
 } from './components';
 import { signInWithGitHub } from './auth/githubAuth';
 import { HomeScreen } from './screens/HomeScreen';
@@ -603,17 +603,15 @@ function AppContent({
         <SafeAreaView style={styles.safeArea}>
           {!isQuizScreen ? (
             <View style={styles.toolbar}>
-              <Pressable
-                accessibilityRole="button"
-                style={({ pressed }) => [
-                  styles.settingsButton,
-                  pressed && styles.settingsButtonPressed,
-                ]}
+              <Button
+                variant="elevated"
+                size="sm"
+                style={styles.settingsButton}
                 onPress={() => setSettingsOpen(true)}
               >
                 <IconWheel size={18} color={theme.colors.textPrimary} />
                 <Text style={styles.settingsButtonText}>Settings</Text>
-              </Pressable>
+              </Button>
             </View>
           ) : null}
           {renderScreen()}
@@ -686,22 +684,7 @@ const useStyles = makeStyles((theme) =>
     },
     settingsButton: {
       flexDirection: 'row',
-      alignItems: 'center',
       gap: theme.spacing.sm,
-      borderRadius: theme.radius.lg,
-      borderWidth: 1,
-      borderColor: theme.colors.border,
-      backgroundColor: theme.colors.surface,
-      paddingHorizontal: theme.spacing.md,
-      paddingVertical: theme.spacing.sm,
-      shadowColor: theme.colors.shadow,
-      shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: 0.08,
-      shadowRadius: 4,
-      elevation: 1,
-    },
-    settingsButtonPressed: {
-      opacity: 0.9,
     },
     settingsButtonText: {
       ...theme.typography.caption,

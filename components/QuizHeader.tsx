@@ -1,13 +1,13 @@
 import React from 'react';
 import {
   Image,
-  Pressable,
   StyleSheet,
   Text,
   View,
   ViewProps,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { Button } from './Button';
 import { makeStyles } from './theme';
 
 export interface QuizHeaderProps extends ViewProps {
@@ -41,8 +41,7 @@ export const QuizHeader: React.FC<QuizHeaderProps> = ({
 
   return (
     <View style={[styles.container, style]} {...rest}>
-      <Pressable
-        accessibilityRole="button"
+      <Button
         accessibilityLabel={t('common.userProfile')}
         onPress={onAvatarPress}
         disabled={!onAvatarPress}
@@ -55,7 +54,7 @@ export const QuizHeader: React.FC<QuizHeaderProps> = ({
             <Text style={styles.avatarInitials}>{initials ?? fallbackInitials}</Text>
           </View>
         )}
-      </Pressable>
+      </Button>
 
       <View style={styles.meta}>
         <Text style={styles.title}>{title}</Text>
