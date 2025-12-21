@@ -110,6 +110,7 @@ function AppContent({
   const iconSize = useAppStore((state) => state.iconSize);
   const setIconSize = useAppStore((state) => state.setIconSize);
   // const isQuizScreen = activeScreen === 'quiz';
+  const isGuestUser = user?.mode === 'guest';
   const showTabs =
     Boolean(user) &&
     (activeScreen === 'home' ||
@@ -532,6 +533,9 @@ function AppContent({
       }
 
       if (tab === 'history') {
+        if (isGuestUser) {
+          return;
+        }
         setActiveScreen('history');
         return;
       }
@@ -548,7 +552,7 @@ function AppContent({
 
       setActiveScreen('home');
     },
-    [setActiveScreen, setSelectedAttempt],
+    [isGuestUser, setActiveScreen, setSelectedAttempt],
   );
 
   const canManageSession = Boolean(user && user.mode !== 'guest');
@@ -673,6 +677,8 @@ function AppContent({
         totalCorrect={user.correct}
         streakDays={user.streak}
         completionRatio={user.completion}
+        lastAttempt={historyAttempts[0] ?? null}
+        onReviewAttempt={handleSelectHistoryAttempt}
         language={language}
         onChangeLanguage={setLanguageCode}
       />
@@ -736,6 +742,7 @@ function AppContent({
             <BottomTabBar
               activeTab={activeTab}
               onTabPress={handleTabPress}
+              isGuest={isGuestUser}
             />
           ) : null}
         </SafeAreaView>

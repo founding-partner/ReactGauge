@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Animated,
   Dimensions,
@@ -99,7 +99,7 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
     setSelectedOption(index);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = useCallback(() => {
     if (selectedOption == null) {
       return;
     }
@@ -128,14 +128,14 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
     if (isCorrect) {
       setConfettiBurst((prev) => prev + 1);
     }
-  };
+  }, [currentQuestion, selectedOption]);
 
-  const handleExit = () => {
+  const handleExit = useCallback(() => {
     setExplanationVisible(false);
     onExit();
-  };
+  }, [onExit]);
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     if (!submitted) {
       return;
     }
@@ -151,9 +151,17 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
     setSelectedOption(null);
     setSubmitted(Boolean(answers.some((a) => a.questionId === questions[nextIndex].id)));
     setExplanationVisible(false);
-  };
+  }, [
+    answers,
+    currentIndex,
+    isLastQuestion,
+    onComplete,
+    questions,
+    submitted,
+    totalQuestions,
+  ]);
 
-  const handlePrevious = () => {
+  const handlePrevious = useCallback(() => {
     setExplanationVisible(false);
     if (currentIndex === 0) {
       return;
@@ -163,7 +171,7 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
     setCurrentIndex(prevIndex);
     setSelectedOption(null);
     setSubmitted(Boolean(answers.some((a) => a.questionId === questions[prevIndex].id)));
-  };
+  }, [answers, currentIndex, questions]);
 
   useEffect(() => {
     setExplanationVisible(false);

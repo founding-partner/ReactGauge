@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, ViewProps } from 'react-native';
+import { Image, StyleSheet, Text, View, ViewProps } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import {
   IconShieldCheck,
@@ -7,12 +7,12 @@ import {
 import {
   Button,
   ProgressBar,
-  QuizHeader,
   makeStyles,
   useTheme,
 } from '../components';
 import { useAppStore } from '../store/useAppStore';
 import { SupportedLanguageCode } from '../localization/i18n';
+import { QuizAttempt } from '../types/history';
 
 export interface HomeScreenProps extends ViewProps {
   username: string;
@@ -24,6 +24,8 @@ export interface HomeScreenProps extends ViewProps {
   totalCorrect: number;
   streakDays: number;
   completionRatio: number;
+  lastAttempt?: QuizAttempt | null;
+  onReviewAttempt?: (attempt: QuizAttempt) => void;
   language: SupportedLanguageCode;
   onChangeLanguage: (language: SupportedLanguageCode) => void;
 }
@@ -38,6 +40,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   totalCorrect,
   streakDays,
   completionRatio,
+  lastAttempt,
+  onReviewAttempt,
   language,
   onChangeLanguage,
   style,
@@ -53,62 +57,47 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
     ? t('home.subtitleGuest')
     : t('home.subtitleSignedIn');
 
-  const streakLabel = isGuest
-    ? t('common.guestMode')
-    : t('common.streakDays', { count: Math.max(streakDays, 0) });
-
   return (
     <View style={[styles.container, style]} {...rest}>
-      <QuizHeader
-        title={greeting}
-        subtitle={subtitle}
-        avatarUri={avatarUrl}
-        initials={getInitials(displayName ?? username)}
-        currentQuestion={Math.max(1, Math.round(completionRatio * 10))}
-        totalQuestions={10}
-        timeRemainingLabel={streakLabel}
-        showProgress={false}
-      />
-      {/* <View style={styles.languageSection}>
-        <Text style={styles.languageLabel}>{t('home.languageLabel')}</Text>
-        <View style={styles.languageRow}>
-          {supportedLanguages.map((entry) => {
-            const isActive = entry.code === language;
-            return (
-              <Button
-                key={entry.code}
-                accessibilityState={{ selected: isActive }}
-                variant="chip"
-                size="sm"
-                selected={isActive}
-                style={styles.languageChip}
-                onPress={() => {
-                  if (!isActive) {
-                    onChangeLanguage(entry.code);
-                  }
-                }}
-              >
-                <Text
-                  style={[
-                    styles.languageChipText,
-                    isActive && styles.languageChipTextActive,
-                  ]}
-                >
-                  {entry.label}
-                </Text>
-              </Button>
-            );
-          })}
-        </View>
-      </View> */}
+      <View style={styles.hero} accessible accessibilityRole="header">
+        <Text style={styles.title}>{greeting}</Text>
+        {avatarUrl ? (
+          <Image
+            source={{ uri: avatarUrl }}
+            style={styles.avatarImage}
+            accessibilityLabel={t('common.userProfile')}
+          />
+        ) : (<Image
+          source={require('../hero.png')}
+          style={styles.heroImage}
+          resizeMode="contain"
+          accessibilityLabel={t('login.logoAlt')}
+        />)}
+        <Text style={styles.subtitle}>{subtitle}</Text>
+        {/* {avatarUrl ? (
+          <Image
+            source={{ uri: avatarUrl }}
+            style={styles.avatarImage}
+            accessibilityLabel={t('common.userProfile')}
+          />
+        ) : (
+          <View style={styles.avatarFallback}>
+            <Text style={styles.avatarInitials}>
+              {getInitials(displayName ?? username)}
+            </Text>
+          </View>
+        )} */}
+        
+        
+      </View>
 
       {isGuest ? (
-        <View style={styles.guestCard}>
-          <Text style={styles.guestTitle}>{t('home.guestCardTitle')}</Text>
-          <Text style={styles.guestBody}>{t('home.guestCardBody')}</Text>
-          {onRequestSignIn ? (
+        // <View style={styles.guestCard}>
+        //   <Text style={styles.guestTitle}>{t('home.guestCardTitle')}</Text>
+        //   <Text style={styles.guestBody}>{t('home.guestCardBody')}</Text>
+          <>{onRequestSignIn ? (
             <Button
-              variant="outlineInverse"
+              variant="primary"
               size="md"
               fullWidth
               style={styles.guestSignInButton}
@@ -123,8 +112,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 </Text>
               </View>
             </Button>
-          ) : null}
-        </View>
+          ) : null}</>
+        // </View>
       ) : (
         <View style={styles.section}>
           <Text style={styles.sectionHeading}>{t('home.progressTitle')}</Text>
@@ -139,22 +128,57 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           </View>
         </View>
       )}
+
+      {lastAttempt && !isGuest ? (
+        <View style={styles.lastAttemptCard}>
+          <View style={styles.lastAttemptHeader}>
+            <View style={styles.lastAttemptTitleBlock}>
+              <Text style={styles.sectionHeading}>
+                {t('home.lastAttemptTitle')}
+              </Text>
+              <Text style={styles.lastAttemptTimestamp}>
+                {new Date(lastAttempt.timestamp).toLocaleString()}
+              </Text>
+            </View>
+            <View style={styles.scorePill}>
+              <Text style={styles.scoreText}>
+                {lastAttempt.score.correct}/{lastAttempt.score.total}
+              </Text>
+            </View>
+          </View>
+          <View style={styles.lastAttemptMetaRow}>
+            <Text style={styles.lastAttemptLabel}>
+              {t('home.difficultyTitle')}
+            </Text>
+            <Text style={styles.lastAttemptValue}>
+              {t(difficultyLabelKeys[lastAttempt.difficulty])}
+            </Text>
+          </View>
+          <View style={styles.lastAttemptMetaRow}>
+            <Text style={styles.lastAttemptLabel}>
+              {t('home.progressCorrect')}
+            </Text>
+            <Text style={styles.lastAttemptValue}>
+              {lastAttempt.score.correct}/{lastAttempt.score.total}
+            </Text>
+          </View>
+          {onReviewAttempt ? (
+            <Button
+              variant="outline"
+              size="md"
+              fullWidth
+              onPress={() => onReviewAttempt(lastAttempt)}
+            >
+              <Text style={styles.reviewButtonText}>
+                {t('common.actions.reviewAnswers')}
+              </Text>
+            </Button>
+          ) : null}
+        </View>
+      ) : null}
     </View>
   );
 };
-
-function getInitials(source: string) {
-  if (!source) {
-    return 'YOU';
-  }
-
-  const parts = source.trim().split(/\s+/).filter(Boolean);
-  if (parts.length >= 2) {
-    return (parts[0][0] + parts[1][0]).toUpperCase();
-  }
-
-  return source.slice(0, 2).toUpperCase();
-}
 
 const ProgressRow = ({
   label,
@@ -173,11 +197,60 @@ const ProgressRow = ({
   );
 };
 
+const difficultyLabelKeys: Record<
+  QuizAttempt['difficulty'],
+  | 'common.difficulties.easy'
+  | 'common.difficulties.medium'
+  | 'common.difficulties.hard'
+> = {
+  easy: 'common.difficulties.easy',
+  medium: 'common.difficulties.medium',
+  hard: 'common.difficulties.hard',
+};
+
 const useStyles = makeStyles((theme) =>
   StyleSheet.create({
     container: {
       flex: 1,
       gap: theme.spacing.xl,
+    },
+    hero: {
+      gap: theme.spacing.md,
+      alignItems: 'center',
+    },
+    heroImage: {
+      width: '100%',
+      height: undefined,
+      aspectRatio: 1,
+      // borderRadius: theme.radius.md,
+      // alignSelf: 'stretch',
+    },
+    avatarImage: {
+      width: 128,
+      height: 128,
+      borderRadius: theme.radius.pill,
+    },
+    avatarFallback: {
+      width: 128,
+      height: 128,
+      borderRadius: theme.radius.pill,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: theme.colors.primary,
+    },
+    avatarInitials: {
+      ...theme.typography.caption,
+      color: theme.colors.textOnPrimary,
+    },
+    title: {
+      ...theme.typography.display,
+      color: theme.colors.textPrimary,
+      textAlign: 'center',
+    },
+    subtitle: {
+      ...theme.typography.body,
+      color: theme.colors.textSecondary,
+      textAlign: 'center',
     },
     section: {
       backgroundColor: theme.colors.surface,
@@ -246,6 +319,64 @@ const useStyles = makeStyles((theme) =>
       ...theme.typography.caption,
       textTransform: 'uppercase',
       color: theme.colors.textOnPrimary,
+    },
+    lastAttemptCard: {
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radius.md,
+      padding: theme.spacing.xl,
+      gap: theme.spacing.md,
+      elevation: 2,
+      shadowColor: theme.colors.shadow,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.08,
+      shadowRadius: 6,
+    },
+    lastAttemptHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    lastAttemptTitleBlock: {
+      gap: theme.spacing.xs,
+    },
+    lastAttemptTimestamp: {
+      ...theme.typography.caption,
+      color: theme.colors.textSecondary,
+      textTransform: 'none',
+    },
+    scorePill: {
+      backgroundColor: theme.colors.primaryMuted,
+      borderRadius: theme.radius.pill,
+      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.sm,
+    },
+    scoreText: {
+      ...theme.typography.body,
+      color: theme.colors.primary,
+      fontWeight: '600',
+    },
+    lastAttemptMetaRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    lastAttemptLabel: {
+      ...theme.typography.caption,
+      color: theme.colors.textSecondary,
+      textTransform: 'uppercase',
+      letterSpacing: 0.4,
+    },
+    lastAttemptValue: {
+      ...theme.typography.body,
+      color: theme.colors.textPrimary,
+      fontWeight: '600',
+    },
+    reviewButtonText: {
+      ...theme.typography.caption,
+      textTransform: 'uppercase',
+      color: theme.colors.primary,
+      letterSpacing: 0.5,
+      fontWeight: '600',
     },
     buttonRow: {
       flexDirection: 'row',

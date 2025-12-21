@@ -83,9 +83,9 @@ export const resources = {
         logoAlt: 'React Gauge Logo',
       },
       home: {
-        welcome: 'Welcome back, {{name}}',
+        welcome: 'Welcome back,\n {{name}}',
         subtitleGuest:
-          'You are exploring ReactGauge in guest mode. Sign in to track your growth.',
+          'You are exploring ReactGauge in guest mode. Sign in to track your growth. \n\nYour progress will reset when you leave. \n\nSign in with GitHub to save results and earn streaks.',
         subtitleSignedIn:
           'Tune your React instincts with fresh questions each session.',
         guestCardTitle: 'Guest mode enabled',
@@ -95,6 +95,7 @@ export const resources = {
         progressAnswered: 'Questions answered',
         progressCorrect: 'Correct answers',
         progressWeekly: 'Weekly completion',
+        lastAttemptTitle: 'Last attempt',
         difficultyTitle: 'Difficulty',
         difficultyDescription:
           'Choose how many questions you want to tackle. Question bank currently holds {{count}} prompts.',
@@ -263,6 +264,7 @@ export const resources = {
         progressAnswered: 'Preguntas respondidas',
         progressCorrect: 'Respuestas correctas',
         progressWeekly: 'Avance semanal',
+        lastAttemptTitle: 'Último intento',
         difficultyTitle: 'Dificultad',
         difficultyDescription:
           'Elige cuántas preguntas quieres resolver. El banco actual tiene {{count}} preguntas.',
@@ -432,6 +434,7 @@ export const resources = {
         progressAnswered: 'பதிலளித்த கேள்விகள்',
         progressCorrect: 'சரியான பதில்கள்',
         progressWeekly: 'வாராந்திர நிறைவு',
+        lastAttemptTitle: 'கடைசி முயற்சி',
         difficultyTitle: 'கடின நிலை',
         difficultyDescription:
           'எத்தனை கேள்விகளை முயற்சி செய்ய விரும்புகிறீர்கள் என்பதைத் தேர்வு செய்யுங்கள். தற்போது {{count}} கேள்விகள் உள்ளன.',
