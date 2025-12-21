@@ -116,7 +116,7 @@ export const OptionButton: React.FC<OptionButtonProps> = ({
               {label}
             </Text>
           </View>
-          {description ? (
+          {/* {description ? (
             <Text
               style={[
                 styles.description,
@@ -129,7 +129,7 @@ export const OptionButton: React.FC<OptionButtonProps> = ({
             >
               {description}
             </Text>
-          ) : null}
+          ) : null} */}
         </View>
       </Button>
     </Animated.View>

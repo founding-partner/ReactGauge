@@ -17,6 +17,7 @@ export type TabKey = 'home' | 'startQuiz' | 'history' | 'warmup' | 'settings';
 export type BottomTabBarProps = {
   activeTab: TabKey;
   onTabPress: (tab: TabKey) => void;
+  isGuest?: boolean;
 };
 
 const tabs: Array<{ key: TabKey; icon: typeof IconHome; labelKey: string }> = [
@@ -30,6 +31,7 @@ const tabs: Array<{ key: TabKey; icon: typeof IconHome; labelKey: string }> = [
 export const BottomTabBar: React.FC<BottomTabBarProps> = ({
   activeTab,
   onTabPress,
+  isGuest = false,
 }) => {
   const theme = useTheme();
   const styles = useStyles();
@@ -39,7 +41,8 @@ export const BottomTabBar: React.FC<BottomTabBarProps> = ({
   return (
     <View style={styles.container}>
       {tabs.map((tab) => {
-        const isActive = activeTab === tab.key;
+        const isDisabled = isGuest && tab.key === 'history';
+        const isActive = !isDisabled && activeTab === tab.key;
         const color = isActive ? theme.colors.primary : theme.colors.textSecondary;
         return (
           <Button
@@ -48,9 +51,15 @@ export const BottomTabBar: React.FC<BottomTabBarProps> = ({
             size="xs"
             selected={isActive}
             style={styles.tabButton}
-            accessibilityState={{ selected: isActive }}
+            disabled={isDisabled}
+            accessibilityState={{ selected: isActive, disabled: isDisabled }}
             accessibilityLabel={t(tab.labelKey)}
-            onPress={() => onTabPress(tab.key)}
+            onPress={() => {
+              if (!isDisabled) {
+                onTabPress(tab.key);
+              }
+            }}
+            
           >
             <View style={styles.tabContent}>
               <tab.icon size={iconSize} color={color} />
