@@ -500,10 +500,6 @@ function AppContent({
     setActiveScreen('home');
   };
 
-  const handleOpenHistory = () => {
-    setActiveScreen('history');
-  };
-
   const handleCloseHistory = () => {
     setActiveScreen('home');
   };
@@ -662,13 +658,10 @@ function AppContent({
         difficulty={difficulty}
         onSelectDifficulty={setDifficulty}
         questionPoolSize={allQuestions.length}
-        warmupQuestion={warmupQuestion}
-        onRefreshWarmup={refreshWarmupQuestion}
         totalAnswered={user.answered}
         totalCorrect={user.correct}
         streakDays={user.streak}
         completionRatio={user.completion}
-        onOpenHistory={handleOpenHistory}
         language={language}
         onChangeLanguage={setLanguageCode}
       />

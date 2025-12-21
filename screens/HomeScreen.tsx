@@ -1,26 +1,20 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React from 'react';
 import { StyleSheet, Text, View, ViewProps } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import ConfettiCannon from 'react-native-confetti-cannon';
 import {
-  IconArrowPath,
   IconFire,
   IconPlayCircle,
   IconRocketLaunch,
   IconShieldCheck,
   IconSparkles,
-  IconDocumentText,
 } from '../components/icons';
 import {
   Button,
-  OptionButton,
   ProgressBar,
-  QuestionCard,
   QuizHeader,
   makeStyles,
   useTheme,
 } from '../components';
-import { Question } from '../types/quiz';
 import { QUESTION_COUNT_BY_DIFFICULTY, useAppStore, type Difficulty } from '../store/useAppStore';
 import { SupportedLanguageCode, supportedLanguages } from '../localization/i18n';
 
@@ -34,13 +28,10 @@ export interface HomeScreenProps extends ViewProps {
   difficulty: 'easy' | 'medium' | 'hard';
   onSelectDifficulty: (difficulty: 'easy' | 'medium' | 'hard') => void;
   questionPoolSize: number;
-  warmupQuestion: Question;
-  onRefreshWarmup: () => void;
   totalAnswered: number;
   totalCorrect: number;
   streakDays: number;
   completionRatio: number;
-  onOpenHistory: () => void;
   language: SupportedLanguageCode;
   onChangeLanguage: (language: SupportedLanguageCode) => void;
 }
@@ -55,31 +46,19 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   difficulty,
   onSelectDifficulty,
   questionPoolSize,
-  warmupQuestion,
-  onRefreshWarmup,
   totalAnswered,
   totalCorrect,
   streakDays,
   completionRatio,
-  onOpenHistory,
   language,
   onChangeLanguage,
   style,
   ...rest
 }) => {
-  const [selectedOption, setSelectedOption] = useState<number | null>(null);
-  const [confettiKey, setConfettiKey] = useState(0);
-  const [showConfetti, setShowConfetti] = useState(false);
-  const options = useMemo(() => warmupQuestion.options, [warmupQuestion]);
   const iconSize = useAppStore((state) => state.iconSize);
   const { t } = useTranslation();
   const theme = useTheme();
   const styles = useStyles();
-
-  useEffect(() => {
-    setSelectedOption(null);
-    setShowConfetti(false);
-  }, [warmupQuestion.id]);
 
   const greeting = t('home.welcome', { name: displayName ?? username });
   const subtitle = isGuest
@@ -241,87 +220,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             </View>
           </Button>
 
-          {!isGuest && <Button
-            variant="outline"
-            size="md"
-            fullWidth
-            onPress={onOpenHistory}
-          >
-            <View style={styles.buttonRow}>
-              <View style={styles.buttonIconWrapper}>
-                <IconDocumentText size={iconSize} color={theme.colors.primary} />
-              </View>
-              <Text style={styles.historyButtonText}>{t('common.actions.viewHistory')}</Text>
-            </View>
-          </Button>}
         </View>
       </View>
-
-      <QuestionCard
-        title={t('home.warmupTitle')}
-        description={warmupQuestion.description}
-        codeSnippet={warmupQuestion.code}
-        footer={
-          <View style={styles.warmupFooter}>
-            <Button
-              variant="outline"
-              size="md"
-              fullWidth
-              onPress={() => {
-                setSelectedOption(null);
-                setShowConfetti(false);
-                onRefreshWarmup();
-              }}
-            >
-              <View style={styles.buttonRow}>
-                <View style={styles.buttonIconWrapper}>
-                  <IconArrowPath size={iconSize} color={theme.colors.primary} />
-                </View>
-                <Text style={styles.refreshButtonText}>{t('common.actions.refreshQuestion')}</Text>
-              </View>
-            </Button>
-          </View>
-        }
-      >
-        {showConfetti ? (
-          <View pointerEvents="none" style={styles.confettiLayer}>
-            <ConfettiCannon
-              key={confettiKey}
-              count={30}
-              origin={{ x: 0, y: 0 }}
-              fadeOut
-              explosionSpeed={220}
-              fallSpeed={1800}
-            />
-          </View>
-        ) : null}
-        <Text style={styles.warmupPrompt}>{warmupQuestion.prompt}</Text>
-        {options.map((option, index) => (
-          <OptionButton
-            key={option}
-            label={option}
-            selected={selectedOption === index}
-            onPress={() => {
-              setSelectedOption(index);
-              if (index === warmupQuestion.answerIndex) {
-                setConfettiKey((prev) => prev + 1);
-                setShowConfetti(true);
-                setTimeout(() => setShowConfetti(false), 1200);
-              } else {
-                setShowConfetti(false);
-              }
-            }}
-            containerStyle={index < options.length - 1 && styles.option}
-          />
-        ))}
-        {selectedOption != null ? (
-          <Text style={styles.warmupFeedback}>
-            {selectedOption === warmupQuestion.answerIndex
-              ? t('home.warmupSuccess')
-              : t('home.warmupRetry')}
-          </Text>
-        ) : null}
-      </QuestionCard>
     </View>
   );
 };
@@ -453,13 +353,6 @@ const useStyles = makeStyles((theme) =>
       marginTop: theme.spacing.lg,
       gap: theme.spacing.md,
     },
-    historyButtonText: {
-      ...theme.typography.caption,
-      textTransform: 'uppercase',
-      color: theme.colors.primary,
-      letterSpacing: 0.6,
-      fontWeight: '600',
-    },
     buttonRow: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -535,35 +428,9 @@ const useStyles = makeStyles((theme) =>
       color: theme.colors.primary,
       lineHeight: 18,
     },
-    option: {
-      marginBottom: theme.spacing.md,
-    },
-    warmupFooter: {
-      gap: theme.spacing.md,
-    },
-    refreshButtonText: {
-      ...theme.typography.caption,
-      textTransform: 'uppercase',
-      color: theme.colors.primary,
-    },
     ctaText: {
       ...theme.typography.heading,
       color: theme.colors.textOnPrimary,
-    },
-    warmupPrompt: {
-      ...theme.typography.body,
-      color: theme.colors.textPrimary,
-      marginBottom: theme.spacing.md,
-    },
-    warmupFeedback: {
-      ...theme.typography.caption,
-      color: theme.colors.textSecondary,
-      marginTop: theme.spacing.md,
-    },
-    confettiLayer: {
-      ...StyleSheet.absoluteFillObject,
-      zIndex: 5,
-      pointerEvents: 'none',
     },
   }),
 );
