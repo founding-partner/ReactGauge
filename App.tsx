@@ -4,7 +4,6 @@ import {
   ScrollView,
   StatusBar,
   StyleSheet,
-  Text,
   View,
 } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
@@ -13,7 +12,6 @@ import {
   useTheme,
   makeStyles,
   ThemePreference,
-  Button,
   BottomTabBar,
   QuizToolbar,
 } from './components';
@@ -27,6 +25,7 @@ import { ScoreScreen } from './screens/ScoreScreen';
 import { HistoryScreen } from './screens/HistoryScreen';
 import { HistoryDetailScreen } from './screens/HistoryDetailScreen';
 import { SettingsScreen } from './screens/SettingsScreen';
+import { StartQuizScreen } from './screens/StartQuizScreen';
 import { WarmupScreen } from './screens/WarmupScreen';
 import { AnswerRecord, Question } from './types/quiz';
 import './localization/i18n';
@@ -50,7 +49,6 @@ import {
   loadThemePreference,
   saveThemePreference,
 } from './storage/settingsStorage';
-import { IconWheel } from './components/icons';
 import type {
   QuizToolbarHandlers,
   QuizToolbarState,
@@ -64,7 +62,8 @@ type ActiveScreen =
   | 'history'
   | 'historyDetail'
   | 'warmup'
-  | 'settings';
+  | 'settings'
+  | 'startQuiz';
 type AppContentProps = {
   themePreference: ThemePreference;
   onSelectTheme: (theme: ThemePreference) => void;
@@ -114,6 +113,7 @@ function AppContent({
   const showTabs =
     Boolean(user) &&
     (activeScreen === 'home' ||
+      activeScreen === 'startQuiz' ||
       activeScreen === 'history' ||
       activeScreen === 'historyDetail' ||
       activeScreen === 'warmup' ||
@@ -126,6 +126,8 @@ function AppContent({
     ? 'warmup'
     : activeScreen === 'settings'
     ? 'settings'
+    : activeScreen === 'startQuiz'
+    ? 'startQuiz'
     : 'home';
 
   const updateQuizToolbar = useCallback(
@@ -534,6 +536,11 @@ function AppContent({
         return;
       }
 
+      if (tab === 'startQuiz') {
+        setActiveScreen('startQuiz');
+        return;
+      }
+
       if (tab === 'warmup') {
         setActiveScreen('warmup');
         return;
@@ -623,16 +630,24 @@ function AppContent({
       return (
         <SettingsScreen
           onClose={() => setActiveScreen('home')}
-          difficulty={difficulty}
-          onSelectDifficulty={setDifficulty}
           iconSize={iconSize}
           onChangeIconSize={setIconSize}
           themePreference={themePreference}
           onSelectTheme={onSelectTheme}
-          showDifficulty
           canManageSession={canManageSession}
           onResetData={canManageSession ? handleResetData : undefined}
           onSignOut={canManageSession ? handleSignOut : undefined}
+        />
+      );
+    }
+
+    if (activeScreen === 'startQuiz') {
+      return (
+        <StartQuizScreen
+          difficulty={difficulty}
+          onSelectDifficulty={setDifficulty}
+          questionPoolSize={allQuestions.length}
+          onStartQuiz={handleStartQuiz}
         />
       );
     }
@@ -652,12 +667,8 @@ function AppContent({
         username={user.login}
         displayName={user.name}
         avatarUrl={user.avatarUrl}
-        onStartQuiz={handleStartQuiz}
         onRequestSignIn={user.mode === 'guest' ? handleSignIn : undefined}
         isGuest={user.mode === 'guest'}
-        difficulty={difficulty}
-        onSelectDifficulty={setDifficulty}
-        questionPoolSize={allQuestions.length}
         totalAnswered={user.answered}
         totalCorrect={user.correct}
         streakDays={user.streak}
@@ -772,23 +783,6 @@ const useStyles = makeStyles((theme) =>
   StyleSheet.create({
     safeArea: {
       flex: 1,
-    },
-    toolbar: {
-      flexDirection: 'row',
-      justifyContent: 'flex-end',
-      paddingHorizontal: theme.spacing.xl,
-      paddingTop: theme.spacing.xl / 2,
-      paddingBottom: theme.spacing.md,
-    },
-    settingsButton: {
-      flexDirection: 'row',
-      gap: theme.spacing.sm,
-    },
-    settingsButtonText: {
-      ...theme.typography.caption,
-      color: theme.colors.textPrimary,
-      textTransform: 'uppercase',
-      letterSpacing: 0.6,
     },
     screen: {
       flex: 1,

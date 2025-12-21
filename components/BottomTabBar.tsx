@@ -6,12 +6,13 @@ import { Button } from './Button';
 import {
   IconDocumentText,
   IconHome,
+  IconPlayCircle,
   IconSparkles,
   IconWheel,
 } from './icons';
 import { makeStyles, useTheme } from './theme';
 
-export type TabKey = 'home' | 'history' | 'warmup' | 'settings';
+export type TabKey = 'home' | 'startQuiz' | 'history' | 'warmup' | 'settings';
 
 export type BottomTabBarProps = {
   activeTab: TabKey;
@@ -21,6 +22,7 @@ export type BottomTabBarProps = {
 const tabs: Array<{ key: TabKey; icon: typeof IconHome; labelKey: string }> = [
   { key: 'home', icon: IconHome, labelKey: 'common.tabs.home' },
   { key: 'warmup', icon: IconSparkles, labelKey: 'common.tabs.warmup' },
+  { key: 'startQuiz', icon: IconPlayCircle, labelKey: 'common.tabs.startQuiz' },
   { key: 'history', icon: IconDocumentText, labelKey: 'common.tabs.history' },
   { key: 'settings', icon: IconWheel, labelKey: 'common.tabs.settings' },
 ];
@@ -43,7 +45,7 @@ export const BottomTabBar: React.FC<BottomTabBarProps> = ({
           <Button
             key={tab.key}
             variant="tab"
-            size="sm"
+            size="xs"
             selected={isActive}
             style={styles.tabButton}
             accessibilityState={{ selected: isActive }}

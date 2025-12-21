@@ -7,7 +7,6 @@ import {
   ViewProps,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { Difficulty } from '../store/useAppStore';
 import { Button, OptionButton, makeStyles, useTheme } from '../components';
 import { Theme, ThemePreference } from '../components/theme';
 import {
@@ -23,13 +22,10 @@ const ICON_STEP = 2;
 
 export interface SettingsScreenProps extends ViewProps {
   onClose?: () => void;
-  difficulty: Difficulty;
-  onSelectDifficulty: (difficulty: Difficulty) => void;
   iconSize: number;
   onChangeIconSize: (size: number) => void;
   themePreference: ThemePreference;
   onSelectTheme: (theme: ThemePreference) => void;
-  showDifficulty?: boolean;
   canManageSession?: boolean;
   onResetData?: () => void;
   onSignOut?: () => void;
@@ -37,13 +33,10 @@ export interface SettingsScreenProps extends ViewProps {
 
 export const SettingsScreen: React.FC<SettingsScreenProps> = ({
   onClose,
-  difficulty,
-  onSelectDifficulty,
   iconSize,
   onChangeIconSize,
   themePreference,
   onSelectTheme,
-  showDifficulty = true,
   canManageSession = false,
   onResetData,
   onSignOut,
@@ -115,35 +108,10 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
                 }
                 selected={themePreference === entry}
                 onPress={() => onSelectTheme(entry)}
-                containerStyle={styles.optionButton}
               />
             ))}
           </View>
         </View>
-
-        {showDifficulty ? (
-          <View style={styles.section}>
-            <Text style={styles.sectionLabel}>Difficulty</Text>
-            <View style={styles.optionList}>
-              {(['easy', 'medium', 'hard'] as Difficulty[]).map((entry) => (
-                <OptionButton
-                  key={entry}
-                  label={entry.charAt(0).toUpperCase() + entry.slice(1)}
-                  description={
-                    entry === 'easy'
-                      ? '10 Questions'
-                      : entry === 'medium'
-                      ? '25 Questions'
-                      : '50 Questions'
-                  }
-                  selected={difficulty === entry}
-                  onPress={() => onSelectDifficulty(entry)}
-                  containerStyle={styles.optionButton}
-                />
-              ))}
-            </View>
-          </View>
-        ) : null}
 
         <View style={styles.section}>
           <Text style={styles.sectionLabel}>Icon Size</Text>
@@ -287,9 +255,6 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     optionList: {
       gap: theme.spacing.sm,
-    },
-    optionButton: {
-      marginBottom: 0,
     },
     iconSizeRow: {
       flexDirection: 'row',

@@ -41,7 +41,8 @@ export const resources = {
         },
         tabs: {
           home: 'Home',
-          warmup: 'Warm-up',
+          startQuiz: 'Quiz',
+          warmup: 'Practice',
           history: 'History',
           settings: 'Settings',
         },
@@ -208,6 +209,7 @@ export const resources = {
         },
         tabs: {
           home: 'Inicio',
+          startQuiz: 'Iniciar quiz',
           warmup: 'Calentamiento',
           history: 'Historial',
           settings: 'Ajustes',
@@ -376,6 +378,7 @@ export const resources = {
         },
         tabs: {
           home: 'முகப்பு',
+          startQuiz: 'வினாடி வினா தொடங்கு',
           warmup: 'முன் பயிற்சி',
           history: 'வரலாறு',
           settings: 'அமைப்புகள்',

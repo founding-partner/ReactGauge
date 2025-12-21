@@ -2,11 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View, ViewProps } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import {
-  IconFire,
-  IconPlayCircle,
-  IconRocketLaunch,
   IconShieldCheck,
-  IconSparkles,
 } from '../components/icons';
 import {
   Button,
@@ -15,19 +11,15 @@ import {
   makeStyles,
   useTheme,
 } from '../components';
-import { QUESTION_COUNT_BY_DIFFICULTY, useAppStore, type Difficulty } from '../store/useAppStore';
-import { SupportedLanguageCode, supportedLanguages } from '../localization/i18n';
+import { useAppStore } from '../store/useAppStore';
+import { SupportedLanguageCode } from '../localization/i18n';
 
 export interface HomeScreenProps extends ViewProps {
   username: string;
   displayName?: string;
   avatarUrl?: string;
-  onStartQuiz: () => void;
   onRequestSignIn?: () => void;
   isGuest?: boolean;
-  difficulty: 'easy' | 'medium' | 'hard';
-  onSelectDifficulty: (difficulty: 'easy' | 'medium' | 'hard') => void;
-  questionPoolSize: number;
   totalAnswered: number;
   totalCorrect: number;
   streakDays: number;
@@ -40,12 +32,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   username,
   displayName,
   avatarUrl,
-  onStartQuiz,
   onRequestSignIn,
   isGuest = false,
-  difficulty,
-  onSelectDifficulty,
-  questionPoolSize,
   totalAnswered,
   totalCorrect,
   streakDays,
@@ -151,77 +139,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           </View>
         </View>
       )}
-
-      <View style={styles.difficultyCard}>
-        <Text style={styles.sectionHeading}>{t('home.difficultyTitle')}</Text>
-        <Text style={styles.difficultySubtext}>
-          {t('home.difficultyDescription', { count: questionPoolSize })}
-        </Text>
-        <View style={styles.difficultyRow}>
-          {difficultyOptions.map((option) => (
-            <Button
-              key={option.value}
-              accessibilityState={{ selected: difficulty === option.value }}
-              variant="chipFilled"
-              size="md"
-              selected={difficulty === option.value}
-              style={styles.difficultyChip}
-              onPress={() => onSelectDifficulty(option.value)}
-            >
-              <View style={styles.difficultyContent}>
-                <View style={styles.difficultyTextGroup}>
-                {(() => {
-                  const IconComponent = difficultyIconMap[option.value];
-                  const iconColor =
-                    difficulty === option.value
-                      ? theme.colors.textOnPrimary
-                      : theme.colors.primary;
-                  return (
-                    <View style={styles.buttonIconWrapper}>
-                      <IconComponent size={iconSize} color={iconColor} />
-                    </View>
-                  );
-                })()}
-                
-                  <Text
-                    style={[
-                      styles.difficultyChipText,
-                      difficulty === option.value && styles.difficultyChipTextActive,
-                    ]}
-                  >
-                    {t(difficultyTranslationKeys[option.value])}
-                  </Text>
-                  <Text
-                    style={[
-                      styles.difficultyChipCount,
-                      difficulty === option.value && styles.difficultyChipTextActive,
-                    ]}
-                  >
-                    {t('home.difficultyCountLabel', { count: option.count })}
-                  </Text>
-                </View>
-              </View>
-            </Button>
-          ))}
-        </View>
-
-        <View style={styles.primaryActionColumn}>
-          <Button
-            variant="primary"
-            size="lg"
-            fullWidth
-            onPress={onStartQuiz}
-          >
-            <View style={styles.buttonRow}>
-              <View style={styles.buttonIconWrapper}>
-                <IconPlayCircle size={iconSize} color={theme.colors.textOnPrimary} />
-              </View>
-              <Text style={styles.ctaText}>{t('common.actions.startQuiz')}</Text>
-            </View>
-          </Button>
-
-        </View>
-      </View>
     </View>
   );
 };
@@ -254,25 +171,6 @@ const ProgressRow = ({
       <Text style={styles.progressRowValue}>{value}</Text>
     </View>
   );
-};
-
-const difficultyOptions = (
-  Object.entries(QUESTION_COUNT_BY_DIFFICULTY) as [Difficulty, number][]
-).map(([value, count]) => ({ value, count }));
-
-const difficultyTranslationKeys: Record<
-  Difficulty,
-  'common.difficulties.easy' | 'common.difficulties.medium' | 'common.difficulties.hard'
-> = {
-  easy: 'common.difficulties.easy',
-  medium: 'common.difficulties.medium',
-  hard: 'common.difficulties.hard',
-};
-
-const difficultyIconMap: Record<Difficulty, typeof IconSparkles> = {
-  easy: IconSparkles,
-  medium: IconRocketLaunch,
-  hard: IconFire,
 };
 
 const useStyles = makeStyles((theme) =>
@@ -349,10 +247,6 @@ const useStyles = makeStyles((theme) =>
       textTransform: 'uppercase',
       color: theme.colors.textOnPrimary,
     },
-    primaryActionColumn: {
-      marginTop: theme.spacing.lg,
-      gap: theme.spacing.md,
-    },
     buttonRow: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -362,48 +256,6 @@ const useStyles = makeStyles((theme) =>
       justifyContent: 'center',
       alignItems: 'center',
       marginRight: theme.spacing.xs,
-    },
-    difficultyCard: {
-      backgroundColor: theme.colors.surface,
-      borderRadius: theme.radius.md,
-      padding: theme.spacing.xl,
-      gap: theme.spacing.md,
-    },
-    difficultySubtext: {
-      ...theme.typography.body,
-      color: theme.colors.textSecondary,
-    },
-    difficultyRow: {
-      flexDirection: 'row',
-      gap: theme.spacing.md,
-    },
-    difficultyChip: {
-      flex: 1,
-    },
-    difficultyContent: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: theme.spacing.sm,
-    },
-    difficultyTextGroup: {
-      gap: theme.spacing.xs,
-    },
-    difficultyChipText: {
-      ...theme.typography.caption,
-      fontSize: 12,
-      letterSpacing: 0.2,
-      textTransform: 'uppercase',
-      color: theme.colors.textPrimary,
-    },
-    difficultyChipTextActive: {
-      color: theme.colors.textOnPrimary,
-    },
-    difficultyChipCount: {
-      ...theme.typography.caption,
-      fontSize: 12,
-      textAlign: 'center',
-      color: theme.colors.textSecondary,
-      textTransform: 'none',
     },
     progressBlock: {
       gap: theme.spacing.sm,
@@ -427,10 +279,6 @@ const useStyles = makeStyles((theme) =>
       ...theme.typography.heading,
       color: theme.colors.primary,
       lineHeight: 18,
-    },
-    ctaText: {
-      ...theme.typography.heading,
-      color: theme.colors.textOnPrimary,
     },
   }),
 );
