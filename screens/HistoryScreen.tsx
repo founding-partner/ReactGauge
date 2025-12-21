@@ -51,7 +51,7 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
 
   return (
     <View style={[styles.container, style]} {...rest}>
-      <View style={styles.header}>
+      {/* <View style={styles.header}>
         <Button variant="ghost" size="sm" style={styles.backButton} onPress={onClose}>
           <IconArrowLeft size={20} color={theme.colors.textPrimary} />
           <Text style={styles.backButtonText}>{t('common.actions.back')}</Text>
@@ -67,7 +67,7 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
         >
           <Text style={styles.clearButtonText}>{t('common.actions.clear')}</Text>
         </Button>
-      </View>
+      </View> */}
 
       <FlatList
         data={attempts}

@@ -59,7 +59,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
 
   return (
     <View style={[styles.container, style]} {...rest}>
-      <View style={styles.header}>
+      {/* <View style={styles.header}>
         <View style={styles.headerTitleRow}>
           <IconWheel size={18} color={theme.colors.textPrimary} />
           <Text style={styles.headerTitle}>
@@ -82,7 +82,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
             </Text>
           </Button>
         ) : null}
-      </View>
+      </View> */}
 
       <ScrollView
         contentContainerStyle={styles.content}
@@ -99,13 +99,13 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
                     ? 'System'
                     : entry.charAt(0).toUpperCase() + entry.slice(1)
                 }
-                description={
-                  entry === 'system'
-                    ? 'Follow device setting'
-                    : entry === 'light'
-                    ? 'Bright backgrounds'
-                    : 'Dim backgrounds'
-                }
+                // description={
+                //   entry === 'system'
+                //     ? 'Follow device setting'
+                //     : entry === 'light'
+                //     ? 'Bright backgrounds'
+                //     : 'Dim backgrounds'
+                // }
                 selected={themePreference === entry}
                 onPress={() => onSelectTheme(entry)}
               />
@@ -116,7 +116,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
         <View style={styles.section}>
           <Text style={styles.sectionLabel}>Icon Size</Text>
           <Text style={styles.sectionHelper}>
-            Adjust hero icon size across the app.
+            Adjust icon size across the app.
           </Text>
           <View style={styles.iconSizeRow}>
             <Button
