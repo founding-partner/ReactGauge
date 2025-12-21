@@ -26,6 +26,7 @@ import { ResultScreen } from './screens/ResultScreen';
 import { ScoreScreen } from './screens/ScoreScreen';
 import { HistoryScreen } from './screens/HistoryScreen';
 import { HistoryDetailScreen } from './screens/HistoryDetailScreen';
+import { SettingsScreen } from './screens/SettingsScreen';
 import { WarmupScreen } from './screens/WarmupScreen';
 import { AnswerRecord, Question } from './types/quiz';
 import './localization/i18n';
@@ -49,7 +50,6 @@ import {
   loadThemePreference,
   saveThemePreference,
 } from './storage/settingsStorage';
-import { SettingsDrawer } from './components/SettingsDrawer';
 import { IconWheel } from './components/icons';
 import type {
   QuizToolbarHandlers,
@@ -63,7 +63,8 @@ type ActiveScreen =
   | 'result'
   | 'history'
   | 'historyDetail'
-  | 'warmup';
+  | 'warmup'
+  | 'settings';
 type AppContentProps = {
   themePreference: ThemePreference;
   onSelectTheme: (theme: ThemePreference) => void;
@@ -109,23 +110,22 @@ function AppContent({
   const setQuizAnswers = useAppStore((state) => state.setQuizAnswers);
   const iconSize = useAppStore((state) => state.iconSize);
   const setIconSize = useAppStore((state) => state.setIconSize);
-  const [settingsOpen, setSettingsOpen] = useState(false);
-  const isQuizScreen = activeScreen === 'quiz';
+  // const isQuizScreen = activeScreen === 'quiz';
   const showTabs =
     Boolean(user) &&
     (activeScreen === 'home' ||
       activeScreen === 'history' ||
       activeScreen === 'historyDetail' ||
-      activeScreen === 'warmup');
-  const showToolbar = Boolean(user) && !isQuizScreen && !showTabs;
-  const activeTab: TabKey = settingsOpen
-    ? 'settings'
-    : activeScreen === 'historyDetail'
+      activeScreen === 'warmup' ||
+      activeScreen === 'settings');
+  const activeTab: TabKey = activeScreen === 'historyDetail'
     ? 'history'
     : activeScreen === 'history'
     ? 'history'
     : activeScreen === 'warmup'
     ? 'warmup'
+    : activeScreen === 'settings'
+    ? 'settings'
     : 'home';
 
   const updateQuizToolbar = useCallback(
@@ -221,12 +221,6 @@ function AppContent({
       mounted = false;
     };
   }, []);
-
-  useEffect(() => {
-    if (isQuizScreen && settingsOpen) {
-      setSettingsOpen(false);
-    }
-  }, [isQuizScreen, settingsOpen]);
 
   const warmupQuestion = useMemo(
     () => dailyWarmupQuestion ?? allQuestions[0],
@@ -532,13 +526,12 @@ function AppContent({
 
   const handleTabPress = useCallback(
     (tab: TabKey) => {
+      setSelectedAttempt(null);
+
       if (tab === 'settings') {
-        setSettingsOpen((prev) => !prev);
+        setActiveScreen('settings');
         return;
       }
-
-      setSettingsOpen(false);
-      setSelectedAttempt(null);
 
       if (tab === 'history') {
         setActiveScreen('history');
@@ -552,8 +545,10 @@ function AppContent({
 
       setActiveScreen('home');
     },
-    [setActiveScreen, setSelectedAttempt, setSettingsOpen],
+    [setActiveScreen, setSelectedAttempt],
   );
+
+  const canManageSession = Boolean(user && user.mode !== 'guest');
 
   const renderScreen = () => {
     if (!user) {
@@ -628,6 +623,24 @@ function AppContent({
       );
     }
 
+    if (activeScreen === 'settings') {
+      return (
+        <SettingsScreen
+          onClose={() => setActiveScreen('home')}
+          difficulty={difficulty}
+          onSelectDifficulty={setDifficulty}
+          iconSize={iconSize}
+          onChangeIconSize={setIconSize}
+          themePreference={themePreference}
+          onSelectTheme={onSelectTheme}
+          showDifficulty
+          canManageSession={canManageSession}
+          onResetData={canManageSession ? handleResetData : undefined}
+          onSignOut={canManageSession ? handleSignOut : undefined}
+        />
+      );
+    }
+
     if (activeScreen === 'warmup') {
       return (
         <WarmupScreen
@@ -686,7 +699,6 @@ function AppContent({
     );
   };
 
-  const canManageSession = Boolean(user && user.mode !== 'guest');
   const showQuizToolbar =
     activeScreen === 'quiz' &&
     quizToolbarState != null &&
@@ -704,21 +716,6 @@ function AppContent({
       />
       <View style={styles.background}>
         <SafeAreaView style={styles.safeArea}>
-          {showToolbar ? (
-            <View style={styles.toolbar}>
-              <Button
-                variant="elevated"
-                size="sm"
-                style={styles.settingsButton}
-                onPress={() => setSettingsOpen(true)}
-              >
-                <IconWheel size={18} color={theme.colors.textPrimary} />
-                <Text style={styles.settingsButtonText}>
-                  {t('common.tabs.settings')}
-                </Text>
-              </Button>
-            </View>
-          ) : null}
           <View style={styles.screen}>
             {renderScreen()}
           </View>
@@ -738,20 +735,6 @@ function AppContent({
             />
           ) : null}
         </SafeAreaView>
-        <SettingsDrawer
-          visible={settingsOpen && !isQuizScreen}
-          onClose={() => setSettingsOpen(false)}
-          showDifficulty={activeScreen !== 'quiz'}
-          difficulty={difficulty}
-          onSelectDifficulty={setDifficulty}
-          iconSize={iconSize}
-          onChangeIconSize={setIconSize}
-          themePreference={themePreference}
-          onSelectTheme={onSelectTheme}
-          canManageSession={canManageSession}
-          onResetData={canManageSession ? handleResetData : undefined}
-          onSignOut={canManageSession ? handleSignOut : undefined}
-        />
       </View>
     </SafeAreaProvider>
   );

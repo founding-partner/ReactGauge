@@ -21,8 +21,6 @@ export type { QuizHeaderProps } from './QuizHeader';
 export { CodeBlock } from './CodeBlock';
 export type { CodeBlockProps } from './CodeBlock';
 
-export { SettingsDrawer } from './SettingsDrawer';
-
 export {
   ThemeProvider,
   useTheme,
