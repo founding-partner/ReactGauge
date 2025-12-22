@@ -1,7 +1,5 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useMemo } from 'react';
 import {
-  Alert,
-  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -9,17 +7,9 @@ import {
   Image,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import ViewShot, { captureRef } from 'react-native-view-shot';
-import Share from 'react-native-share';
-import {
-  IconArrowPath,
-  IconDocumentText,
-  IconHome,
-  IconShare,
-} from '../components/icons';
-import { Button, ProgressBar, makeStyles, useTheme } from '../components';
+import ViewShot from 'react-native-view-shot';
+import { ProgressBar, makeStyles } from '../components';
 import { AnswerRecord, Question } from '../types/quiz';
-import { useAppStore } from '../store/useAppStore';
 
 interface TopicStat {
   topic: string;
@@ -30,21 +20,15 @@ interface TopicStat {
 export interface ScoreScreenProps {
   questions: Question[];
   answers: AnswerRecord[];
-  onReviewAnswers: () => void;
-  onRetakeQuiz: () => void;
-  onGoHome: () => void;
+  viewShotRef: React.RefObject<ViewShot | null>;
 }
 
 export const ScoreScreen: React.FC<ScoreScreenProps> = ({
   questions,
   answers,
-  onReviewAnswers,
-  onRetakeQuiz,
-  onGoHome,
+  viewShotRef,
 }) => {
-  const iconSize = useAppStore((state) => state.iconSize);
   const { t } = useTranslation();
-  const theme = useTheme();
   const styles = useStyles();
   const { topicStats, totalCorrect, totalQuestions } = useMemo(
     () => deriveTopicStats(questions, answers),
@@ -54,47 +38,6 @@ export const ScoreScreen: React.FC<ScoreScreenProps> = ({
   const overallPercentage = totalQuestions
     ? Math.round((totalCorrect / totalQuestions) * 100)
     : 0;
-
-  const viewShotRef = useRef<ViewShot | null>(null);
-  const [sharing, setSharing] = useState(false);
-
-  const handleShare = async () => {
-    if (sharing) {
-      return;
-    }
-
-    try {
-      setSharing(true);
-      const uri = await captureRef(viewShotRef, {
-        format: 'png',
-        quality: 0.92,
-      });
-
-      if (!uri) {
-        throw new Error(t('alerts.shareCaptureError'));
-      }
-
-      const shareUrl = Platform.OS === 'android' ? 'file://' + uri : uri;
-
-      await Share.open({
-        url: shareUrl,
-        type: 'image/png',
-        title: t('score.shareTitle'),
-        failOnCancel: false,
-      });
-    } catch (error) {
-      const isCancelled =
-        typeof error === 'object' && error !== null && 'message' in error &&
-        (error as { message?: string }).message?.includes('User did not share');
-
-      if (!isCancelled) {
-        const message = error instanceof Error ? error.message : t('alerts.shareFailedBody');
-        Alert.alert(t('alerts.shareFailedTitle'), message);
-      }
-    } finally {
-      setSharing(false);
-    }
-  };
 
   return (
     <ScrollView
@@ -156,60 +99,6 @@ export const ScoreScreen: React.FC<ScoreScreenProps> = ({
         </View>
       </ViewShot>
 
-      <View style={styles.actions}>
-        <Button
-          variant="primary"
-          size="lg"
-          onPress={onRetakeQuiz}
-        >
-          <View style={styles.buttonContent}>
-            <View style={styles.buttonIconWrapper}>
-              <IconArrowPath size={iconSize} color={theme.colors.textOnPrimary} />
-            </View>
-            <Text style={styles.primaryText}>{t('common.actions.retakeQuiz')}</Text>
-          </View>
-        </Button>
-        <Button
-          variant="outline"
-          size="lg"
-          onPress={onReviewAnswers}
-        >
-          <View style={styles.buttonContent}>
-            <View style={styles.buttonIconWrapper}>
-              <IconDocumentText size={iconSize} color={theme.colors.primary} />
-            </View>
-            <Text style={styles.secondaryText}>{t('common.actions.reviewAnswers')}</Text>
-          </View>
-        </Button>
-        <Button
-          variant="surface"
-          size="lg"
-          onPress={onGoHome}
-        >
-          <View style={styles.buttonContent}>
-            <View style={styles.buttonIconWrapper}>
-              <IconHome size={iconSize} color={theme.colors.textOnPrimary} />
-            </View>
-            <Text style={styles.tertiaryText}>{t('common.actions.backHome')}</Text>
-          </View>
-        </Button>
-        <Button
-          variant="surface"
-          size="lg"
-          onPress={handleShare}
-          disabled={sharing}
-          disabledOpacity={0.6}
-        >
-          <View style={styles.buttonContent}>
-            <View style={styles.buttonIconWrapper}>
-              <IconShare size={iconSize} color={theme.colors.textOnPrimary} />
-            </View>
-            <Text style={styles.shareText}>
-              {sharing ? t('common.actions.preparing') : t('common.actions.shareScorecard')}
-            </Text>
-          </View>
-        </Button>
-      </View>
     </ScrollView>
   );
 };
@@ -350,37 +239,6 @@ const useStyles = makeStyles((theme) =>
     topicCount: {
       ...theme.typography.caption,
       color: theme.colors.textSecondary,
-    },
-    actions: {
-      paddingHorizontal: theme.spacing.xl,
-      paddingVertical: theme.spacing.xl,
-      gap: theme.spacing.md,
-    },
-    primaryText: {
-      ...theme.typography.heading,
-      color: theme.colors.textOnPrimary,
-    },
-    secondaryText: {
-      ...theme.typography.heading,
-      color: theme.colors.primary,
-    },
-    tertiaryText: {
-      ...theme.typography.heading,
-      color: theme.colors.textPrimary,
-    },
-    shareText: {
-      ...theme.typography.heading,
-      color: theme.colors.textPrimary,
-    },
-    buttonContent: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: theme.spacing.sm,
-    },
-    buttonIconWrapper: {
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginRight: theme.spacing.xs,
     },
   }),
 );

@@ -87,8 +87,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             </Text>
           </View>
         )} */}
-        
-        
       </View>
 
       {isGuest ? (

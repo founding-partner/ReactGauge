@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import {
   Alert,
+  Platform,
   ScrollView,
   StatusBar,
   StyleSheet,
@@ -9,16 +10,20 @@ import {
 } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import {
+  Button,
   ThemeProvider,
   useTheme,
   makeStyles,
   ThemePreference,
   BottomTabBar,
+  ScoreCardBar,
   QuizExplanationDrawer,
   QuizToolbar,
-  Button,
 } from './components';
 import type { TabKey } from './components';
+import Share from 'react-native-share';
+import { captureRef } from 'react-native-view-shot';
+import type ViewShot from 'react-native-view-shot';
 import { signInWithGitHub } from './auth/githubAuth';
 import { HomeScreen } from './screens/HomeScreen';
 import { LoginScreen } from './screens/LoginScreen';
@@ -96,6 +101,8 @@ function AppContent({
   const [quizExplanationState, setQuizExplanationState] =
     useState<QuizExplanationState | null>(null);
   const quizExplanationHandlers = useRef<QuizExplanationHandlers | null>(null);
+  const scoreCardRef = useRef<ViewShot | null>(null);
+  const [scoreSharing, setScoreSharing] = useState(false);
   const setQuestions = useAppStore((state) => state.setQuestions);
   const allQuestions = useAppStore((state) => state.allQuestions);
   const difficulty = useAppStore((state) => state.difficulty);
@@ -523,6 +530,52 @@ function AppContent({
     setActiveScreen('home');
   };
 
+  const handleShareScorecard = useCallback(async () => {
+    if (scoreSharing) {
+      return;
+    }
+
+    if (!scoreCardRef.current) {
+      Alert.alert(t('alerts.shareFailedTitle'), t('alerts.shareCaptureError'));
+      return;
+    }
+
+    try {
+      setScoreSharing(true);
+      const uri = await captureRef(scoreCardRef, {
+        format: 'png',
+        quality: 0.92,
+      });
+
+      if (!uri) {
+        throw new Error(t('alerts.shareCaptureError'));
+      }
+
+      const shareUrl = Platform.OS === 'android' ? `file://${uri}` : uri;
+
+      await Share.open({
+        url: shareUrl,
+        type: 'image/png',
+        title: t('score.shareTitle'),
+        failOnCancel: false,
+      });
+    } catch (error) {
+      const isCancelled =
+        typeof error === 'object' &&
+        error !== null &&
+        'message' in error &&
+        (error as { message?: string }).message?.includes('User did not share');
+
+      if (!isCancelled) {
+        const message =
+          error instanceof Error ? error.message : t('alerts.shareFailedBody');
+        Alert.alert(t('alerts.shareFailedTitle'), message);
+      }
+    } finally {
+      setScoreSharing(false);
+    }
+  }, [scoreSharing, t]);
+
   const handleCloseHistory = () => {
     setActiveScreen('home');
   };
@@ -599,9 +652,7 @@ function AppContent({
         <ScoreScreen
           questions={completedQuestions}
           answers={quizAnswers}
-          onReviewAnswers={handleReviewAnswers}
-          onRetakeQuiz={handleRetryQuiz}
-          onGoHome={handleScoreGoHome}
+          viewShotRef={scoreCardRef}
         />
       );
     }
@@ -742,6 +793,7 @@ function AppContent({
       quizToolbarState.showPrevious ||
       quizToolbarState.showSubmit ||
       quizToolbarState.showNext);
+  const showScoreCardBar = activeScreen === 'score';
 
   return (
     <SafeAreaProvider>
@@ -752,10 +804,9 @@ function AppContent({
       />
       <View style={styles.background}>
         <SafeAreaView style={styles.safeArea}>
-          <Button onPress={() => setActiveScreen('score')}
-              >
-                <Text>show scoreboard</Text>
-              </Button>
+          {/* <Button onPress={() => setActiveScreen('score')}>
+            <Text>show scoreboard</Text>
+          </Button> */}
           <View style={styles.screen}>
             {renderScreen()}
           </View>
@@ -777,6 +828,16 @@ function AppContent({
               activeTab={activeTab}
               onTabPress={handleTabPress}
               isGuest={isGuestUser}
+            />
+          ) : null}
+          {showScoreCardBar ? (
+            <ScoreCardBar
+              iconSize={iconSize}
+              onRetakeQuiz={handleRetryQuiz}
+              onReviewAnswers={handleReviewAnswers}
+              onGoHome={handleScoreGoHome}
+              onShare={handleShareScorecard}
+              sharing={scoreSharing}
             />
           ) : null}
         </SafeAreaView>
