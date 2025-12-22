@@ -13,6 +13,12 @@ export type { ProgressBarProps } from './ProgressBar';
 export { QuizToolbar } from './QuizToolbar';
 export type { QuizToolbarProps } from './QuizToolbar';
 
+export { QuizExplanationDrawer } from './QuizExplanationDrawer';
+export type { QuizExplanationDrawerProps } from './QuizExplanationDrawer';
+
+export { ScoreCardBar } from './ScoreCardBar';
+export type { ScoreCardBarProps } from './ScoreCardBar';
+
 export { QuestionCard } from './QuestionCard';
 
 export { QuizHeader } from './QuizHeader';

@@ -1,18 +1,14 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-  Animated,
   Dimensions,
   ScrollView,
   StyleSheet,
-  Text,
   View,
   ViewProps,
-  Easing,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import ConfettiCannon from 'react-native-confetti-cannon';
 import {
-  Button,
   OptionButton,
   ProgressBar,
   QuestionCard,
@@ -22,6 +18,10 @@ import {
 } from '../components';
 import { AnswerRecord, Question } from '../types/quiz';
 import { QuizToolbarHandlers, QuizToolbarState } from '../types/quizToolbar';
+import {
+  QuizExplanationHandlers,
+  QuizExplanationState,
+} from '../types/quizExplanation';
 
 export interface QuizScreenProps extends ViewProps {
   questions: Question[];
@@ -35,6 +35,10 @@ export interface QuizScreenProps extends ViewProps {
     state: QuizToolbarState,
     handlers: QuizToolbarHandlers,
   ) => void;
+  onExplanationUpdate?: (
+    state: QuizExplanationState | null,
+    handlers: QuizExplanationHandlers,
+  ) => void;
 }
 
 export const QuizScreen: React.FC<QuizScreenProps> = ({
@@ -46,6 +50,7 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
   onExit,
   onComplete,
   onToolbarUpdate,
+  onExplanationUpdate,
   style,
   ...rest
 }) => {
@@ -56,7 +61,6 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
   const [answers, setAnswers] = useState<AnswerRecord[]>([]);
   const [confettiBurst, setConfettiBurst] = useState(0);
   const [explanationVisible, setExplanationVisible] = useState(false);
-  const explanationAnim = useRef(new Animated.Value(0)).current;
   const { t } = useTranslation();
   const theme = useTheme();
   const styles = useStyles();
@@ -182,27 +186,52 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
     Boolean(currentQuestion.explanation) &&
     Boolean(currentAnswer);
 
-  useEffect(() => {
-    if (showExplanation) {
-      explanationAnim.setValue(0);
-      Animated.timing(explanationAnim, {
-        toValue: 1,
-        duration: 240,
-        easing: Easing.out(Easing.ease),
-        useNativeDriver: true,
-      }).start();
-    } else {
-      explanationAnim.stopAnimation();
-      explanationAnim.setValue(0);
-    }
-  }, [showExplanation, explanationAnim]);
-
-  const handleDismissExplanation = () => {
+  const handleDismissExplanation = useCallback(() => {
     setExplanationVisible(false);
-  };
+  }, []);
 
-  const showExit = !showExplanation;
-  const showPrevious = currentIndex > 0 && !showExplanation;
+  const explanationHandlers = useMemo(
+    () => ({ onDismiss: handleDismissExplanation }),
+    [handleDismissExplanation],
+  );
+
+  useEffect(() => {
+    if (!onExplanationUpdate) {
+      return;
+    }
+
+    if (!showExplanation || !currentAnswer) {
+      onExplanationUpdate(null, explanationHandlers);
+      return;
+    }
+
+    const selectedLabel =
+      currentAnswer.selectedIndex != null
+        ? currentQuestion.options[currentAnswer.selectedIndex] ?? '—'
+        : '—';
+    const correctLabel =
+      currentQuestion.options[currentQuestion.answerIndex] ?? '—';
+
+    onExplanationUpdate(
+      {
+        prompt: currentQuestion.prompt,
+        explanation: currentQuestion.explanation ?? '',
+        selectedLabel,
+        correctLabel,
+        isCorrect: currentAnswer.isCorrect,
+      },
+      explanationHandlers,
+    );
+  }, [
+    currentAnswer,
+    currentQuestion,
+    explanationHandlers,
+    onExplanationUpdate,
+    showExplanation,
+  ]);
+
+  const showExit = currentIndex === 0;
+  const showPrevious = currentIndex > 0;
   const showSubmit = selectedOption != null && !submitted && !showExplanation;
   const showNext = submitted && !showExplanation;
 
@@ -239,84 +268,6 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
     showSubmit,
   ]);
 
-  const renderExplanation = () => {
-    if (!showExplanation || !currentAnswer) {
-      return null;
-    }
-
-    const isCorrect = currentAnswer.isCorrect;
-    const selectedLabel =
-      currentAnswer.selectedIndex != null
-        ? currentQuestion.options[currentAnswer.selectedIndex] ?? '—'
-        : '—';
-    const correctLabel =
-      currentQuestion.options[currentQuestion.answerIndex] ?? '—';
-    const emphasisColor = isCorrect ? theme.colors.success : theme.colors.dangerStrong;
-
-    return (
-      <Animated.View
-        style={[
-          styles.explanationDrawer,
-          {
-            borderLeftColor: emphasisColor,
-            opacity: explanationAnim,
-            transform: [
-              {
-                translateY: explanationAnim.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [40, 0],
-                }),
-              },
-            ],
-          },
-        ]}
-        >
-          <Text
-            style={[
-              styles.explanationHeading,
-              { color: emphasisColor },
-            ]}
-          >
-            {isCorrect ? t('quiz.explanationCorrect') : t('quiz.explanationReview')}
-          </Text>
-        <Text style={styles.explanationQuestion}>{currentQuestion.prompt}</Text>
-        <View style={styles.explanationAnswers}>
-          <View style={styles.answerRow}>
-            <Text style={styles.answerLabel}>{t('quiz.yourAnswer')}</Text>
-            <Text
-              style={[
-                styles.answerValue,
-                isCorrect
-                  ? styles.answerValueCorrect
-                  : styles.answerValueIncorrect,
-              ]}
-            >
-              {selectedLabel}
-            </Text>
-          </View>
-          <View style={styles.answerRow}>
-            <Text style={styles.answerLabel}>{t('quiz.correctAnswer')}</Text>
-            <Text
-              style={[styles.answerValue, styles.answerValueCorrect]}
-            >
-              {correctLabel}
-            </Text>
-          </View>
-        </View>
-        <Text style={styles.explanationBody}>{currentQuestion.explanation}</Text>
-        <Button
-          variant="primary"
-          size="sm"
-          radius="md"
-          style={styles.dismissButton}
-          onPress={handleDismissExplanation}
-        >
-          <Text style={styles.dismissButtonText}>{t('quiz.dismiss')}</Text>
-        </Button>
-      </Animated.View>
-    );
-  };
-
   return (
     <View style={[styles.root, style]}>
       {confettiBurst > 0 ? (
@@ -329,23 +280,6 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
             explosionSpeed={320}
             fallSpeed={2400}
           />
-        </View>
-      ) : null}
-      {showExplanation ? (
-        <View
-          pointerEvents="auto"
-          style={[
-            styles.explanationOverlay,
-            { paddingTop: theme.spacing.xl },
-          ]}
-        >
-          <Button
-            variant="unstyled"
-            size="none"
-            style={styles.overlayBackdrop}
-            onPress={handleDismissExplanation}
-          />
-          {renderExplanation()}
         </View>
       ) : null}
       <ScrollView
@@ -361,19 +295,24 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
       >
         <QuizHeader
           title={t('quiz.title')}
-          subtitle={t('quiz.subtitle', {
-            current: currentIndex + 1,
-            total: totalQuestions,
-          })}
-          avatarUri={avatarUrl}
-          initials={getInitials(username)}
-          currentQuestion={currentIndex + 1}
-          totalQuestions={totalQuestions}
-          timeRemainingLabel={
+          // subtitle={t('quiz.subtitle', {
+          //   current: currentIndex + 1,
+          //   total: totalQuestions,
+          // })}
+          subtitle={
             isGuest
               ? t('common.guestMode')
               : t('common.streakDays', { count: Math.max(streakDays, 0) })
           }
+          avatarUri={avatarUrl}
+          initials={getInitials(username)}
+          currentQuestion={currentIndex + 1}
+          totalQuestions={totalQuestions}
+          // timeRemainingLabel={
+          //   isGuest
+          //     ? t('common.guestMode')
+          //     : t('common.streakDays', { count: Math.max(streakDays, 0) })
+          // }
         />
 
         <ProgressBar progress={progress} milestones={milestones} />
@@ -451,22 +390,8 @@ const useStyles = makeStyles((theme) =>
       flex: 1,
       gap: theme.spacing.xl,
     },
-    explanationOverlay: {
-      ...StyleSheet.absoluteFillObject,
-      justifyContent: 'flex-start',
-      alignItems: 'center',
-      zIndex: 30,
-      paddingHorizontal: theme.spacing.xl,
-    },
-    overlayBackdrop: {
-      ...StyleSheet.absoluteFillObject,
-      backgroundColor:
-        theme.name === 'dark'
-          ? 'rgba(0, 0, 0, 0.55)'
-          : 'rgba(15, 23, 42, 0.55)',
-    },
     confettiLayer: {
-      ...StyleSheet.absoluteFillObject,
+      ...StyleSheet.absoluteFill,
       zIndex: 20,
       elevation: 20,
     },
@@ -487,69 +412,6 @@ const useStyles = makeStyles((theme) =>
     },
     option: {
       marginBottom: theme.spacing.md,
-    },
-    explanationDrawer: {
-      width: '100%',
-      maxWidth: 560,
-      backgroundColor: theme.colors.surface,
-      borderRadius: theme.radius.lg,
-      padding: theme.spacing.xl,
-      gap: theme.spacing.md,
-      borderLeftWidth: 4,
-      borderLeftColor: 'transparent',
-      shadowColor: theme.colors.shadow,
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.12,
-      shadowRadius: 12,
-      elevation: 4,
-    },
-    explanationHeading: {
-      ...theme.typography.heading,
-      color: theme.colors.textPrimary,
-    },
-    explanationQuestion: {
-      ...theme.typography.body,
-      color: theme.colors.textPrimary,
-      fontWeight: '600',
-      marginTop: theme.spacing.xs,
-    },
-    explanationAnswers: {
-      marginTop: theme.spacing.md,
-      gap: theme.spacing.sm,
-    },
-    answerRow: {
-      gap: theme.spacing.xs,
-    },
-    answerLabel: {
-      ...theme.typography.caption,
-      color: theme.colors.textSecondary,
-      textTransform: 'uppercase',
-      letterSpacing: 0.5,
-    },
-    answerValue: {
-      ...theme.typography.body,
-      fontWeight: '600',
-      color: theme.colors.textPrimary,
-    },
-    answerValueCorrect: {
-      color: theme.colors.success,
-    },
-    answerValueIncorrect: {
-      color: theme.colors.dangerStrong,
-    },
-    explanationBody: {
-      ...theme.typography.body,
-      color: theme.colors.textSecondary,
-      marginTop: theme.spacing.md,
-    },
-    dismissButton: {
-      alignSelf: 'flex-end',
-      marginTop: theme.spacing.lg,
-    },
-    dismissButtonText: {
-      ...theme.typography.body,
-      color: theme.colors.textOnPrimary,
-      fontWeight: '600',
     },
   }),
 );

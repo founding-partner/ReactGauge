@@ -4,6 +4,7 @@ import {
   ScrollView,
   StatusBar,
   StyleSheet,
+  Text,
   View,
 } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
@@ -13,7 +14,9 @@ import {
   makeStyles,
   ThemePreference,
   BottomTabBar,
+  QuizExplanationDrawer,
   QuizToolbar,
+  Button,
 } from './components';
 import type { TabKey } from './components';
 import { signInWithGitHub } from './auth/githubAuth';
@@ -53,6 +56,10 @@ import type {
   QuizToolbarHandlers,
   QuizToolbarState,
 } from './types/quizToolbar';
+import type {
+  QuizExplanationHandlers,
+  QuizExplanationState,
+} from './types/quizExplanation';
 
 type ActiveScreen =
   | 'home'
@@ -86,6 +93,9 @@ function AppContent({
   const [quizToolbarState, setQuizToolbarState] =
     useState<QuizToolbarState | null>(null);
   const quizToolbarHandlers = useRef<QuizToolbarHandlers | null>(null);
+  const [quizExplanationState, setQuizExplanationState] =
+    useState<QuizExplanationState | null>(null);
+  const quizExplanationHandlers = useRef<QuizExplanationHandlers | null>(null);
   const setQuestions = useAppStore((state) => state.setQuestions);
   const allQuestions = useAppStore((state) => state.allQuestions);
   const difficulty = useAppStore((state) => state.difficulty);
@@ -151,10 +161,20 @@ function AppContent({
     [],
   );
 
+  const updateQuizExplanation = useCallback(
+    (state: QuizExplanationState | null, handlers: QuizExplanationHandlers) => {
+      quizExplanationHandlers.current = handlers;
+      setQuizExplanationState(state);
+    },
+    [],
+  );
+
   useEffect(() => {
     if (activeScreen !== 'quiz') {
       quizToolbarHandlers.current = null;
       setQuizToolbarState(null);
+      quizExplanationHandlers.current = null;
+      setQuizExplanationState(null);
     }
   }, [activeScreen]);
 
@@ -692,6 +712,7 @@ function AppContent({
         onExit={handleExitQuiz}
         onComplete={handleQuizComplete}
         onToolbarUpdate={updateQuizToolbar}
+        onExplanationUpdate={updateQuizExplanation}
       />
     );
 
@@ -708,6 +729,11 @@ function AppContent({
       </ScrollView>
     );
   };
+
+  const handleDismissExplanation = useCallback(() => {
+    setQuizExplanationState(null);
+    quizExplanationHandlers.current?.onDismiss();
+  }, []);
 
   const showQuizToolbar =
     activeScreen === 'quiz' &&
@@ -726,9 +752,17 @@ function AppContent({
       />
       <View style={styles.background}>
         <SafeAreaView style={styles.safeArea}>
+          <Button onPress={() => setActiveScreen('score')}
+              >
+                <Text>show scoreboard</Text>
+              </Button>
           <View style={styles.screen}>
             {renderScreen()}
           </View>
+          <QuizExplanationDrawer
+            state={quizExplanationState}
+            onDismiss={handleDismissExplanation}
+          />
           {showQuizToolbar && quizToolbarState ? (
             <QuizToolbar
               state={quizToolbarState}
