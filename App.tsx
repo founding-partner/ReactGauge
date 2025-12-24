@@ -5,12 +5,10 @@ import {
   ScrollView,
   StatusBar,
   StyleSheet,
-  Text,
   View,
 } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import {
-  Button,
   ThemeProvider,
   useTheme,
   makeStyles,
@@ -803,44 +801,41 @@ function AppContent({
         translucent
       />
       <View style={styles.background}>
-        <SafeAreaView style={styles.safeArea}>
-          {/* <Button onPress={() => setActiveScreen('score')}>
-            <Text>show scoreboard</Text>
-          </Button> */}
+        <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
           <View style={styles.screen}>
             {renderScreen()}
           </View>
-          <QuizExplanationDrawer
-            state={quizExplanationState}
-            onDismiss={handleDismissExplanation}
-          />
-          {showQuizToolbar && quizToolbarState ? (
-            <QuizToolbar
-              state={quizToolbarState}
-              iconSize={iconSize}
-              onExit={() => quizToolbarHandlers.current?.onExit()}
-              onPrevious={() => quizToolbarHandlers.current?.onPrevious()}
-              onSubmit={() => quizToolbarHandlers.current?.onSubmit()}
-              onNext={() => quizToolbarHandlers.current?.onNext()}
-            />
-          ) : showTabs ? (
-            <BottomTabBar
-              activeTab={activeTab}
-              onTabPress={handleTabPress}
-              isGuest={isGuestUser}
-            />
-          ) : null}
-          {showScoreCardBar ? (
-            <ScoreCardBar
-              iconSize={iconSize}
-              onRetakeQuiz={handleRetryQuiz}
-              onReviewAnswers={handleReviewAnswers}
-              onGoHome={handleScoreGoHome}
-              onShare={handleShareScorecard}
-              sharing={scoreSharing}
-            />
-          ) : null}
         </SafeAreaView>
+        {showQuizToolbar && quizToolbarState ? (
+          <QuizToolbar
+            state={quizToolbarState}
+            iconSize={iconSize}
+            onExit={() => quizToolbarHandlers.current?.onExit()}
+            onPrevious={() => quizToolbarHandlers.current?.onPrevious()}
+            onSubmit={() => quizToolbarHandlers.current?.onSubmit()}
+            onNext={() => quizToolbarHandlers.current?.onNext()}
+          />
+        ) : showTabs ? (
+          <BottomTabBar
+            activeTab={activeTab}
+            onTabPress={handleTabPress}
+            isGuest={isGuestUser}
+          />
+        ) : null}
+        {showScoreCardBar ? (
+          <ScoreCardBar
+            iconSize={iconSize}
+            onRetakeQuiz={handleRetryQuiz}
+            onReviewAnswers={handleReviewAnswers}
+            onGoHome={handleScoreGoHome}
+            onShare={handleShareScorecard}
+            sharing={scoreSharing}
+          />
+        ) : null}
+        <QuizExplanationDrawer
+          state={quizExplanationState}
+          onDismiss={handleDismissExplanation}
+        />
       </View>
     </SafeAreaProvider>
   );

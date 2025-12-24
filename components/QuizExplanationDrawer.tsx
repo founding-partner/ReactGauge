@@ -125,7 +125,7 @@ const useStyles = makeStyles((theme) =>
       ...StyleSheet.absoluteFillObject,
       backgroundColor:
         theme.name === 'dark'
-          ? 'rgba(135, 29, 29, 0.55)'
+          ? 'rgba(25, 23, 23, 0.55)'
           : 'rgba(25, 70, 175, 0.55)',
     },
     drawer: {
