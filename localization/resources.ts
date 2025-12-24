@@ -38,6 +38,16 @@ export const resources = {
           ok: 'Okay',
           clear: 'Clear',
           cancel: 'Cancel',
+          joinContributor: 'Contribute',
+          starRepo: 'Star repo',
+        },
+        sectionTitles: {
+          actions: 'Community Actions',
+        },
+        actionDescriptions: {
+          joinContributor:
+            'Join as a contributor to submit questions, fixes, and features.',
+          starRepo: 'Star the repo to support the project and show interest.',
         },
         tabs: {
           home: 'Home',
@@ -207,6 +217,17 @@ export const resources = {
           ok: 'Aceptar',
           clear: 'Borrar',
           cancel: 'Cancelar',
+          joinContributor: 'Contribuir',
+          starRepo: 'Marcar con estrella',
+        },
+        sectionTitles: {
+          actions: 'Acciones',
+        },
+        actionDescriptions: {
+          joinContributor:
+            'Únete como colaborador para enviar preguntas, mejoras y funciones.',
+          starRepo:
+            'Dale una estrella al repo para apoyar el proyecto y mostrar interés.',
         },
         tabs: {
           home: 'Inicio',
@@ -377,6 +398,17 @@ export const resources = {
           ok: 'சரி',
           clear: 'அழி',
           cancel: 'ரத்து',
+          joinContributor: 'பங்களிக்க',
+          starRepo: 'நட்சத்திரமிடு',
+        },
+        sectionTitles: {
+          actions: 'செயல்கள்',
+        },
+        actionDescriptions: {
+          joinContributor:
+            'கேள்விகள், திருத்தங்கள், அம்சங்களை சமர்ப்பிக்க பங்களிப்பாளராக இணைக.',
+          starRepo:
+            'இந்த திட்டத்தை ஆதரிக்கவும் உங்கள் ஆர்வத்தை காட்டவும் repo-க்கு நட்சத்திரமிடுங்கள்.',
         },
         tabs: {
           home: 'முகப்பு',

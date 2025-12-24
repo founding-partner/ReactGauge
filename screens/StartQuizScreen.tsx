@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  Linking,
   ScrollView,
   StyleSheet,
   Text,
@@ -11,8 +12,10 @@ import { Button, makeStyles, useTheme } from '../components';
 import {
   IconFire,
   IconPlayCircle,
+  IconContributor,
   IconRocketLaunch,
   IconSparkles,
+  IconStar,
 } from '../components/icons';
 import {
   QUESTION_COUNT_BY_DIFFICULTY,
@@ -39,6 +42,8 @@ export const StartQuizScreen: React.FC<StartQuizScreenProps> = ({
   const { t } = useTranslation();
   const theme = useTheme();
   const styles = useStyles();
+  const repoUrl = 'https://github.com/founding-partner/ReactGauge';
+  const contributeUrl = `${repoUrl}/contribute`;
 
   return (
     <ScrollView
@@ -119,6 +124,52 @@ export const StartQuizScreen: React.FC<StartQuizScreenProps> = ({
           </View>
         </Button>
       </View>
+
+      <View style={styles.actionCard}>
+        <Text style={styles.sectionHeading}>
+          {t('common.sectionTitles.actions')}
+        </Text>
+        <View style={styles.repoActions}>
+          <View style={styles.repoActionCard}>
+            <Text style={styles.repoDescription}>
+              {t('common.actionDescriptions.joinContributor')}
+            </Text>
+            <Button
+              variant="outline"
+              size="sm"
+              fullWidth
+              style={styles.repoButton}
+              onPress={() => void Linking.openURL(contributeUrl)}
+            >
+              <View style={styles.repoButtonContent}>
+                <IconContributor size={iconSize + 4} color={theme.colors.primary} />
+                <Text style={styles.repoButtonText}>
+                  {t('common.actions.joinContributor')}
+                </Text>
+              </View>
+            </Button>
+          </View>
+          <View style={styles.repoActionCard}>
+            <Text style={styles.repoDescription}>
+              {t('common.actionDescriptions.starRepo')}
+            </Text>
+            <Button
+              variant="surface"
+              size="sm"
+              fullWidth
+              style={styles.repoButton}
+              onPress={() => void Linking.openURL(repoUrl)}
+            >
+              <View style={styles.repoButtonContent}>
+                <IconStar size={iconSize + 4} color={theme.colors.primary} />
+                <Text style={styles.repoButtonText}>
+                  {t('common.actions.starRepo')}
+                </Text>
+              </View>
+            </Button>
+          </View>
+        </View>
+      </View>
     </ScrollView>
   );
 };
@@ -172,6 +223,12 @@ const useStyles = makeStyles((theme) =>
       padding: theme.spacing.xl,
       gap: theme.spacing.lg,
     },
+    actionCard: {
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radius.md,
+      padding: theme.spacing.xl,
+      gap: theme.spacing.lg,
+    },
     sectionHeading: {
       ...theme.typography.heading,
       color: theme.colors.textPrimary,
@@ -217,6 +274,39 @@ const useStyles = makeStyles((theme) =>
       justifyContent: 'center',
       alignItems: 'center',
       marginRight: theme.spacing.xs,
+    },
+    repoActions: {
+      flexDirection: 'column',
+      // gap: theme.spacing.sm,
+    },
+    repoActionCard: {
+      flex: 1,
+      gap: theme.spacing.md,
+      paddingVertical: theme.spacing.md
+    },
+    repoButton: {
+      flex: 1,
+      // gap: theme.spacing.xl,
+    },
+    repoButtonText: {
+      ...theme.typography.caption,
+      color: theme.colors.textPrimary,
+      textTransform: 'uppercase',
+      letterSpacing: 0.4,
+      fontWeight: '600',
+    },
+    repoButtonContent: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: theme.spacing.sm,
+      justifyContent: 'center',
+    },
+    repoDescription: {
+      ...theme.typography.caption,
+      color: theme.colors.textSecondary,
+      letterSpacing: 0.4,
+      textAlign: 'center',
+      textTransform: 'none',
     },
     ctaText: {
       ...theme.typography.heading,
